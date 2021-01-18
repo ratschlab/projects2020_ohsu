@@ -18,7 +18,7 @@ mkdir -p ${log_dir}
 
 ### Immunopepper Run 
 annotation=${basedir}/annotation/gencode.v32.annotation.gtf
-genome=${basedir}/genome/GRCh38.d1.vd1.phiX.fa
+genome=${basedir}/genome/GRCh38.p13.genome.fa
 vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome 
 maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same geno,e
 heter_code='0'
@@ -37,8 +37,15 @@ for cancer_type in BRCA OV; do
 				outdir=${base_path}/${target}/${cancer_type}/${sample}/spladder_confidence_${cf_level}/${read_frame}_frames
                        		mkdir -p $outdir
 				for mutation in ref; do #somatic_and_germline  germline somatic ref ; do  
-				    if [ ! -f  ${outdir}/${mutation}_junction_${kmer}mer.pq.gz ] || [ ! -f  ${outdir}/${mutation}_back_${kmer}mer.pq.gz ] || [ ! -f  ${outdir}/${mutation}_back_peptides.fa.pq.gz ] ||  [ ! -f  ${outdir}/${mutation}_peptides.fa.pq.gz ] ||  [ ! -f  ${outdir}/${mutation}_metadata.tsv.gz.pq ]; then
-				       echo "${outdir}/${mutation}${out_file} does not exist"
+				out_1=${outdir}/${mutation}_sample_${kmer}mer.pq.gz
+                		out_2=${outdir}/${mutation}_annot_${kmer}mer.pq.gz
+                		out_3=${outdir}/${mutation}_annot_peptides.fa.pq.gz
+                	        out_4=${outdir}/${mutation}_sample_peptides.fa.pq.gz
+                	        out_5=${outdir}/${sample}/${mutation}_sample_peptides_meta.tsv.gz.pq
+                		if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]]; then 
+					
+					
+					echo "${outdir}/${mutation}${out_file} does not exist"
 				       spladder_path=${basedir}/spladder/${cancer_type}/spladder_confidence_${cf_level}/genes_graph_conf${cf_level}.${sample}
 				       cmd_base="immunopepper  build --verbose 1 --samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path}.pickle --count-path ${spladder_path}.count.hdf5 --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size}"
 				      
@@ -55,7 +62,7 @@ for cancer_type in BRCA OV; do
 						$cmd
 					else
 						echo $cmd
-						echo $cmd | bsub -J for_annot -n ${parallel} -J ${mutation}_ohsu -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf
+					#	echo $cmd | bsub -J for_annot -n ${parallel} -J ${mutation}_ohsu -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf
 					fi
 				fi
 				done
