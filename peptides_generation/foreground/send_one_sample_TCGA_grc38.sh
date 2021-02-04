@@ -46,7 +46,7 @@ for cancer_type in BRCA OV; do
 					
 					
 					echo "${outdir}/${mutation}${out_file} does not exist"
-				       spladder_path=${basedir}/spladder/${cancer_type}/spladder_confidence_${cf_level}/genes_graph_conf${cf_level}.${sample}
+				       spladder_path=${basedir}/spladder/cancer/${cancer_type}/spladder_confidence_${cf_level}/genes_graph_conf${cf_level}.${sample}
 				       cmd_base="immunopepper  build --verbose 1 --samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path}.pickle --count-path ${spladder_path}.count.hdf5 --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size}"
 				      
 				       if [ "$read_frame == "all"" ]; then 
