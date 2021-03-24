@@ -19,7 +19,7 @@ frames=all_frames
 path_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/${cancer_type}/${sample}/${confidence}/${frames}
 path_cancer_libsize=${path_cancer}/expression_counts.libsize.tsv
 path_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/output/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2_linked_part_snappy
-path_normal_libsize=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/output/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2/expression_counts.libsize.tsv
+path_normal_libsize=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/output/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2/libsize_dummy.tsv #expression_counts.libsize.tsv
 path_normal_matrix_segm=${path_normal}/SegmExpr_mtx
 path_normal_matrix_edge=${path_normal}/JuncExpr_mtx
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
@@ -43,7 +43,7 @@ mkdir -p $output_dir
 # right normalisation scheme 
 # later somatic mutations as input  --> maybe soon 
 file_interest=ref_sample_9mer.pq.gz
-cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segment_Expr" "junction_Expr" --path-cancer-libsize $path_cancer_libsize --path-normal-libsize ${path_normal_libsize} --paths-cancer-samples ${path_cancer}/${sample}/${file_interest} --ids-cancer-samples "${sample}" --path-normal-matrix-segm $path_normal_matrix_segm --path-normal-matrix-edge $path_normal_matrix_edge --output-dir $output_dir --expr-high-limit-normal $expr_high_limit_normal --expr-high-limit-normal $expr_high_limit_normal --expr-limit-normal $expr_limit_normal --n-samples-lim-normal $expr_n_limit --expr-limit-cancer ${expr_limit_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions}" # --statistical"
+cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segment_Expr" "junction_Expr" --path-cancer-libsize $path_cancer_libsize --path-normal-libsize ${path_normal_libsize} --paths-cancer-samples ${path_cancer}/${sample}/${file_interest} --ids-cancer-samples "${sample}" --path-normal-matrix-segm $(readlink -f ${path_normal_matrix_segm}/* | paste -s ) --path-normal-matrix-edge $( readlink -f  ${path_normal_matrix_edge}/* | paste -s ) --output-dir $output_dir --expr-high-limit-normal $expr_high_limit_normal --expr-high-limit-normal $expr_high_limit_normal --expr-limit-normal $expr_limit_normal --n-samples-lim-normal $expr_n_limit --expr-limit-cancer ${expr_limit_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions}" # --statistical"
 
 			
 	if [ "$local_" = "run_local" ] ; then
