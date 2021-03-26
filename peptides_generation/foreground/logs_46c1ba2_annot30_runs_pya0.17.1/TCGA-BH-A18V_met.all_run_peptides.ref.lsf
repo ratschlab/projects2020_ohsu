@@ -1,0 +1,144 @@
+Sender: LSF System <lsfadmin@le-g3-012>
+Subject: Job 1405215: <ref_ohsu> in cluster <ethsec> Done
+
+Job <ref_ohsu> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Mon Mar 22 17:58:54 2021
+Job was executed on host(s) <4*le-g3-012>, in queue <normal.24h>, as user <prelotla> in cluster <ethsec> at Mon Mar 22 17:59:11 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Mon Mar 22 17:59:11 2021
+Terminated at Tue Mar 23 01:07:47 2021
+Results reported at Tue Mar 23 01:07:47 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper build --verbose 1 --samples TCGA-BH-A18V_met.all --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames --ann-path /cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf --splice-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_2/genes_graph_conf2.TCGA-BH-A18V_met.all.pickle --count-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_2/genes_graph_conf2.TCGA-BH-A18V_met.all.count.hdf5 --ref-path /cluster/work/grlab/projects/projects2020_OHSU/genome/GRCh38.p13.genome.fa --kmer 9 --mutation-mode ref --somatic /cluster/work/grlab/projects/projects2020_OHSU/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf --germline /cluster/work/grlab/projects/projects2020_OHSU/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5 --batch-size 10 --parallel 4 --use-mut-pickle --all-read-frames > /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all_run_peptides.ref.log 2>&1
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   74176.53 sec.
+    Max Memory :                                 6152 MB
+    Average Memory :                             5324.44 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               53848.00 MB
+    Max Swap :                                   -
+    Max Processes :                              9
+    Max Threads :                                18
+    Run time :                                   25715 sec.
+    Turnaround time :                            25733 sec.
+
+The output (if any) follows:
+
+Sender: LSF System <lsfadmin@le-g3-008>
+Subject: Job 1405200: <ref_ohsu> in cluster <ethsec> Done
+
+Job <ref_ohsu> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Mon Mar 22 17:58:45 2021
+Job was executed on host(s) <4*le-g3-008>, in queue <normal.24h>, as user <prelotla> in cluster <ethsec> at Mon Mar 22 17:59:11 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Mon Mar 22 17:59:11 2021
+Terminated at Tue Mar 23 01:17:10 2021
+Results reported at Tue Mar 23 01:17:10 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper build --verbose 1 --samples TCGA-BH-A18V_met.all --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames --ann-path /cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf --splice-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_1/genes_graph_conf1.TCGA-BH-A18V_met.all.pickle --count-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_1/genes_graph_conf1.TCGA-BH-A18V_met.all.count.hdf5 --ref-path /cluster/work/grlab/projects/projects2020_OHSU/genome/GRCh38.p13.genome.fa --kmer 9 --mutation-mode ref --somatic /cluster/work/grlab/projects/projects2020_OHSU/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf --germline /cluster/work/grlab/projects/projects2020_OHSU/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5 --batch-size 10 --parallel 4 --use-mut-pickle --all-read-frames > /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all_run_peptides.ref.log 2>&1
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   79772.02 sec.
+    Max Memory :                                 9112 MB
+    Average Memory :                             7597.01 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               50888.00 MB
+    Max Swap :                                   -
+    Max Processes :                              9
+    Max Threads :                                18
+    Run time :                                   26278 sec.
+    Turnaround time :                            26305 sec.
+
+The output (if any) follows:
+
+Sender: LSF System <lsfadmin@le-g3-005>
+Subject: Job 1405210: <ref_ohsu> in cluster <ethsec> Done
+
+Job <ref_ohsu> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Mon Mar 22 17:58:51 2021
+Job was executed on host(s) <4*le-g3-005>, in queue <normal.24h>, as user <prelotla> in cluster <ethsec> at Mon Mar 22 17:59:11 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Mon Mar 22 17:59:11 2021
+Terminated at Tue Mar 23 01:19:59 2021
+Results reported at Tue Mar 23 01:19:59 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper build --verbose 1 --samples TCGA-BH-A18V_met.all --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames --ann-path /cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf --splice-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_2/genes_graph_conf2.TCGA-BH-A18V_met.all.pickle --count-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_2/genes_graph_conf2.TCGA-BH-A18V_met.all.count.hdf5 --ref-path /cluster/work/grlab/projects/projects2020_OHSU/genome/GRCh38.p13.genome.fa --kmer 9 --mutation-mode ref --somatic /cluster/work/grlab/projects/projects2020_OHSU/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf --germline /cluster/work/grlab/projects/projects2020_OHSU/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5 --batch-size 10 --parallel 4 --use-mut-pickle --all-read-frames > /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all_run_peptides.ref.log 2>&1
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   76832.45 sec.
+    Max Memory :                                 6173 MB
+    Average Memory :                             5317.31 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               53827.00 MB
+    Max Swap :                                   -
+    Max Processes :                              9
+    Max Threads :                                18
+    Run time :                                   26447 sec.
+    Turnaround time :                            26468 sec.
+
+The output (if any) follows:
+
+Sender: LSF System <lsfadmin@le-g3-007>
+Subject: Job 1405205: <ref_ohsu> in cluster <ethsec> Done
+
+Job <ref_ohsu> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Mon Mar 22 17:58:48 2021
+Job was executed on host(s) <4*le-g3-007>, in queue <normal.24h>, as user <prelotla> in cluster <ethsec> at Mon Mar 22 17:59:11 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Mon Mar 22 17:59:11 2021
+Terminated at Tue Mar 23 02:06:31 2021
+Results reported at Tue Mar 23 02:06:31 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper build --verbose 1 --samples TCGA-BH-A18V_met.all --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames --ann-path /cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf --splice-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_1/genes_graph_conf1.TCGA-BH-A18V_met.all.pickle --count-path /cluster/work/grlab/projects/projects2020_OHSU/spladder/cancer/BRCA/spladder_confidence_1/genes_graph_conf1.TCGA-BH-A18V_met.all.count.hdf5 --ref-path /cluster/work/grlab/projects/projects2020_OHSU/genome/GRCh38.p13.genome.fa --kmer 9 --mutation-mode ref --somatic /cluster/work/grlab/projects/projects2020_OHSU/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf --germline /cluster/work/grlab/projects/projects2020_OHSU/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5 --batch-size 10 --parallel 4 --use-mut-pickle --all-read-frames > /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/46c1ba2_annot30_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all_run_peptides.ref.log 2>&1
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   87976.30 sec.
+    Max Memory :                                 6377 MB
+    Average Memory :                             5396.32 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               53623.00 MB
+    Max Swap :                                   -
+    Max Processes :                              9
+    Max Threads :                                18
+    Run time :                                   29264 sec.
+    Turnaround time :                            29263 sec.
+
+The output (if any) follows:
+

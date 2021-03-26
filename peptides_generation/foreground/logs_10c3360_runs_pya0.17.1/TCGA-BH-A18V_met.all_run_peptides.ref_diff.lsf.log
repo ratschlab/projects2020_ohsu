@@ -1,0 +1,192 @@
+Sender: LSF System <lsfadmin@le-s4-051>
+Subject: Job 1315374: <diff_annot_ip_tcga> in cluster <ethsec> Done
+
+Job <diff_annot_ip_tcga> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Tue Mar  2 20:36:56 2021
+Job was executed on host(s) <4*le-s4-051>, in queue <normal.120h>, as user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:13 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Tue Mar  2 20:37:13 2021
+Terminated at Tue Mar  2 20:42:35 2021
+Results reported at Tue Mar  2 20:42:35 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper samplespecif --annot-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz --junction-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz --bg-file-path /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq --output-suffix no-annot --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all --remove-bg
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   318.95 sec.
+    Max Memory :                                 11107 MB
+    Average Memory :                             5070.85 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               48893.00 MB
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                9
+    Run time :                                   347 sec.
+    Turnaround time :                            339 sec.
+
+The output (if any) follows:
+
+2021-03-02 20:37:27,223 INFO     Command lineNamespace(annot_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz'], bg_file_path='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq', compressed=True, junction_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz'], output_dir='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all', output_suffix='no-annot', parallel=1, remove_bg=True, verbose=1)
+2021-03-02 20:37:27,238 INFO     >>>>>>>>> Remove annotation: Start
+2021-03-02 20:37:27,241 INFO     ...consider annotation file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz
+2021-03-02 20:39:47,992 INFO     Saving parquet integrated_background_kmer.gz.pq with 11063557 lines. Took 22.1263 seconds
+2021-03-02 20:39:48,184 INFO     generated unique background kmer file in /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq 
+ 
+2021-03-02 20:39:48,184 INFO     ...consider foreground file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz
+2021-03-02 20:42:28,904 INFO     Saving parquet ref_sample_9mer_no-annot.gz.pq with 12111054 lines. Took 67.3468 seconds
+2021-03-02 20:42:28,905 INFO     output bg-removed kmer file : /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer_no-annot.gz.pq 
+ 
+2021-03-02 20:42:28,906 INFO     >>>>>>>>> Remove annotation: Finish
+
+Sender: LSF System <lsfadmin@le-gtx-004>
+Subject: Job 1315384: <diff_annot_ip_tcga> in cluster <ethsec> Done
+
+Job <diff_annot_ip_tcga> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:03 2021
+Job was executed on host(s) <4*le-gtx-004>, in queue <normal.120h>, as user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:13 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Tue Mar  2 20:37:13 2021
+Terminated at Tue Mar  2 20:42:40 2021
+Results reported at Tue Mar  2 20:42:40 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper samplespecif --annot-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz --junction-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz --bg-file-path /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq --output-suffix no-annot --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all --remove-bg
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   325.38 sec.
+    Max Memory :                                 10948 MB
+    Average Memory :                             5464.00 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               49052.00 MB
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                9
+    Run time :                                   327 sec.
+    Turnaround time :                            337 sec.
+
+The output (if any) follows:
+
+2021-03-02 20:37:25,617 INFO     Command lineNamespace(annot_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz'], bg_file_path='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq', compressed=True, junction_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz'], output_dir='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all', output_suffix='no-annot', parallel=1, remove_bg=True, verbose=1)
+2021-03-02 20:37:26,170 INFO     >>>>>>>>> Remove annotation: Start
+2021-03-02 20:37:26,173 INFO     ...consider annotation file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz
+2021-03-02 20:39:48,470 INFO     Saving parquet integrated_background_kmer.gz.pq with 11063557 lines. Took 22.2273 seconds
+2021-03-02 20:39:48,656 INFO     generated unique background kmer file in /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq 
+ 
+2021-03-02 20:39:48,656 INFO     ...consider foreground file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz
+2021-03-02 20:42:33,675 INFO     Saving parquet ref_sample_9mer_no-annot.gz.pq with 12006460 lines. Took 67.0793 seconds
+2021-03-02 20:42:33,676 INFO     output bg-removed kmer file : /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/annot_frames/TCGA-BH-A18V_met.all/ref_sample_9mer_no-annot.gz.pq 
+ 
+2021-03-02 20:42:33,677 INFO     >>>>>>>>> Remove annotation: Finish
+
+Sender: LSF System <lsfadmin@le-gtx-009>
+Subject: Job 1315389: <diff_annot_ip_tcga> in cluster <ethsec> Done
+
+Job <diff_annot_ip_tcga> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:06 2021
+Job was executed on host(s) <4*le-gtx-009>, in queue <normal.120h>, as user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:13 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Tue Mar  2 20:37:13 2021
+Terminated at Tue Mar  2 20:42:53 2021
+Results reported at Tue Mar  2 20:42:53 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper samplespecif --annot-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz --junction-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz --bg-file-path /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq --output-suffix no-annot --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all --remove-bg
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   334.69 sec.
+    Max Memory :                                 11003 MB
+    Average Memory :                             4972.92 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               48997.00 MB
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                9
+    Run time :                                   339 sec.
+    Turnaround time :                            347 sec.
+
+The output (if any) follows:
+
+2021-03-02 20:37:29,274 INFO     Command lineNamespace(annot_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz'], bg_file_path='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq', compressed=True, junction_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz'], output_dir='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all', output_suffix='no-annot', parallel=1, remove_bg=True, verbose=1)
+2021-03-02 20:37:29,370 INFO     >>>>>>>>> Remove annotation: Start
+2021-03-02 20:37:29,373 INFO     ...consider annotation file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz
+2021-03-02 20:39:57,393 INFO     Saving parquet integrated_background_kmer.gz.pq with 11063557 lines. Took 22.9744 seconds
+2021-03-02 20:39:57,634 INFO     generated unique background kmer file in /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq 
+ 
+2021-03-02 20:39:57,634 INFO     ...consider foreground file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz
+2021-03-02 20:42:46,049 INFO     Saving parquet ref_sample_9mer_no-annot.gz.pq with 12006460 lines. Took 69.499 seconds
+2021-03-02 20:42:46,050 INFO     output bg-removed kmer file : /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_2/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer_no-annot.gz.pq 
+ 
+2021-03-02 20:42:46,050 INFO     >>>>>>>>> Remove annotation: Finish
+
+Sender: LSF System <lsfadmin@le-gtx-002>
+Subject: Job 1315379: <diff_annot_ip_tcga> in cluster <ethsec> Done
+
+Job <diff_annot_ip_tcga> was submitted from host <ethsec-login-02> by user <prelotla> in cluster <ethsec> at Tue Mar  2 20:36:59 2021
+Job was executed on host(s) <4*le-gtx-002>, in queue <normal.120h>, as user <prelotla> in cluster <ethsec> at Tue Mar  2 20:37:13 2021
+</cluster/home/prelotla> was used as the home directory.
+</cluster/home/prelotla/GitHub/projects2020_ohsu/peptides_generation/foreground> was used as the working directory.
+Started at Tue Mar  2 20:37:13 2021
+Terminated at Tue Mar  2 20:42:55 2021
+Results reported at Tue Mar  2 20:42:55 2021
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+immunopepper samplespecif --annot-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz --junction-kmer-files /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz --bg-file-path /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq --output-suffix no-annot --output-dir /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all --remove-bg
+
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   338.38 sec.
+    Max Memory :                                 10980 MB
+    Average Memory :                             4599.14 MB
+    Total Requested Memory :                     60000.00 MB
+    Delta Memory :                               49020.00 MB
+    Max Swap :                                   -
+    Max Processes :                              5
+    Max Threads :                                9
+    Run time :                                   342 sec.
+    Turnaround time :                            356 sec.
+
+The output (if any) follows:
+
+2021-03-02 20:37:28,125 INFO     Command lineNamespace(annot_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz'], bg_file_path='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq', compressed=True, junction_kmer_files=['/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz'], output_dir='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all', output_suffix='no-annot', parallel=1, remove_bg=True, verbose=1)
+2021-03-02 20:37:30,241 INFO     >>>>>>>>> Remove annotation: Start
+2021-03-02 20:37:30,245 INFO     ...consider annotation file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_annot_9mer.pq.gz
+2021-03-02 20:39:58,233 INFO     Saving parquet integrated_background_kmer.gz.pq with 11063557 lines. Took 23.0759 seconds
+2021-03-02 20:39:58,480 INFO     generated unique background kmer file in /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/integrated_background_kmer.gz.pq 
+ 
+2021-03-02 20:39:58,480 INFO     ...consider foreground file:/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer.pq.gz
+2021-03-02 20:42:48,896 INFO     Saving parquet ref_sample_9mer_no-annot.gz.pq with 12111054 lines. Took 69.9901 seconds
+2021-03-02 20:42:48,897 INFO     output bg-removed kmer file : /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/10c3360_runs_pya0.17.1/BRCA/TCGA-BH-A18V_met.all/spladder_confidence_1/all_frames/TCGA-BH-A18V_met.all/ref_sample_9mer_no-annot.gz.pq 
+ 
+2021-03-02 20:42:48,897 INFO     >>>>>>>>> Remove annotation: Finish
+

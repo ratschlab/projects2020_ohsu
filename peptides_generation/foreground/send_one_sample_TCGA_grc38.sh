@@ -2,9 +2,9 @@
 set -e
 
 mem=15000
-time_=120
+time_=24
 
-target=10c3360_runs_pya0.17.1
+target=46c1ba2_annot30_runs_pya0.17.1
 local_=non_local  #$3 # "run_local"
 parallel=4 $2
 batch_size=10 $4
@@ -17,7 +17,7 @@ mkdir -p ${log_dir}
 
 
 ### Immunopepper Run 
-annotation=${basedir}/annotation/gencode.v32.annotation.gtf
+annotation=/cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
 vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome 
 maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same geno,e
@@ -62,7 +62,7 @@ for cancer_type in BRCA OV; do
 						$cmd
 					else
 						echo $cmd
-					#	echo $cmd | bsub -J for_annot -n ${parallel} -J ${mutation}_ohsu -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf
+						echo $cmd | bsub -J for_annot -n ${parallel} -J ${mutation}_ohsu -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf
 					fi
 				fi
 				done

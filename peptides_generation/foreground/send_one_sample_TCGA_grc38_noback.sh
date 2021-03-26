@@ -1,0 +1,64 @@
+#!/bin/bash
+set -e
+
+mem=15000
+time_=120
+
+target=10c3360_runs_pya0.17.1
+local_=non_local  #$3 # "run_local"
+parallel=4 $2
+batch_size=10 $4
+
+
+basedir=/cluster/work/grlab/projects/projects2020_OHSU
+base_path=${basedir}/peptides_generation
+log_dir=./logs_${target}
+mkdir -p ${log_dir}
+
+
+### Immunopepper Run 
+annotation=${basedir}/annotation/gencode.v32.annotation.gtf
+genome=${basedir}/genome/GRCh38.p13.genome.fa
+vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome 
+maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same geno,e
+heter_code='0'
+kmer='9'
+
+
+
+#source deactivate
+#source activate myimmuno3
+echo "WARNING check activation myimmuno3"
+
+for cancer_type in BRCA OV; do 
+	for cf_level in 1 2; do
+	       for read_frame in annot all; do 	
+			while read sample; do 
+				outdir=${base_path}/${target}/${cancer_type}/${sample}/spladder_confidence_${cf_level}/${read_frame}_frames/${sample}
+                       		mkdir -p $outdir
+				for mutation in ref; do #somatic_and_germline  germline somatic ref ; do  
+				out_1=${outdir}/${mutation}_sample_${kmer}mer.pq.gz
+                		out_2=${outdir}/${mutation}_annot_${kmer}mer.pq.gz
+                		out_3=${outdir}/${mutation}_annot_peptides.fa.pq.gz
+                	        out_4=${outdir}/${mutation}_sample_peptides.fa.pq.gz
+                	        out_5=${outdir}/${sample}/${mutation}_sample_peptides_meta.tsv.gz.pq
+                		if [[ -f $out_1 ]] && [[ -f $out_2 ]] ; then 
+					
+
+               			cmd="immunopepper samplespecif --annot-kmer-files ${outdir}/${mutation}_annot_${kmer}mer.pq.gz --junction-kmer-files ${outdir}/${mutation}_sample_${kmer}mer.pq.gz --bg-file-path ${outdir}/integrated_background_kmer.gz.pq --output-suffix "no-annot" --output-dir ${outdir} --remove-bg"
+                                
+			 	if [ "$local_" = "run_local" ] ; then
+                                	echo "running local"
+                                	$cmd
+                        	else
+                                	echo $cmd
+                                	echo $cmd | bsub -n ${parallel} -J diff_annot_ip_tcga -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}_diff.lsf.log #-o $logfile -e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+                        	fi
+
+
+				fi
+				done
+			done < ${basedir}/sample_lists/TCGA_foreground/${cancer_type}_5samples_id_random_final.csv 
+		done
+	done
+done
