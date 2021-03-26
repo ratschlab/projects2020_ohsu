@@ -1,12 +1,13 @@
 #!/bin/bash
 set -e
 
-mem=15000
+mem=10000
 time_=24
 
-target=46c1ba2_annot30_runs_pya0.17.1
+cap=1000
+target=commit0898b52_annot30inter32_pya0.17.1_annot_cap${cap}
 local_=non_local  #$3 # "run_local"
-parallel=4 $2
+parallel=3 $2
 batch_size=10 $4
 
 
@@ -17,7 +18,7 @@ mkdir -p ${log_dir}
 
 
 ### Immunopepper Run 
-annotation=/cluster/work/grlab/projects/GTEx/annotation/gencode.v30.annotation.gtf
+annotation=/cluster/work/grlab/projects/projects2020_OHSU/annotation/gencode.v32_IntersectGenesInV30.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
 vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome 
 maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same geno,e
@@ -47,10 +48,10 @@ for cancer_type in BRCA OV; do
 					
 					echo "${outdir}/${mutation}${out_file} does not exist"
 				       spladder_path=${basedir}/spladder/cancer/${cancer_type}/spladder_confidence_${cf_level}/genes_graph_conf${cf_level}.${sample}
-				       cmd_base="immunopepper  build --verbose 1 --samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path}.pickle --count-path ${spladder_path}.count.hdf5 --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size}"
+				       cmd_base="immunopepper  build --verbose 1 --samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path}.pickle --count-path ${spladder_path}.count.hdf5 --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap"
 				      
 				       if [ "$read_frame == "all"" ]; then 
-						cmd="${cmd_base} --parallel ${parallel} --use-mut-pickle --all-read-frames  > ${outdir}/${sample}_run_peptides.${mutation}.log 2>&1"
+						cmd="${cmd_base} --parallel ${parallel} --process-chr '22' --use-mut-pickle --all-read-frames  > ${outdir}/${sample}_run_peptides.${mutation}.log 2>&1"
 					else
 						cmd="${cmd_base} --parallel ${parallel} --use-mut-pickle > ${outdir}/${sample}_run_peptides.${mutation}.log 2>&1"
 					fi
@@ -69,4 +70,3 @@ for cancer_type in BRCA OV; do
 			done < ${basedir}/sample_lists/TCGA_foreground/${cancer_type}_5samples_id_random_final.csv 
 		done
 	done
-done
