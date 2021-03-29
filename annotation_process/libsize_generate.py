@@ -22,23 +22,24 @@ def compute_library_size(path_expr, path_gene_list, path_save, percentile ):
     logging.info("Saving")
     libsize_count.to_csv(path_save, index = None, sep = '\t')
 
-    path_expr = '/cluster/work/grlab/projects/GTEx/rna/results/splicing/spladder/genes_graph_conf2.merge_graphs.count.gene_expression.hdf5'
-    path_gene_list = '/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v32_inter_v30.txt'
-    path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2'
-    tag = ".coding_gencode_v32_inter_v30.txt"
-    path_save = 'expression_counts.libsize{}.tsv'.format(tag)
-    compute_library_size(path_expr, path_gene_list, path_save, percentile )
+percentile=75
+path_expr = '/cluster/work/grlab/projects/GTEx/rna/results/splicing/spladder/genes_graph_conf2.merge_graphs.count.gene_expression.hdf5'
+path_gene_list = '/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v32_inter_v30.txt'
+path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2'
+tag = ".coding_gencode_v32_inter_v30.txt"
+path_save = 'expression_counts.libsize{}.tsv'.format(tag)
+compute_library_size(path_expr, path_gene_list, path_save, percentile )
 
-    path_expr = '/cluster/work/grlab/projects/GTEx/rna/results/splicing/spladder/genes_graph_conf2.merge_graphs.count.gene_expression.hdf5'
-    path_gene_list = '/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v30.txt'
-    path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2'
-    tag = ".coding_gencode_v30.txt"
-    path_save = 'expression_counts.libsize{}.tsv'.format(tag)
-    compute_library_size(path_expr, path_gene_list, path_save, percentile )
+path_expr = '/cluster/work/grlab/projects/GTEx/rna/results/splicing/spladder/genes_graph_conf2.merge_graphs.count.gene_expression.hdf5'
+path_gene_list = '/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v30.txt'
+path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_1fc5828_pya.0.17.1_ref_mode2'
+tag = ".coding_gencode_v30.txt"
+path_save = 'expression_counts.libsize{}.tsv'.format(tag)
+compute_library_size(path_expr, path_gene_list, path_save, percentile )
 
-    path_expr = '/cluster/work/grlab/projects/TCGA/PanCancer/rerun2018_alt_splice_GTEx/spladder/genes_graph_conf2.merge_graphs.validated.count.gene_expression.hdf5'
-    path_gene_list = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/coding_genes_nocap_GTEX2017'
-    path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2017_commit_1fc5828_pya.0.17.1_ref'
-    tag = ".coding_gencode_v19.txt"
-    path_save = 'expression_counts.libsize{}.tsv'.format(tag)
-    compute_library_size(path_expr, path_gene_list, path_save, percentile )
+path_expr = '/cluster/work/grlab/projects/TCGA/PanCancer/rerun2018_alt_splice_GTEx/spladder/genes_graph_conf2.merge_graphs.validated.count.gene_expression.hdf5'
+path_gene_list = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/coding_genes_nocap_GTEX2017'
+path_save = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2017_commit_1fc5828_pya.0.17.1_ref'
+tag = ".coding_gencode_v19.txt"
+path_save = 'expression_counts.libsize{}.tsv'.format(tag)
+compute_library_size(path_expr, path_gene_list, path_save, percentile )
