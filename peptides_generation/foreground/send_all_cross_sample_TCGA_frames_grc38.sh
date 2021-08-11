@@ -1,36 +1,21 @@
 #!/bin/bash
 set -e
 
-mem=50000
-time_=24
-local_=run_local #run_cluster 
-parallel=1 $2
+mem=15000
+time_=120
+local_=run_cluster 
+parallel=4 $2
 
-### Immunopepper Run
-cap=1000 #TODO Confirm??
+### Immunopepper parameters
+cap=1000 #TODO 
 batch_size=10 $4
 frames=annot
-conf=conf1
+conf=conf2
 basedir=/cluster/work/grlab/projects/projects2020_OHSU
 base_path=${basedir}/peptides_generation
+coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 
-if [ "$frame" == "all" ] ; then
-	target=v2_a6e5cad_${conf}_allFrame_cap${cap}_runs_pya0.17.1
-else
-	target=v2_a6e5cad_${conf}_annotFrame_cap${cap}_runs_pya0.17.1
-fi
-outdir=${base_path}/${target}
-log_dir=${outdir}/lsf
-mkdir -p $outdir
-mkdir -p ${log_dir}
-
-
-basedir=/cluster/work/grlab/projects/projects2020_OHSU
-base_path=${basedir}/peptides_generation
-log_dir=./logs_${target}
-mkdir -p ${log_dir}
-
-### Immunopepper Run
+### Inputs
 annotation=${basedir}/annotation/gencode.v32.annotation.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
 vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome
@@ -38,13 +23,37 @@ maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" 
 heter_code='0'
 kmer='9'
 
-count_path=/cluster/work/grlab/projects/tmp_tinu/TCGA_for_neoepitopes/TCGA_Ovarian_374_conf1_results/splicing_conf1/spladder/genes_graph_${conf}.merge_graphs.count.hdf5
-splice_path=/cluster/work/grlab/projects/tmp_tinu/TCGA_for_neoepitopes/TCGA_Ovarian_374_conf1_results/splicing_conf1/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path 
-sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
-coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v32.txt
+sample_type=TCGA_Breast_1102  # TCGA_All_Normals #TCGA_Ovarian_374 #TCGA_Breast_1102 TCGA_All_Normals
+if [ "$sample_type" == "TCGA_Ovarian_374" ]; then  
+    count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
+    splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path 
+    sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
+elif [ "$sample_type" == "TCGA_Breast_1102" ]; then
+   count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 #RECHUNKED NOT AVAILABLE 
+   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path
+   sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_BRCA_1102.tsv
+elif [ "$sample_type" == "TCGA_All_Normals" ]; then
+   count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
+   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path
+   sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_All_Normals/sample_full_All_Normals.tsv
+fi
 
+### Outputs
+commit=libsizes
+if [ "$frame" == "all" ] ; then
+        target=v2_${commit}_${conf}_allFrame_cap${cap}_runs_pya0.17.1/${sample_type}
+else
+        target=v2_${commit}_${conf}_annotFrame_cap${cap}_runs_pya0.17.1/${sample_type}
+fi
+
+outdir=${base_path}/${target}
+log_dir=${outdir}/lsf
+mkdir -p $outdir
+mkdir -p ${log_dir}
+
+
+#TODO remove skip annotation
 echo "WARNING check activation myimmuno3"
-
 for mutation in ref; do  
 	#out_1=${outdir}/${sample}/${mutation}_sample_${kmer}mer.pq
 	#out_2=${outdir}/${sample}/${mutation}_annot_${kmer}mer.pq
@@ -58,7 +67,7 @@ for mutation in ref; do
                 if [ "$mutation" == "ref" ]; then
                       sample='cohort'
                 fi
-		cmd_base="immunopepper  build --verbose 1 --output-samples $(cat ${sample_file} |tr '\n\' '\t') --mutation-sample ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes}" #TODO Remove tmp genes 
+		cmd_base="immunopepper  build --verbose 1 --output-samples $(cat ${sample_file} |tr '\n\' '\t') --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes}" #TODO Remove tmp genes 
 		## Parallel mode
 	       if [ "$parallel" -gt 1 ]; then 
 			cmd1="${cmd_base} --parallel ${parallel} --use-mut-pickle --cross-graph-expr" 
@@ -73,14 +82,15 @@ for mutation in ref; do
        			cmd2="${cmd1}" 
 		fi
 
-		cmd3="${cmd2}  > ${outdir}/mode_build_run_peptides.${mutation}.log 2>&1"
+		cmd3="${cmd2} --skip-annotation > ${outdir}/mode_build_run_peptides.${mutation}.log 2>&1"
 
 		## Launch 
 		if [ "$local_" = "run_local" ] ; then
 			echo "running local"
 		        echo $cmd3
 		else
-			echo $cmd3 | bsub -J for_${frame} -n ${parallel} -J ${mutation}_ip_tcga -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf 
+			echo $cmd3
+			echo $cmd3 | bsub -J ohsu -n ${parallel} -J ${mutation}_ip_tcga -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.lsf 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
