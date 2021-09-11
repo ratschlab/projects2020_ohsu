@@ -5,8 +5,8 @@ mem=10000
 time_=24
 
 cap=0 #TODO change 
-target=juliannetestbug_pya0.17.1_annot_cap${cap}_p_spladder2
-local_=run_local  #$3 # "run_local"
+target=juliannetest3exons_pya0.17.1_annot_cap${cap}_p_bb7681d
+local_=run_cluster  #$3 # "run_local"
 parallel=4 $2
 batch_size=10 $4
 
@@ -17,7 +17,9 @@ log_dir=./logs_${target}
 mkdir -p ${log_dir}
 
 
-### Immunopepper Run 
+### Immunopepper Run
+
+coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 whitelist_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/genes_coding_gencode_v32_inter_v30_wo_version.txt
 annotation=/cluster/work/grlab/projects/projects2020_OHSU/annotation/gencode.v32.annotation.gtf #/cluster/work/grlab/projects/projects2020_OHSU/annotation/gencode.v32_IntersectGenesInV30.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
@@ -49,9 +51,9 @@ for cancer_type in OV ; do # TODO add back the OV #OV; do
 					echo "${outdir}/${mutation}${out_file} does not exist"
 				       #TODO REPLACE THIS WITH THE MERGED GRAPH 
 				       # TODO add the softlink path 	spladder_path=${basedir}/spladder/TCGA_${cancer_type}_cancers/spladder_confidence_${cf_level}/genes_graph_conf${cf_level}.${sample}
-				       spladder_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_conf${cf_level}_results/splicing/spladder/genes_graph_conf${cf_level}.${sample}.pickle
-				       count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_conf${cf_level}_results/splicing/spladder/genes_graph_conf${cf_level}.merge_graphs.${sample}.count.hdf5
-				       cmd_base="immunopepper  build --verbose 1 --output-samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ./tmp_gene" #TODO add whitelist genes --genes-interest ${whitelist_genes}"
+				       spladder_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_conf${cf_level}.${sample}.pickle
+				       count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_conf${cf_level}.merge_graphs.${sample}.count.hdf5
+				       cmd_base="immunopepper  build --verbose 1 --output-samples ${sample} --output-dir ${outdir} --ann-path ${annotation} --splice-path ${spladder_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --min-pep-len '35'" #TODO add whitelist genes --genes-interest ${whitelist_genes}"
 				      
 				       if [ "$read_frame" == "all" ]; then 
 						cmd="${cmd_base} --parallel ${parallel} --process-chr "chr22" --use-mut-pickle --all-read-frames  > ${outdir}/${sample}_run_peptides.${mutation}.log 2>&1"
