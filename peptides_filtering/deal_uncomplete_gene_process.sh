@@ -14,16 +14,16 @@ gene_interest_file=./dev_genes
 #gene_interest_file=./tmp_genes
 
 
-run_status='collect_finished' #'collect_finished'
+run_status='file_' #'collect_finished'
 
 if [ $run_status == 'collect_finished' ] ; then  
 	echo "collect processed genes to $(dirname ${outfolder})/ref_gene_folder_eq"
 	for folder in ${outfolder}/tmp*/gene_expression_detail.pq ; 
-		do echo $(dirname $folder)  $(parquet-tools csv -c gene $folder  | cut -f1 -d ',' | grep ENS) > $(dirname ${outfolder})/ref_gene_folder_eq	
+		do echo $(dirname $folder)  $(parquet-tools csv -c gene $folder  | cut -f1 -d ',' | grep ENS) >> $(dirname ${outfolder})/ref_gene_folder_eq	
 	done
 	#TODO add check for folders without gene output 
 	else
-		file_out=Segm
+		file_out=Junc
 		if [ ${file_out} == 'Junc' ]; then
 		        file_out_full=ref_graph_kmer_JuncExpr.pq
 		elif  [ ${file_out} == 'Segm' ]; then
