@@ -4,7 +4,7 @@ set -e
 
 ### Lsf and Run Parameters
 mem=20000
-time_=120
+time_=24
 local_=run_cluster #"run_local"
 parallel=6
 #edge_or_segm=edge
@@ -14,11 +14,9 @@ echo "WARNING check activation myimmuno3"
 
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
-
 ## Cancer #TODO OV
 base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102
 path_cancer=${base_cancer}/cohort_mutNone
-
 sample_type=BRCA
 if [ ${sample_type} == 'OV' ] ; then 
 	whitelist_cancer=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
@@ -49,12 +47,16 @@ fi
 
 if [ ${sample_back} == 'GTEX' ]; then 
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist
+	tag_normals='Gtex'
 elif [ ${sample_back} == 'GTEXcore' ]; then 
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis
+	tag_normals='Gtexcore'
 elif [ ${sample_back} == 'AllNormals' ]; then 
 	#whitelist_normal=./tmp_ALL_samples
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX_and_TCGA_normals/sample_full_All_Normals_plus_GTEx_sample_IDs_10-2021_lib_graph_juliannelist
+	tag_normals='GtexTcga'
 elif [ ${sample_back} == 'matchedNormals' ]; then 
+	tag_normals='Matched'
 	if [ ${sample_type} == 'OV' ] ; then
 		whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_matched_normals/GTEx_normal_samples_12-2020_Ovary_suffix.csv
 	else
@@ -71,7 +73,7 @@ kmer='9'
 #TODO adjust parallelism 
 parallelism='100'
 out_partitions=1
-scratch_mem=200000 #155000
+scratch_mem=270000 #155000
 test_=''
 
 cohort_expr_lim_cancer='1'
@@ -85,9 +87,9 @@ log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
 ### Main 
 ##TODO add argument core whitelist; all normal subset and all normals with whitelist
-for cohort_expr_lim_cancer in '1' ; do #'none' '5'; do 
-	for expr_n_limit_cancer in '1' ; do #'2' '10'; do 
-		for sample_expr_lim_cancer in '2' ; do #do '0' ; do #other type of splicing graph
+for cohort_expr_lim_cancer in '1' 'none' '5'; do 
+	for expr_n_limit_cancer in '1' '2' '10'; do 
+		for sample_expr_lim_cancer in '2' '0' ; do #other type of splicing graph
 			for expr_n_limit_normal in '1' '2' '10'; do 
 				for cohort_expr_lim_normal in '0' '3' '10'; do  
 					while read sample; do
@@ -95,7 +97,9 @@ for cohort_expr_lim_cancer in '1' ; do #'none' '5'; do
 							## Organize folders
 							
 							## Generate instructions
+							sample_short=$(echo $sample | sed 's,\.all,,g')
 							output_dir=${base_cancer}/filter_${sample}/${suffix}_${sample_back}
+							output_count=${base_cancer}/filter_${sample}/G_filtered_df_${sample_short}_samp_chrt_norm_mot_unip.tsv
 							mkdir -p ${output_dir}	
 							logfile=${log_dir}/${sample}.cancerspec.${suffix}.log
 							#echo $logfile
@@ -103,7 +107,7 @@ for cohort_expr_lim_cancer in '1' ; do #'none' '5'; do
 							
 							if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then 	
 								echo $test_output_exist
-								cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --cohort-expr-support-norm ${cohort_expr_lim_normal} --n-samples-lim-normal ${expr_n_limit_normal} " #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" 
+								cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --cohort-expr-support-norm ${cohort_expr_lim_normal} --n-samples-lim-normal ${expr_n_limit_normal} --id-normals ${sample_back} --output-count ${output_count} --tag-normals ${tag_normals}" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
 								
 								if [ ${cohort_expr_lim_cancer} != 'none' ]; then 	
 									cmd1="${cmd} --cohort-expr-support-cancer ${cohort_expr_lim_cancer} --n-samples-lim-cancer ${expr_n_limit_cancer}"
@@ -122,7 +126,7 @@ for cohort_expr_lim_cancer in '1' ; do #'none' '5'; do
 								fi
 							fi
 						done
-					done < ./tmp_samples #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
+					done < ./tmp_samples2 #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
 				done
 			done
 		done
