@@ -4,7 +4,7 @@ set -e
 
 ### Lsf and Run Parameters
 mem=20000
-time_=24
+time_=75
 local_=run_cluster #"run_local"
 parallel=6
 #edge_or_segm=edge
@@ -14,7 +14,7 @@ echo "WARNING check activation myimmuno3"
 
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
-## Cancer #TODO OV
+## Cancer Cohorts #TODO OV
 base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102
 path_cancer=${base_cancer}/cohort_mutNone
 sample_type=BRCA
@@ -32,7 +32,7 @@ else
 fi
 
 ## Normal Cohorts
-sample_back='matchedNormals'
+sample_back='AllNormals'
 if [ ${sample_back} == 'GTEX' ] || [ ${sample_back} == 'GTEXcore' ] ; then 
 	libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
 	#TODO Update gene list
@@ -48,15 +48,19 @@ fi
 if [ ${sample_back} == 'GTEX' ]; then 
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist
 	tag_normals='Gtex'
+	batch='True'
 elif [ ${sample_back} == 'GTEXcore' ]; then 
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis
 	tag_normals='Gtexcore'
+	batch='False'
 elif [ ${sample_back} == 'AllNormals' ]; then 
 	#whitelist_normal=./tmp_ALL_samples
 	whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX_and_TCGA_normals/sample_full_All_Normals_plus_GTEx_sample_IDs_10-2021_lib_graph_juliannelist
 	tag_normals='GtexTcga'
+	batch='True'
 elif [ ${sample_back} == 'matchedNormals' ]; then 
 	tag_normals='Matched'
+	batch='False'
 	if [ ${sample_type} == 'OV' ] ; then
 		whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_matched_normals/GTEx_normal_samples_12-2020_Ovary_suffix.csv
 	else
@@ -74,7 +78,7 @@ kmer='9'
 parallelism='100'
 out_partitions=1
 scratch_mem=270000 #155000
-test_=''
+tot_batches=10
 
 cohort_expr_lim_cancer='1'
 expr_n_limit_cancer='2'
@@ -110,26 +114,41 @@ for cohort_expr_lim_cancer in '1' '0' '5'; do
 							## Cmd
 							if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then 	
 								echo $test_output_exist
-								cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --cohort-expr-support-norm ${cohort_expr_lim_normal} --n-samples-lim-normal ${expr_n_limit_normal} --id-normals ${sample_back} --output-count ${output_count} --tag-normals ${tag_normals} --interm-dir-norm ${output_norm} interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
-								## Noone case
+								cmd="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --cohort-expr-support-norm ${cohort_expr_lim_normal} --n-samples-lim-normal ${expr_n_limit_normal} --output-count ${output_count} --tag-normals ${tag_normals} --interm-dir-norm ${output_norm} interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
+								## None case
 								if [ ${expr_n_limit_cancer} != 'none' ]; then 	
 									cmd1="${cmd} --cohort-expr-support-cancer ${cohort_expr_lim_cancer} --n-samples-lim-cancer ${expr_n_limit_cancer}"
 								else 
 									cmd1="${cmd}"
 								fi 
-								cmd2="${cmd1} > ${output_dir}/${sample}.${mutation_canc}.run_cancerspecif.${suffix}.Cec${cohort_expr_lim_cancer}.Cn${expr_n_limit_cancer}.Ces.${sample_expr_lim_cancer}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}${test_}.log 2>&1"	
 								
+								## Batch case
+								if [ ${batch} == 'True' ]; then 
+									cmd2="${cmd1} --tot-batches ${tot_batches} --batch-id nbtc--tag-normals ${tag_normals}nbtc"
+								else
+									cmd2="${cmd1} --id-normals ${sample_back}"
+								fi
+										
+								cmd3="${cmd2} > ${output_dir}/${sample}.${mutation_canc}.run_cancerspecif.${suffix}.Cec${cohort_expr_lim_cancer}.Cn${expr_n_limit_cancer}.Ces.${sample_expr_lim_cancer}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}_nbtc.log 2>&1"	
 								
+								## Send runs matching conditions 	
 								if [[ ( ${expr_n_limit_cancer} != 'none' || ${cohort_expr_lim_cancer} == '0' ) && ( ${cohort_expr_lim_normal} != '0'  ||  ${expr_n_limit_normal} == '1' ) ]] ; then 
 									## Run
 									if [ "$local_" = "run_local" ] ; then
 										echo "running local"
-										echo $cmd2
-										#$cmd
+										echo $cmd3
+										#$cmd3
 									else
-										echo "cohort_expr_lim_cancer $cohort_expr_lim_cancer expr_n_limit_cancer $expr_n_limit_cancer sample_expr_lim_cancer $sample_expr_lim_cancer expr_n_limit_normal $expr_n_limit_normal cohort_expr_lim_normal $cohort_expr_lim_normal"
-										#echo $cmd2
-							#			echo $cmd2 | bsub -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+										if [ ${batch} == "True" ]; then 
+											for batch_id in $(seq 0 $(( $tot_batches -1))); do 
+												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
+												echo $submit
+												echo $submit | echo bsub -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+											done
+										else
+											echo $cmd3
+											echo $cmd3 | bsub -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+										fi
 									fi
 								fi
 							fi
