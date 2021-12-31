@@ -8,7 +8,7 @@ time_=120
 local_=run_cluster #"run_local"
 parallel=6
 #edge_or_segm=edge
-suffix="commit_80fdbe6" #e5b5b51"
+suffix="commit_d4aee54" #e5b5b51"
 #suffix="commit_0a02cfe"
 echo "WARNING check activation myimmuno3"
 
@@ -91,16 +91,13 @@ log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
 ### Main 
 ##TODO add argument core whitelist; all normal subset and all normals with whitelist
-for cohort_expr_lim_cancer in '1' '0' '5'; do 
+for cohort_expr_lim_cancer in '0' '1' '5'; do 
 	for expr_n_limit_cancer in '1' '2' '10' 'none'; do 
 		for sample_expr_lim_cancer in '2' '0' ; do #other type of splicing graph
-			for expr_n_limit_normal in '2' '10' 'none'; do 
-				for cohort_expr_lim_normal in '3' '10' 'none'; do  
+			for expr_nsamples_limit_normal in '0,0' '3,2' '3,10' '10,2' 'Any,2' '3,Any'; do  
 					while read sample; do
 						for mutation_canc in ref; do 
 							## Organize folders
-							
-							## Generate instructions
 							sample_short=$(echo $sample | sed 's,\.all,,g')
 							output_norm=$(dirname ${base_cancer})/filtered_backgrounds/${suffix}_${sample_back}
 							output_canc=${base_cancer}/filter_${sample}/${suffix}_a_interm_cancer
@@ -113,18 +110,20 @@ for cohort_expr_lim_cancer in '1' '0' '5'; do
 							mkdir -p ${output_count}
 							logfile=${log_dir}/${sample}.cancerspec.${suffix}.log
 							test_output_exist=${output_dir}/${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormalsCohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}.tsv						
-							
+							## Extract parameters	
+							cohort_expr_lim_normal=$(echo $expr_nsamples_limit_normal | cut -f1 -d ',')
+							expr_n_limit_normal=$(echo $expr_nsamples_limit_normal | cut -f2 -d ',')
 							## Cmd
 							if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then 	
 								echo $test_output_exist
 								cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --output-count ${file_count} --interm-dir-norm ${output_norm} --interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
 								## None case
-								if [ ${cohort_expr_lim_normal} != 'none' ]; then
+								if [ ${cohort_expr_lim_normal} != 'Any' ]; then
                                                                         cmd00="${cmd000} --cohort-expr-support-norm ${cohort_expr_lim_normal}"
                                                                 else
                                                                         cmd00="${cmd000}"
                                                                 fi
-								if [ ${expr_n_limit_normal} != 'none' ]; then
+								if [ ${expr_n_limit_normal} != 'Any' ]; then
                                                                         cmd0="${cmd00} --n-samples-lim-normal ${expr_n_limit_normal}"
                                                                 else
                                                                         cmd0="${cmd00}"
@@ -157,19 +156,18 @@ for cohort_expr_lim_cancer in '1' '0' '5'; do
 											for batch_id in $(seq 0 $(( $tot_batches -1))); do 
 												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
 												echo $submit
-												echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+							#					echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 											done
 										else
 											echo $cmd3
-											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+							#				echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi
 							fi
 						done
-					done < ./tmp_samples #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
+					done < ./tmp_samples2 #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
 				done
-			done
 		done
 	done
 done
