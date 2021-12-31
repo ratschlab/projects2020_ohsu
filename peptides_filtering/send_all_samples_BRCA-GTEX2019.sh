@@ -108,11 +108,14 @@ for cohort_expr_lim_cancer in '0' '1' '5'; do
 							mkdir -p ${output_canc}
 							mkdir -p ${output_norm}
 							mkdir -p ${output_count}
-							logfile=${log_dir}/${sample}.cancerspec.${suffix}.log
-							test_output_exist=${output_dir}/${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormalsCohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}.tsv						
+							logfile=${log_dir}/${sample}.cancerspec.${suffix}.${tag_normals}.log
 							## Extract parameters	
 							cohort_expr_lim_normal=$(echo $expr_nsamples_limit_normal | cut -f1 -d ',')
 							expr_n_limit_normal=$(echo $expr_nsamples_limit_normal | cut -f2 -d ',')
+							if [ ${expr_n_limit_cancer} == 'none' ]; then
+								cohort_expr_lim_cancer='none'
+							fi
+							test_output_exist=$(echo ${output_dir}/G_${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormals${tag_normals}Cohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}.tsv | sed 's,Any,None,g' | sed 's,none,None,g' |sed 's/None\.0/None/g' )
 							## Cmd
 							if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then 	
 								echo $test_output_exist
@@ -145,7 +148,7 @@ for cohort_expr_lim_cancer in '0' '1' '5'; do
 								cmd3="${cmd2} > ${output_dir}/${sample}.${mutation_canc}.run_cancerspecif.${suffix}.Cec${cohort_expr_lim_cancer}.Cn${expr_n_limit_cancer}.Ces.${sample_expr_lim_cancer}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}_nbtc.log 2>&1"	
 								
 								## Send runs matching conditions 	
-								if [[ ( ${expr_n_limit_cancer} != 'none' || ${cohort_expr_lim_cancer} == '0' ) && ( ${cohort_expr_lim_normal} != '0'  ||  ${expr_n_limit_normal} == '1' ) ]] ; then 
+								#if [[ ( ${expr_n_limit_cancer} != 'none' || ${cohort_expr_lim_cancer} == '0' ) && ( ${cohort_expr_lim_normal} != '0'  ||  ${expr_n_limit_normal} == '1' ) ]] ; then 
 									## Run
 									if [ "$local_" = "run_local" ] ; then
 										echo "running local"
@@ -156,15 +159,15 @@ for cohort_expr_lim_cancer in '0' '1' '5'; do
 											for batch_id in $(seq 0 $(( $tot_batches -1))); do 
 												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
 												echo $submit
-							#					echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+												echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 											done
 										else
 											echo $cmd3
-							#				echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi
-							fi
+						#	fi
 						done
 					done < ./tmp_samples2 #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
 				done
