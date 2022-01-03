@@ -32,7 +32,7 @@ else
 fi
 
 ## Normal Cohorts
-sample_back='GTEXcore'
+sample_back='AllNormals'
 if [ ${sample_back} == 'GTEX' ] || [ ${sample_back} == 'GTEXcore' ] ; then 
 	libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
 	#TODO Update gene list
@@ -91,10 +91,10 @@ log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
 ### Main 
 ##TODO add argument core whitelist; all normal subset and all normals with whitelist
-for cohort_expr_lim_cancer in '0' '1' '5'; do 
-	for expr_n_limit_cancer in '1' '2' '10' 'none'; do 
-		for sample_expr_lim_cancer in '2' '0' ; do #other type of splicing graph
-			for expr_nsamples_limit_normal in '0,0' '3,2' '3,10' '10,2' 'Any,2' '3,Any'; do  
+for cohort_expr_lim_cancer in '0' ; do #'1' '5'; do 
+	for expr_n_limit_cancer in '1' ; do #'2' '10' 'none'; do 
+		for sample_expr_lim_cancer in '2'; do # '0' ; do #other type of splicing graph
+			for expr_nsamples_limit_normal in 'Any,2' '3,Any' ; do #'0,0' '3,2' '3,10' '10,2'; do  
 					while read sample; do
 						for mutation_canc in ref; do 
 							## Organize folders
@@ -112,64 +112,70 @@ for cohort_expr_lim_cancer in '0' '1' '5'; do
 							## Extract parameters	
 							cohort_expr_lim_normal=$(echo $expr_nsamples_limit_normal | cut -f1 -d ',')
 							expr_n_limit_normal=$(echo $expr_nsamples_limit_normal | cut -f2 -d ',')
+							
 							if [ ${expr_n_limit_cancer} == 'none' ]; then
 								cohort_expr_lim_cancer='none'
 							fi
 							test_output_exist=$(echo ${output_dir}/G_${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormals${tag_normals}Cohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}.tsv | sed 's,Any,None,g' | sed 's,none,None,g' |sed 's/None\.0/None/g' )
+							
 							## Cmd
-							if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then 	
-								echo $test_output_exist
-								cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --output-count ${file_count} --interm-dir-norm ${output_norm} --interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
-								## None case
-								if [ ${cohort_expr_lim_normal} != 'Any' ]; then
-                                                                        cmd00="${cmd000} --cohort-expr-support-norm ${cohort_expr_lim_normal}"
-                                                                else
-                                                                        cmd00="${cmd000}"
-                                                                fi
-								if [ ${expr_n_limit_normal} != 'Any' ]; then
-                                                                        cmd0="${cmd00} --n-samples-lim-normal ${expr_n_limit_normal}"
-                                                                else
-                                                                        cmd0="${cmd00}"
-                                                                fi
-								
-								if [ ${expr_n_limit_cancer} != 'none' ]; then 	
-									cmd1="${cmd0} --cohort-expr-support-cancer ${cohort_expr_lim_cancer} --n-samples-lim-cancer ${expr_n_limit_cancer}"
-								else 
-									cmd1="${cmd0}"
-								fi 
-								
-								## Batch case
-								if [ ${batch} == 'True' ]; then 
-									cmd2="${cmd1} --tot-batches ${tot_batches} --batch-id nbtc --tag-normals ${tag_normals}nbtc"
+							cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --output-count ${file_count} --interm-dir-norm ${output_norm} --interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
+							## None case
+							if [ ${cohort_expr_lim_normal} != 'Any' ]; then
+                                                                cmd00="${cmd000} --cohort-expr-support-norm ${cohort_expr_lim_normal}"
+                                                        else
+                                                                cmd00="${cmd000}"
+                                                        fi
+							if [ ${expr_n_limit_normal} != 'Any' ]; then
+                                                                cmd0="${cmd00} --n-samples-lim-normal ${expr_n_limit_normal}"
+                                                        else
+                                                                cmd0="${cmd00}"
+                                                        fi
+							
+							if [ ${expr_n_limit_cancer} != 'none' ]; then 	
+								cmd1="${cmd0} --cohort-expr-support-cancer ${cohort_expr_lim_cancer} --n-samples-lim-cancer ${expr_n_limit_cancer}"
+							else 
+								cmd1="${cmd0}"
+							fi 
+							
+							## Batch case
+							if [ ${batch} == 'True' ]; then 
+								cmd2="${cmd1} --tot-batches ${tot_batches} --batch-id nbtc --tag-normals ${tag_normals}nbtc"
+							else
+								cmd2="${cmd1} --tag-normals ${tag_normals}"
+							fi
+									
+							cmd3="${cmd2} > ${output_dir}/${sample}.${mutation_canc}.run_cancerspecif.${suffix}.Cec${cohort_expr_lim_cancer}.Cn${expr_n_limit_cancer}.Ces.${sample_expr_lim_cancer}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}_nbtc.log 2>&1"	
+							
+							## Send runs matching conditions 	
+							#if [[ ( ${expr_n_limit_cancer} != 'none' || ${cohort_expr_lim_cancer} == '0' ) && ( ${cohort_expr_lim_normal} != '0'  ||  ${expr_n_limit_normal} == '1' ) ]] ; then 
+								## Run
+								if [ "$local_" = "run_local" ] ; then
+									echo "running local"
+									echo $cmd3
+									#$cmd3
 								else
-									cmd2="${cmd1} --tag-normals ${tag_normals}"
-								fi
-										
-								cmd3="${cmd2} > ${output_dir}/${sample}.${mutation_canc}.run_cancerspecif.${suffix}.Cec${cohort_expr_lim_cancer}.Cn${expr_n_limit_cancer}.Ces.${sample_expr_lim_cancer}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}_nbtc.log 2>&1"	
-								
-								## Send runs matching conditions 	
-								#if [[ ( ${expr_n_limit_cancer} != 'none' || ${cohort_expr_lim_cancer} == '0' ) && ( ${cohort_expr_lim_normal} != '0'  ||  ${expr_n_limit_normal} == '1' ) ]] ; then 
-									## Run
-									if [ "$local_" = "run_local" ] ; then
-										echo "running local"
-										echo $cmd3
-										#$cmd3
+									if [ ${batch} == "True" ]; then 
+										for batch_id in $(seq 0 $(( $tot_batches -1))); do 
+											test_output_exist_batch=$( echo ${test_output_exist} |sed "s/\.tsv/_batch${batch_id}\.tsv/g" | sed "s,${tag_normals},${tag_normals}${batch_id},g" )
+											if [ ! -f "${test_output_exist_batch}/_SUCCESS" ] ; then
+												echo $test_output_exist_batch
+											#	submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
+											#	echo $submit
+											#	echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+											fi
+										done
 									else
-										if [ ${batch} == "True" ]; then 
-											for batch_id in $(seq 0 $(( $tot_batches -1))); do 
-												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
-												echo $submit
-												echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
-											done
-										else
-											echo $cmd3
-											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+										if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
+											echo $test_output_exist	
+											#echo $cmd3
+											#echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi
 						#	fi
 						done
-					done < ./tmp_samples2 #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
+					done < ./tmp_samples #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
 				done
 		done
 	done
