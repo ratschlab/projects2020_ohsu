@@ -4,10 +4,10 @@ set -e
 mem=20000
 time_=120
 local_=run_cluster 
-parallel=4 $2
+parallel=6 $2
 
 ### Immunopepper parameters
-start_id=0
+start_id=47000
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -25,7 +25,7 @@ heter_code='0'
 kmer='9'
 
 sample_type=TCGA_All_Normals #TCGA_Ovarian_374 # TCGA_Breast_1102  # TCGA_All_Normals #TCGA_Ovarian_374 #TCGA_Breast_1102 TCGA_All_Normals
-for sample_type in TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
+for sample_type in TCGA_Ovarian_374; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
 if [ "$sample_type" == "TCGA_Ovarian_374" ]; then  
     count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
     splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path 
@@ -41,7 +41,7 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v2.37ea713
+commit=v2.5f0752a
 if [ "$frame" == "all" ] ; then
         target=v2_${commit}_${conf}_allFrame_cap${cap}_runs_pya0.17.1/${sample_type}
 else
@@ -69,12 +69,12 @@ for mutation in ref; do
                 if [ "$mutation" == "ref" ]; then
                       sample='cohort'
                 fi
-		cmd_base="immunopepper  build --verbose 2 --output-samples $(cat ${sample_file} |tr '\n\' '\t') --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}" #TODO Remove tmp genes 
+		cmd_base="immunopepper  build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}" #TODO Remove tmp genes 
 		## Parallel mode
 	       if [ "$parallel" -gt 1 ]; then 
-			cmd1="${cmd_base} --parallel ${parallel} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm" 
+			cmd1="${cmd_base} --parallel ${parallel} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm --skip-annotation" 
 		else
-			cmd1="${cmd_base} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm"
+			cmd1="${cmd_base} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm --skip-annotation"
 		fi
 		
 		## Frame mode
@@ -92,7 +92,7 @@ for mutation in ref; do
 		        echo $cmd3
 		else
 			echo $cmd3
-			echo $cmd3 | bsub -J ohsu${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
+			echo $cmd3 | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 

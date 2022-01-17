@@ -24,7 +24,7 @@ def compute_library_size(path_expr, path_gene_list, path_save, percentile, query
     logging.info("Computing library percentiles")
     libsize_count = pd.DataFrame({'sample': sample_names})
     for perc in percentile:
-        libsize_count['libsize_{}percent'.format(perc)] =  np.percentile(h5_coding_mx, perc, axis = 0 )
+        libsize_count['libsize_{}percent'.format(perc)] = np.round(np.percentile(h5_coding_mx, perc, axis = 0 ), 1)
     logging.info("Saving to {}".format(path_save))
     libsize_count.to_csv(path_save, index = None, sep = '\t')
 

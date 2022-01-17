@@ -4,7 +4,7 @@ set -e
 
 ### Lsf and Run Parameters
 mem=20000
-time_=120
+time_=24
 local_=run_cluster #"run_local"
 parallel=6
 #edge_or_segm=edge
@@ -77,7 +77,7 @@ kmer='9'
 #TODO adjust parallelism 
 parallelism='100'
 out_partitions=1
-scratch_mem=155000 # 270000 #155000
+scratch_mem=270000 #155000 # 270000 #155000
 tot_batches=10
 
 cohort_expr_lim_cancer='1'
@@ -91,11 +91,15 @@ log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
 ### Main 
 ##TODO add argument core whitelist; all normal subset and all normals with whitelist
-for cohort_expr_lim_cancer in '0' ; do #'1' '5'; do 
-	for expr_n_limit_cancer in '1' ; do #'2' '10' 'none'; do 
-		for sample_expr_lim_cancer in '2'; do # '0' ; do #other type of splicing graph
-			for expr_nsamples_limit_normal in 'Any,2' '3,Any' ; do #'0,0' '3,2' '3,10' '10,2'; do  
-					while read sample; do
+for cohort_expr_lim_cancer in '0'  #'1' '5' # 3 cond
+	do
+	for expr_n_limit_cancer in '1' # '2' '10' 'none' # 4 cond
+		do 
+		for sample_expr_lim_cancer in '2' # '0'  #other type of splicing graph # 2 cond 
+			do 
+			for expr_nsamples_limit_normal in '10,2' #'Any,2' '3,Any' '3,2' '3,10' '0,0' # '10,2' # 6 cond  
+				do 	
+				while read sample; do
 						for mutation_canc in ref; do 
 							## Organize folders
 							sample_short=$(echo $sample | sed 's,\.all,,g')
@@ -160,16 +164,16 @@ for cohort_expr_lim_cancer in '0' ; do #'1' '5'; do
 											test_output_exist_batch=$( echo ${test_output_exist} |sed "s/\.tsv/_batch${batch_id}\.tsv/g" | sed "s,${tag_normals},${tag_normals}${batch_id},g" )
 											if [ ! -f "${test_output_exist_batch}/_SUCCESS" ] ; then
 												echo $test_output_exist_batch
-											#	submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
-											#	echo $submit
-											#	echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
+												echo $submit
+												echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 											fi
 										done
 									else
 										if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
 											echo $test_output_exist	
-											#echo $cmd3
-											#echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+											echo $cmd3
+											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi
