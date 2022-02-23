@@ -1,2 +1,7 @@
-**/lsf*
-**/log*
+*lsf*
+*log*
+*checkpoint*
+*tmp*
+*test*
+*pyc
+*png
