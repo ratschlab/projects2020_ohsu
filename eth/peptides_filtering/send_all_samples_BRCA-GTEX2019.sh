@@ -4,7 +4,7 @@ set -e
 
 ### Lsf and Run Parameters
 mem=50000
-time_=24
+time_=120
 local_=run_cluster #"run_local"
 parallel=2
 #edge_or_segm=edge
@@ -14,17 +14,18 @@ echo "WARNING check activation myimmuno3"
 
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
-## Cancer Cohorts #TODO OV
-base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102
-path_cancer=${base_cancer}/cohort_mutNone
-sample_type=BRCA
+## Cancer Cohorts 
+
+sample_type='OV'
 if [ ${sample_type} == 'OV' ] ; then 
+	base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Ovarian_374
 	whitelist_cancer=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
-	target_cancer=''
 	libsize_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_libsizes_conf2_annotFrame_cap1000_runs_pya0.17.1_KEEP/TCGA_Ovarian_374/cohort_mutNone/TCGA_Ovarian_374_coding_libsize75.tsv
+	input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Ovarian_374/cohort_mutNone_relink/Junc_OV_19072
+	input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Ovarian_374/cohort_mutNone_relink/annot_OV_19072
 else
+	base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102
 	whitelist_cancer=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_BRCA_1102.tsv
-	target_cancer='' #TODO update target 
 	libsize_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_libsizes_conf2_annotFrame_cap1000_runs_pya0.17.1_KEEP/TCGA_Breast_1102/cohort_mutNone/TCGA_Breast_1102_coding_libsize75.tsv
 	#TODO Update gene list
         input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_BRCA_19077
@@ -32,7 +33,7 @@ else
 fi
 
 ## Normal Cohorts
-sample_back='AllNormals'
+sample_back='GTEXcore'
 if [ ${sample_back} == 'GTEX' ] || [ ${sample_back} == 'GTEXcore' ] ; then 
 	libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
 	#TODO Update gene list
@@ -75,9 +76,9 @@ normalizer_normal_libsize=${normalizer_cancer_libsize}
 kmer='9'
 
 #TODO adjust parallelism 
-parallelism='100'
+parallelism='1000'
 out_partitions=1
-scratch_mem=155000  #270000 #155000 # 270000 #155000
+scratch_mem=270000  #270000 #155000 # 270000 #155000
 tot_batches=10
 
 #cohort_expr_lim_cancer='1'
@@ -91,13 +92,13 @@ log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
 ### Main 
 ##TODO add argument core whitelist; all normal subset and all normals with whitelist
-for cohort_expr_lim_cancer in '0' '1' '5' # 3 cond
+for cohort_expr_lim_cancer in '0' #'1' '5' # 3 cond
 	do
-	for expr_n_limit_cancer in '1' '2' '10' 'none' # 4 cond
+	for expr_n_limit_cancer in '1' #'2' '10' 'none' # 4 cond
 		do 
-		for sample_expr_lim_cancer in '2' '0'  #other type of splicing graph # 2 cond 
+		for sample_expr_lim_cancer in '2' #'0'  #other type of splicing graph # 2 cond 
 			do 
-			for expr_nsamples_limit_normal in 3,10 'Any,2' '3,Any' '3,2' '0,0' # '10,2' # 6 cond  
+			for expr_nsamples_limit_normal in 3,10 'Any,2' '10,2' # '3,Any' '3,2' '0,0' # '10,2' # 6 cond  
 				do 	
 				while read sample; do
 						for mutation_canc in ref; do 
@@ -120,7 +121,7 @@ for cohort_expr_lim_cancer in '0' '1' '5' # 3 cond
 							if [ ${expr_n_limit_cancer} == 'none' ]; then
 								cohort_expr_lim_cancer='none'
 							fi
-							test_output_exist=$(echo ${output_dir}/G_${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormals${tag_normals}Cohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}.tsv | sed 's,Any,None,g' | sed 's,none,None,g' |sed 's/None\.0/None/g' )
+							test_output_exist=$(echo ${output_dir}/G_${sample}_${mutation_canc}_SampleLim${sample_expr_lim_cancer}.0CohortLim${cohort_expr_lim_cancer}.0Across${expr_n_limit_cancer}_FiltNormals${tag_normals}Cohortlim${cohort_expr_lim_normal}.0Across${expr_n_limit_normal}_FiltUniprot.tsv | sed 's,Any,None,g' | sed 's,none,None,g' |sed 's/None\.0/None/g' )
 							
 							## Cmd
 							cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --expression-fields-c "segmentExpr" "junctionExpr" --path-cancer-matrix-edge ${input_Junc_cancer} --ids-cancer-samples "${sample}" --mut-cancer-samples ${mutation_canc} --whitelist-cancer ${whitelist_cancer} --path-cancer-libsize ${libsize_cancer} --normalizer-cancer-libsize ${normalizer_cancer_libsize} --whitelist-normal ${whitelist_normal} --path-normal-libsize ${libsize_normal} --normalizer-normal-libsize ${normalizer_normal_libsize} --output-dir $output_dir --sample-expr-support-cancer ${sample_expr_lim_cancer} --uniprot ${uniprot} --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm ${input_Segm_normal} --path-normal-matrix-edge ${input_Junc_normal} --path-normal-kmer-list ${input_annot_cancer} --output-count ${file_count} --interm-dir-norm ${output_norm} --interm-dir-canc ${output_canc} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? 
@@ -180,7 +181,7 @@ for cohort_expr_lim_cancer in '0' '1' '5' # 3 cond
 								fi
 						#	fi
 						done
-					done < ./tmp_samples2 #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
+					done < ./tmp_sample_OV #/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/BRCA_5samples_spladder_full.csv #./tmp_samples
 				done
 		done
 	done
