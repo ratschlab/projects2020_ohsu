@@ -14,9 +14,9 @@ frames=annot
 conf=conf2
 basedir=/cluster/work/grlab/projects/projects2020_OHSU
 base_path=${basedir}/peptides_generation
-#coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
+coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
-coding_genes=./test_genes_2exons #TODO update
+#coding_genes=./test_genes_2exons #TODO update
 ### Inputs
 annotation=${basedir}/annotation/gencode.v32.annotation.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
@@ -41,7 +41,7 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v2.3d4974b_TEST1
+commit=v2.168c331_TESTfixfull
 if [ "$frame" == "all" ] ; then
         target=v2_${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -65,34 +65,47 @@ for mutation in ref; do
 
 	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
 	while read sample ; do 
-	        ## no mutation sample
-                if [ "$mutation" == "ref" ]; then
+		cmd_base="immunopepper  build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
+	
+          
+		## Specific processing parameters 
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --skip-annotation --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}"  #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
+
+		# mutation mode
+		if [ "$mutation" == "ref" ]; then
                       sample='cohort'
-                fi
-		cmd_base="immunopepper  build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}" #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
+		      cmd1="${cmd0}"
+		elif [ "$mutation" == "somatic" ]; then
+		      cmd1="${cmd0} --mutation-sample ${mutation_sample} --somatic ${maf_path} --use-mut-pickle"
+		elif [ "$mutation" == "germline" ]; then  
+		      cmd1="${cmd0} --mutation-sample ${mutation_sample} --germline ${vcf_path} --use-mut-pickle"
+		fi 
+
 		## Parallel mode
-	       if [ "$parallel" -gt 1 ]; then 
-			cmd1="${cmd_base} --parallel ${parallel} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm --skip-annotation" 
+	        if [ "$parallel" -gt 1 ]; then 
+			cmd2="${cmd1} --parallel ${parallel}" 
 		else
-			cmd1="${cmd_base} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm --skip-annotation"
+			cmd2="${cmd1}" 
 		fi
 		
+
 		## Frame mode
 		if [ "$frame" == "all" ] ; then
-        		cmd2="${cmd1} --all-read-frames" 
+        		cmd3="${cmd2} --all-read-frames" 
 		else
-       			cmd2="${cmd1}" 
+       			cmd3="${cmd2}" 
 		fi
-
-		cmd3="${cmd2} > ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log 2>&1" #--skip-annotation
+			
+		## Output log 
+		cmd_out="${cmd3} > ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log 2>&1" #--skip-annotation
 
 		## Launch 
 		if [ "$local_" = "run_local" ] ; then
 			echo "running local"
-		        echo $cmd3
+		        echo $cmd_out
 		else
-			echo $cmd3
-#			echo $cmd3 | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
+			echo $cmd_out
+			echo $cmd_out | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
