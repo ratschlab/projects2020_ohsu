@@ -15,7 +15,8 @@ conf=conf2
 basedir=/cluster/work/grlab/projects/projects2020_OHSU
 base_path=${basedir}/peptides_generation
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
-coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
+#coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
+coding_genes=./test_genes_2exons #TODO update
 ### Inputs
 annotation=${basedir}/annotation/gencode.v32.annotation.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
@@ -40,7 +41,7 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v2.3d4974b_TEST
+commit=v2.3d4974b_TEST1
 if [ "$frame" == "all" ] ; then
         target=v2_${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -68,7 +69,7 @@ for mutation in ref; do
                 if [ "$mutation" == "ref" ]; then
                       sample='cohort'
                 fi
-		cmd_base="immunopepper  build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}" #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
+		cmd_base="immunopepper  build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer} --mutation-mode ${mutation} --somatic ${maf_path} --germline ${vcf_path} --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}" #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
 		## Parallel mode
 	       if [ "$parallel" -gt 1 ]; then 
 			cmd1="${cmd_base} --parallel ${parallel} --use-mut-pickle --cross-graph-expr --skip-tmpfiles-rm --skip-annotation" 
@@ -91,7 +92,7 @@ for mutation in ref; do
 		        echo $cmd3
 		else
 			echo $cmd3
-			echo $cmd3 | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
+#			echo $cmd3 | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
