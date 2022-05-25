@@ -1,7 +1,7 @@
 This document sets the guidelines to learn unsing the filtering mode of immunopepper. 
-We will use a simplified script for this purpose send_all_samples_learning.sh
-Run a script means "sh send_all_samples_learning.sh"
-Set a variable means change the value of "variable=" I will refer to the content of the variable with $variable. 
+We will use a simplified script for this purpose: send_all_samples_learning.sh
+"Run" a script means "sh send_all_samples_learning.sh"
+"Set" a variable means change the value of "variable=" I will refer to the content of the variable with $variable. 
 
 Tasks 1-5 are expected to take 2 weeks 
 Task 6 will take 1 week or more 
@@ -9,10 +9,10 @@ We can discuss tasks >7 later
 
 
 
-Task 1: 
+# Task 1: 
 - Read the script. Recognize the parameters. Understand the explanations in the script
 
-Task 2:
+# Task 2:
 - Underatand how to run the script in print only mode. Set the variable ${local_}
 - run the script by setting ${local_) to run_cluster
 - Locate the ${log_dir} path. For this get the path inside the variable and do a ls or ll to this path. Here you will get lsf related errors.
