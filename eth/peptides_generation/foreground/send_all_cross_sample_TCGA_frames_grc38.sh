@@ -65,7 +65,7 @@ for mutation in ref; do
 
 	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
 	while read sample ; do 
-		cmd_base="immunopepper  build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
+		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
 	
           
 		## Specific processing parameters 

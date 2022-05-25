@@ -1,0 +1,75 @@
+This document sets the guidelines to learn unsing the filtering mode of immunopepper. 
+We will use a simplified script for this purpose send_all_samples_learning.sh
+Run a script means "sh send_all_samples_learning.sh"
+Set a variable means change the value of "variable=" I will refer to the content of the variable with $variable. 
+
+Tasks 1-5 are expected to take 2 weeks 
+Task 6 will take 1 week or more 
+We can discuss tasks >7 later
+
+
+
+Task 1: 
+- Read the script. Recognize the parameters. Understand the explanations in the script
+
+Task 2:
+- Underatand how to run the script in print only mode. Set the variable ${local_}
+- run the script by setting ${local_) to run_cluster
+- Locate the ${log_dir} path. For this get the path inside the variable and do a ls or ll to this path. Here you will get lsf related errors.
+- locate the ${output_dir} path. 
+- Locate the ${output_dir}/*log path. In this file you will get live run outputs 
+- Understand how to set a new output directory. Set the variable ${suffix}
+
+# Task 3: 
+- Run the script with different "Lsf and Run Parameters"
+- Try ${time_} of 04, 24, 120 
+- Change the memory ${mem} to very small values, and larger values. Do not Go beyound 50000
+- Change the ${parallel} from 1 to 3
+- Do bjobs, observe the queues 
+- Do bbjobs, observe and understand what you get 
+- Do bjobs, find a job id, do "bkill" followed by the job idea that you foud 
+- Look at the finished and the killed jobs logs files in ${log_dir} path. 
+
+# Task 4
+- Use the print only mode by setting the ${local_} variable accordingly (local="print_only_the_command"). 
+- Run the script with different "Filtering specific parameter"s. And see what it prints (print only mode!). 
+- Select one parameters combination and run the script with local_=run_cluster
+- Discover all the output files in ${output_dir}. Open them and understand their names. Understand which ones are the intermediate files (1) and (2) 
+
+# Task 5 
+- Run the scripts with different "Filtering specific parameter"s but this time try to follow strictly the " Management tip: Intermediate running stage"
+- Extract the running times of your runs. You will find them in the ${log_dir}/* files. 
+- Reflect on the running times. Was it quicker once step (a) was run?
+- Read all the ${output_dir}/*log files of the runs that you just launched. Look for all the lines which contain "load" (either by reading the file, or by using grep). See if you find a message saying that the intermediate file is being used. 
+
+# Task 6
+- grep -n '_toy_data' in send_all_samples_learning.sh. 
+- You will have to use vim to replace all the _toy_data suffix by _19077. This will use the real sized data instead of the toy dataset. You will have 19077 genes instead of 3 genes. 
+- set the ${scratch_mem} parameter to 155000
+- set mem=20000, and time_=120, parallel=4 
+- run one parameter combination (will take 5 days) 
+- check success 
+- reduce mem=20000, and time_=24, parallel=2
+- change the parameters --cohort-expr-support-cancer --expr_n_limit_cancer. Keep the same --cohort-expr-support-norm --n-samples-lim-normal parameters. 
+- check success look at all the outputs files 
+
+# Task 7
+- Plan an analysis. Which parameters, in which orders? How long do you think it will take? Any crashes excpected?
+- Present the analysis to me. 
+
+# Task 8 
+These intermediate data can be used later to discuss the outputs 
+- The next step is to onboard on the real analyis. Discuss scientifically the parameters, make choices
+- Understand real scripts. A few additional parameters will be added. 
+- Run large scale runs on BRCA samples 
+
+# Task 9 
+- Understand all the output files 
+- Make basic plots 
+
+# Task 10 
+- Discuss plotting 
+
+# Task 11 
+- Plan for Ovarian runs
+ 
