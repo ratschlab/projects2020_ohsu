@@ -168,14 +168,14 @@ for cohort_expr_lim_cancer in '0' #'1' '5' # 3 cond
 												echo $test_output_exist_batch
 												submit=$(echo  $cmd3 | sed "s,nbtc,${batch_id},g")
 												echo $submit
-												echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+										#		echo $submit |  bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 											fi
 										done
 									else
 										if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
 											echo $test_output_exist	
 											echo $cmd3
-											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+											#echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi

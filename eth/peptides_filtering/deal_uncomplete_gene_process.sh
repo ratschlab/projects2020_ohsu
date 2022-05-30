@@ -1,16 +1,17 @@
 #!/bin/bash
 set -e
 
-suffix_out='OV'
+suffix_out='BRCA'
 file_out='annot'
-run_status='simililink' #'collect_finished'
+run_status='collect_finished' #'simililink' #'collect_finished'
 gene_interest_file=./dev_genes
 #gene_interest_file=./tmp_genes
 
 if [ $suffix_out == 'GTEX2019' ]; then 
 	outfolder=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_v2.5f0752a_pya.0.17.1_conf2_annot_ref_chrall_cap/cohort_mutNone
 elif  [ $suffix_out == 'BRCA' ]; then 
-	outfolder=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone
+	#outfolder=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone
+	outfolder=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v3_d2d2574_conf2_annotFrame_cap0_runs/TCGA_Breast_1102/cohort_mutNone
 elif [ $suffix_out == 'Normals' ]; then
 	outfolder=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_All_Normals/cohort_mutNone
 elif [ $suffix_out == 'OV' ]; then 
@@ -26,6 +27,7 @@ if [ $run_status == 'collect_finished' ] ; then
 	done
 	#TODO add check for folders without gene output 
 	else
+		echo "creating list of files for simililink"
 		if [ ${file_out} == 'Junc' ]; then
 		        file_out_full=ref_graph_kmer_JuncExpr.pq
 		elif  [ ${file_out} == 'Segm' ]; then
@@ -36,7 +38,7 @@ if [ $run_status == 'collect_finished' ] ; then
 	while read gene; do
 		myfile=$(grep -E "${gene}" $(dirname ${outfolder})/ref_gene_folder_eq | sed -z 's/\n/|/g;s/|$/\n/' | cut -f1 -d ' ' | sed "s,$,/${file_out_full},g")
 	       	if [ -f "${myfile}" ]; then
-			echo $myfile >> ./tmp20220318_input_${file_out}_${suffix_out}
+			echo $myfile >> ${outfolder}/tmp20220428_input_${file_out}_${suffix_out}
 		fi
  	done < ${gene_interest_file} 
 

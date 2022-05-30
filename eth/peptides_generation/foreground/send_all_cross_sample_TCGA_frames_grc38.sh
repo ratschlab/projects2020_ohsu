@@ -4,7 +4,7 @@ set -e
 mem=20000
 time_=120
 local_=run_cluster 
-parallel=6 $2
+parallel=8 $2
 
 ### Immunopepper parameters
 start_id=0
@@ -41,7 +41,7 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v2.168c331_TESTfixfull
+commit=v3_d2d2574
 if [ "$frame" == "all" ] ; then
         target=v2_${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -65,11 +65,11 @@ for mutation in ref; do
 
 	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
 	while read sample ; do 
-		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
+		cmd_base="immunopepper build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --skip-annotation --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}"  #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}"  #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
