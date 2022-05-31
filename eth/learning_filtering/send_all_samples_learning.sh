@@ -6,7 +6,8 @@ set -e
 mem=20000
 time_=04
 #local_="print_only_the_command" #run_cluster # Use print_only_the_command to only print the command and preview what will happen, and use run_cluster to submit to the lsf system via bsub
-local_="run_cluster"
+#local_="run_cluster"
+local_="print_only_the_command"
 parallel=2
 suffix="run_test1_commit_bb" #Choose your run name (output folder name)
 echo "WARNING check activation myimmuno3"
