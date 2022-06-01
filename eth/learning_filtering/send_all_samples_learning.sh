@@ -5,10 +5,12 @@ set -e
 ### Lsf and Run Parameters: Can be changed as wished to submit the job to the cluster. Basic running stage 
 mem=20000
 time_=04
+
 #local_="print_only_the_command" #run_cluster # Use print_only_the_command to only print the command and preview what will happen, and use run_cluster to submit to the lsf system via bsub
 local_="run_cluster"
+#local_="print_only_the_command"
 parallel=2
-suffix="run_test1_commit_bb" #Choose your run name (output folder name)
+suffix="run_MYURCHIK_TEST3" #Choose your run name (output folder name)
 echo "WARNING check activation myimmuno3"
 base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/learning_filter
 mkdir -p ${base_cancer}
@@ -27,14 +29,14 @@ whitelist_cancer=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCG
 # libsize
 libsize_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_libsizes_conf2_annotFrame_cap1000_runs_pya0.17.1_KEEP/TCGA_Breast_1102/cohort_mutNone/TCGA_Breast_1102_coding_libsize75.tsv
 # Here we applied a "trick". Instead of using the real paths of the files we did use a simililink to access the files that we care about in the same place. 
-input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_BRCA_toy_data #_19077
-input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/annot_BRCA_toy_data #_19077	
+input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_BRCA_toy_data2 #_19077
+input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/annot_BRCA_toy_data2 #_19077	
 
 ## Normal Cohorts
 sample_back='GTEXcore'
 # We work with 4 different cohorts All Normals (TCGA Normals + GTEX), GTEX, GTEXcore (same as GTEX but excluding brain and testis", Matched Normals (Only the normals for Breast tissue in the case of Breast cancer". Here we are going to focus on GTEXcore. 
 # libsize
-libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
+libsize_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/learning_filter/GTEX_hg38_coding_libsize75_tmp.tsv
 # Here we applied the same "trick" as above. We have relinked the files of interest with simililinks
 input_Segm_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Segm_GTEX2019_toy_data #_19077
 input_Junc_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_GTEX2019_toy_data #_19077
