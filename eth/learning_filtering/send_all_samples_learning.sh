@@ -36,7 +36,7 @@ input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_gener
 sample_back='GTEXcore'
 # We work with 4 different cohorts All Normals (TCGA Normals + GTEX), GTEX, GTEXcore (same as GTEX but excluding brain and testis", Matched Normals (Only the normals for Breast tissue in the case of Breast cancer". Here we are going to focus on GTEXcore. 
 # libsize
-libsize_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/learning_filter/GTEX_hg38_coding_libsize75_tmp.tsv
+libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
 # Here we applied the same "trick" as above. We have relinked the files of interest with simililinks
 input_Segm_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Segm_GTEX2019_19077
 input_Junc_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_GTEX2019_19077 #_19077
