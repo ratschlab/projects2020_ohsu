@@ -7,7 +7,7 @@ local_=run_cluster
 parallel=8 $2
 
 ### Immunopepper parameters
-start_id=0
+start_id=30000 #0
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -17,6 +17,7 @@ base_path=${basedir}/peptides_generation
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
 #coding_genes=./test_genes_2exons #TODO update
+coding_genes=./test_genes_recurrent
 ### Inputs
 annotation=${basedir}/annotation/gencode.v32.annotation.gtf
 genome=${basedir}/genome/GRCh38.p13.genome.fa
@@ -41,7 +42,7 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v3_d2d2574
+commit=v3_TEST_SHORT_bb97473
 if [ "$frame" == "all" ] ; then
         target=v2_${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -69,7 +70,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id}"  #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --skip-annotation" #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
