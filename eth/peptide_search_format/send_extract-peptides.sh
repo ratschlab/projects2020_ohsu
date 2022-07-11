@@ -1,0 +1,1 @@
+for input in /cluster/work/grlab/projects/projects2022-PCa_Immuno/peptides_generation/v3_84dc237_conf2_annotFrame_cap0_runs/*/ref_sample_peptides_meta.mig_filtered.fasta; do python extract-peptides.py $input $(dirname $input)/$(basename $input | cut -f1-2 -d '.' ).tryptic.fasta > $(dirname $input)/fasta_extract.log ; done
