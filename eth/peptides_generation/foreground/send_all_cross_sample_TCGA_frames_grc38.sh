@@ -3,7 +3,7 @@ set -e
 
 mem=20000
 time_=120
-local_=run_cluster 
+local_=run_local #_cluster 
 parallel=8 $2
 
 ### Immunopepper parameters
