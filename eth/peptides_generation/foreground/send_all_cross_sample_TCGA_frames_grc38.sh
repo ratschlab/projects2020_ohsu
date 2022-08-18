@@ -3,11 +3,11 @@ set -e
 
 mem=20000
 time_=120
-local_=run_local #_cluster 
+local_=run_cluster 
 parallel=8 $2
 
 ### Immunopepper parameters
-start_id=30000 #0
+start_id=0
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -16,37 +16,39 @@ basedir=/cluster/work/grlab/projects/projects2020_OHSU
 base_path=${basedir}/peptides_generation
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
-#coding_genes=./test_genes_2exons #TODO update
-coding_genes=./test_genes_recurrent
+#coding_genes=./test_genes_recurrent
 ### Inputs
-annotation=${basedir}/annotation/gencode.v32.annotation.gtf
-genome=${basedir}/genome/GRCh38.p13.genome.fa
+annotation="${basedir}/annotation/gencode.v32.annotation.gtf"
+genome="${basedir}/genome/GRCh38.p13.genome.fa"
 vcf_path="${basedir}/germline_variants/mergedfiles_clean_stringentfilter.matchIds.h5" # Dummy, see if we have the variant calls with the right genome
-maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same geno,e
+maf_path="${basedir}/somatic_variants/pancan.merged.v0.2.6.PUBLIC.matchIds.maf" # Dummy see if we have the variant call with the same genome
+uniprot_kmers="/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv"
 heter_code='0'
 kmer='9'
 
+#Note 
+#/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 seems to be the realignement + reurun of spladder graph.
 for sample_type in TCGA_Breast_1102; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
 if [ "$sample_type" == "TCGA_Ovarian_374" ]; then  
     count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
-    splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path 
+    splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle  
     sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
 elif [ "$sample_type" == "TCGA_Breast_1102" ]; then
    count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 #RECHUNKED NOT AVAILABLE 
-   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path
+   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
    sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_BRCA_1102.tsv
 elif [ "$sample_type" == "TCGA_All_Normals" ]; then
    count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
-   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle #TODO Link to real path
+   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
    sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_All_Normals/sample_full_All_Normals.tsv
 fi
 
 ### Outputs
-commit=v3_TEST_SHORT_bb97473
+commit=v3_TEST_merged3_57a6a62_libsize #timing_substract_noannot #_libsize #timing_substract
 if [ "$frame" == "all" ] ; then
-        target=v2_${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
+        target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
-        target=v2_${commit}_${conf}_annotFrame_cap${cap}_runs/${sample_type}
+        target=${commit}_${conf}_annotFrame_cap${cap}_runs/${sample_type}
 fi
 
 outdir=${base_path}/${target}
@@ -66,11 +68,11 @@ for mutation in ref; do
 
 	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
 	while read sample ; do 
-		cmd_base="immunopepper build --verbose 1 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
+		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --skip-annotation" #TODO Remove tmp genes  #Remark, of no output samples does ouotput all samples from countfile #TODO remove skip annotation
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation  --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
