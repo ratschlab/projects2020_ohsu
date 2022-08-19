@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-mem=20000
+mem=100000
 time_=120
 local_=run_cluster 
-parallel=8 $2
+parallel=2 #8 $2
 
 ### Immunopepper parameters
-start_id=0
+start_id=60600
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -44,7 +44,12 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v3_TEST_merged3_57a6a62_libsize #timing_substract_noannot #_libsize #timing_substract
+commit=v3_TEST_merged3_57a6a62_libsize
+#commit=commit_v3_TEST_merged3_372a147_medium_run #timing_substract_noannot #_libsize #timing_substract
+#commit=TEST_empty_loop_282dabc_nocountinfo
+#commit=TEST_batchSave_NoParallel_9f75b46_noverbose
+#commit=TEST_empty_loop_nolog_d232e0d
+#commit=TEST_process_removedebug_1e4d72d
 if [ "$frame" == "all" ] ; then
         target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -68,11 +73,11 @@ for mutation in ref; do
 
 	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
 	while read sample ; do 
-		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --count-path ${count_path} --ref-path ${genome} --kmer ${kmer}"
+		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --ref-path ${genome} --kmer ${kmer} --count-path ${count_path}" #TODO countinfo 
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation  --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
