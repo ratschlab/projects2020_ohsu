@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 
-mem=100000
+mem=20000
 time_=120
 local_=run_cluster 
-parallel=2 #8 $2
+parallel=10 #8 $2
 
 ### Immunopepper parameters
-start_id=60600
+start_id=9362
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -44,8 +44,8 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=v3_TEST_merged3_57a6a62_libsize
-#commit=commit_v3_TEST_merged3_372a147_medium_run #timing_substract_noannot #_libsize #timing_substract
+#commit=v3_TEST_merged3_57a6a62_libsize
+commit=commit_v3_TEST_merged3_372a147_medium_run #timing_substract_noannot #_libsize #timing_substract
 #commit=TEST_empty_loop_282dabc_nocountinfo
 #commit=TEST_batchSave_NoParallel_9f75b46_noverbose
 #commit=TEST_empty_loop_nolog_d232e0d
@@ -77,7 +77,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
+                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
