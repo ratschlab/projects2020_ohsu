@@ -8,9 +8,9 @@ time_=120
 local_=run_cluster #"run_local"
 parallel=4
 #edge_or_segm=edge
-suffix="commit_372a147_full_flags"
+suffix="commit_372a147_one_flags"
 echo "WARNING check activation myimmuno3"
-run_mini='' # 'mini_' #'mini_' #''
+run_mini='one_' #'' # 'mini_' #'mini_' #''
 
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
@@ -175,7 +175,7 @@ for cohort_expr_lim_cancer in '0' #'1' '5' # 3 cond
 										if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
 											echo $test_output_exist	
 											echo $cmd3
-											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
+#											echo $cmd3 | bsubio -n ${parallel} -J ${sample_back} -W ${time_}:00 -R "rusage[mem=${mem}]" -R "span[hosts=1]" -R "rusage[scratch=$scratch_mem]" -o $logfile #-e ${logfile}.e -o $logfile #-R "span[hosts=1]" -o $logfile
 										fi
 									fi
 								fi
