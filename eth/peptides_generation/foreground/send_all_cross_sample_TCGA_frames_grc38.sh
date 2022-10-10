@@ -1,13 +1,13 @@
 #!/bin/bash
-set -e
 
+### Run parameters
 mem=20000
-time_=120
+time_=4
 local_=run_cluster 
-parallel=10 #8 $2
+parallel=4 #8 $2
 
 ### Immunopepper parameters
-start_id=9362
+start_id=12422
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -17,6 +17,7 @@ base_path=${basedir}/peptides_generation
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
 #coding_genes=./test_genes_recurrent
+coding_genes=./tmp_genes_debug2_small
 ### Inputs
 annotation="${basedir}/annotation/gencode.v32.annotation.gtf"
 genome="${basedir}/genome/GRCh38.p13.genome.fa"
@@ -44,12 +45,9 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-#commit=v3_TEST_merged3_57a6a62_libsize
-commit=commit_v3_TEST_merged3_372a147_medium_run #timing_substract_noannot #_libsize #timing_substract
-#commit=TEST_empty_loop_282dabc_nocountinfo
-#commit=TEST_batchSave_NoParallel_9f75b46_noverbose
-#commit=TEST_empty_loop_nolog_d232e0d
-#commit=TEST_process_removedebug_1e4d72d
+commit=commit_v3_TEST_merged4_78fcf4_mini_run #timing_substract_noannot #_libsize #timing_substract
+
+
 if [ "$frame" == "all" ] ; then
         target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -61,9 +59,17 @@ log_dir=${outdir}/lsf
 mkdir -p $outdir
 mkdir -p ${log_dir}
 
+#SBATCH --job-name=ohfas${start_id}
+#SBATCH --cpus-per-task=${parallel}
+#SBATCH --time=0-24:00:00
+#SBATCH --mem=${mem}
+#SBATCH -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf
+#SBATCH -o ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
+echo ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf
+echo ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
 
-#TODO remove skip annotation
 echo "WARNING check activation myimmuno3"
+### Run command
 for mutation in ref; do  
 	#out_1=${outdir}/${sample}/${mutation}_sample_${kmer}mer.pq
 	#out_2=${outdir}/${sample}/${mutation}_annot_${kmer}mer.pq
@@ -77,7 +83,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --skip-tmpfiles-rm --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
+                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
@@ -105,15 +111,17 @@ for mutation in ref; do
 		fi
 			
 		## Output log 
-		cmd_out="${cmd3} > ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log 2>&1" #--skip-annotation
+		cmd_out="${cmd3} " #> ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log 2>&1" #--skip-annotation
 
 		## Launch 
 		if [ "$local_" = "run_local" ] ; then
 			echo "running local"
 		        echo $cmd_out
 		else
-			echo $cmd_out
-			echo $cmd_out | bsub -J ohfas${start_id} -n ${parallel} -W ${time_}:00 -R "rusage[mem=${mem}]" -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf 
+			echo '#!/bin/bash' > tmp_file
+			echo $cmd_out >> tmp_file
+			#$cmd_out
+			sbatch --job-name=ohfas${start_id} --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf ./tmp_file 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
