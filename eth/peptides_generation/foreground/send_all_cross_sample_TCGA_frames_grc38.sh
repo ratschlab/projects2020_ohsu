@@ -4,10 +4,10 @@
 mem=20000
 time_=4
 local_=run_cluster 
-parallel=4 #8 $2
+parallel=2 #8 $2
 
 ### Immunopepper parameters
-start_id=12422
+start_id=0 #12422
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -46,7 +46,7 @@ fi
 
 ### Outputs
 commit=commit_v3_TEST_merged4_78fcf4_mini_run #timing_substract_noannot #_libsize #timing_substract
-
+commit=commit_v3_TEST_global_a956027_mini_run
 
 if [ "$frame" == "all" ] ; then
         target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
@@ -65,12 +65,11 @@ mkdir -p ${log_dir}
 #SBATCH --mem=${mem}
 #SBATCH -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf
 #SBATCH -o ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
-echo ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf
-echo ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
 
 echo "WARNING check activation myimmuno3"
 ### Run command
 for mutation in ref; do  
+	echo ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
 	#out_1=${outdir}/${sample}/${mutation}_sample_${kmer}mer.pq
 	#out_2=${outdir}/${sample}/${mutation}_annot_${kmer}mer.pq
 	#out_3=${outdir}/${sample}/${mutation}_annot_peptides.fa.pq
@@ -83,7 +82,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
+                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --process-num 100 --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
