@@ -4,10 +4,10 @@
 mem=20000
 time_=4
 local_=run_cluster 
-parallel=2 #8 $2
+parallel=4 #8 $2
 
 ### Immunopepper parameters
-start_id=0 #12422
+start_id=12422
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -82,7 +82,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --process-num 100 --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
+                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
@@ -120,7 +120,7 @@ for mutation in ref; do
 			echo '#!/bin/bash' > tmp_file
 			echo $cmd_out >> tmp_file
 			#$cmd_out
-			sbatch --job-name=ohfas${start_id} --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -o ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf ./tmp_file 
+			sbatch --job-name=ohfas${start_id} --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf -o ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log ./tmp_file 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
