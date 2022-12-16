@@ -13,11 +13,9 @@ batch_size=1 $4
 frames=annot
 conf=conf2
 basedir=/cluster/work/grlab/projects/projects2020_OHSU
-base_path=${basedir}/peptides_generation
+base_path=${basedir}/peptides_generation/CANCER_eth
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
-#coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
-#coding_genes=./test_genes_recurrent
-#coding_genes=./tmp_genes_debug3_small
+
 ### Inputs
 annotation="${basedir}/annotation/gencode.v32.annotation.gtf"
 genome="${basedir}/genome/GRCh38.p13.genome.fa"
@@ -45,12 +43,12 @@ elif [ "$sample_type" == "TCGA_All_Normals" ]; then
 fi
 
 ### Outputs
-commit=commit_v3_TEST_merged4_78fcf4_mini_run #timing_substract_noannot #_libsize #timing_substract
-commit=commit_v3_TEST_ALL_407e9b5_withannot
+commit=c4dd02c
+
 if [ "$frame" == "all" ] ; then
-        target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
+        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
 else
-        target=${commit}_${conf}_annotFrame_cap${cap}_runs/${sample_type}
+        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
 fi
 
 outdir=${base_path}/${target}
@@ -68,20 +66,17 @@ mkdir -p ${log_dir}
 echo "WARNING check activation myimmuno3"
 ### Run command
 for mutation in ref; do  
-	echo ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log
-	#out_1=${outdir}/${sample}/${mutation}_sample_${kmer}mer.pq
-	#out_2=${outdir}/${sample}/${mutation}_annot_${kmer}mer.pq
-	#out_3=${outdir}/${sample}/${mutation}_annot_peptides.fa.pq
-	#out_5=${outdir}/${sample}/${mutation}_sample_peptides_meta.pq
-	#out_4=${outdir}/${sample}/gene_expression_detail.pq
-
-	#if [ ! -f $out_1 ] || [ ! -f $out_2 ] || [[ ! -f $out_5 ]] || [[ ! -f $out_3 ]] || [[ ! -f $out_4 ]]; then 
-	while read sample ; do 
-		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --ref-path ${genome} --kmer ${kmer} --count-path ${count_path}" #TODO countinfo 
+	echo ${log_dir} 
+	error_file={log_dir}/${mutation}.${start_id}.lsf
+	output_file=${outdir}/mode_build.${mutation}.${start_id}.log
+	echo ${output_file}
+	
+	#while read sample ; do 
+		cmd_base="immunopepper build --verbose 2 --output-dir ${outdir} --ann-path ${annotation} --splice-path ${splice_path} --ref-path ${genome} --kmer ${kmer} --count-path ${count_path}" 
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} " # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
+                cmd0="${cmd_base} --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} " # --libsize-extract"   #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
@@ -109,7 +104,7 @@ for mutation in ref; do
 		fi
 			
 		## Output log 
-		cmd_out="${cmd3} " #> ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log 2>&1" #--skip-annotation
+		cmd_out="${cmd3} " #> ${output_file}  2>&1" #--skip-annotation
 
 		## Launch 
 		if [ "$local_" = "run_local" ] ; then
@@ -119,11 +114,11 @@ for mutation in ref; do
 			echo '#!/bin/bash' > tmp_file
 			echo $cmd_out >> tmp_file
 			#$cmd_out
-			sbatch --job-name=ohfas${start_id} --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${log_dir}/${sample}_run_peptides.${mutation}.${start_id}.lsf -o ${outdir}/mode_build_run_peptides.${mutation}.${start_id}.log ./tmp_file 
+			sbatch --job-name=ohfas${start_id}${sample_type} --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${error_file} -o ${output_file} ./tmp_file 
 		fi
 	 if [ "$mutation" == "ref" ]; then 
 		 break 
 	 fi 
-      done < ${sample_file}
+      #done < ${sample_file}
 done
-done
+
