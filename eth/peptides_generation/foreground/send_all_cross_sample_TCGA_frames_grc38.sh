@@ -2,12 +2,12 @@
 
 ### Run parameters
 mem=20000
-time_=4
+time_=48
 local_=run_cluster 
 parallel=4 #8 $2
 
 ### Immunopepper parameters
-start_id=12422
+start_id=0
 cap=0 #TODO 
 batch_size=1 $4
 frames=annot
@@ -17,7 +17,7 @@ base_path=${basedir}/peptides_generation
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 #coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/tmp_genes #TODO update
 #coding_genes=./test_genes_recurrent
-coding_genes=./tmp_genes_debug2_small
+#coding_genes=./tmp_genes_debug3_small
 ### Inputs
 annotation="${basedir}/annotation/gencode.v32.annotation.gtf"
 genome="${basedir}/genome/GRCh38.p13.genome.fa"
@@ -46,8 +46,7 @@ fi
 
 ### Outputs
 commit=commit_v3_TEST_merged4_78fcf4_mini_run #timing_substract_noannot #_libsize #timing_substract
-commit=commit_v3_TEST_global_a956027_mini_run
-
+commit=commit_v3_TEST_ALL_407e9b5_withannot
 if [ "$frame" == "all" ] ; then
         target=${commit}_${conf}_allFrame_cap${cap}_runs/${sample_type}
 else
@@ -82,7 +81,7 @@ for mutation in ref; do
 	
           
 		## Specific processing parameters 
-                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} --skip-annotation" # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
+                cmd0="${cmd_base} --cross-graph-expr --keep-tmpfiles --batch-size ${batch_size} --complexity-cap $cap --genes-interest ${coding_genes} --start-id ${start_id} --kmer-database ${uniprot_kmers} " # --libsize-extract" #TODO Remove tmp genes  #Remark, if no output_samples does output all samples from countfile #TODO remove skip annotation #TODO add back --genes-interest ${coding_genes}
 
 		# mutation mode
 		if [ "$mutation" == "ref" ]; then
