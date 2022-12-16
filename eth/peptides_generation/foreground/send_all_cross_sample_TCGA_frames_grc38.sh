@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### Run parameters
-mem=20000
+mem=30G
 time_=48
 local_=run_cluster 
 parallel=4 #8 $2
@@ -46,9 +46,9 @@ fi
 commit=c4dd02c
 
 if [ "$frame" == "all" ] ; then
-        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
+        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_run_p${parallel}_${mem}/${sample_type}
 else
-        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
+        target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs_p${parallel}_${mem}/${sample_type}
 fi
 
 outdir=${base_path}/${target}
