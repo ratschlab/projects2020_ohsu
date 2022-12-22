@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ### Run parameters
-mem=30G
-time_=48
+mem=50G
+time_=120
 local_=run_cluster 
 parallel=4 #8 $2
 
@@ -27,7 +27,7 @@ kmer='9'
 
 #Note 
 #/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 seems to be the realignement + reurun of spladder graph.
-for sample_type in TCGA_Breast_1102; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
+for sample_type in TCGA_Breast_1102 TCGA_Ovarian_374; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
 	if [ "$sample_type" == "TCGA_Ovarian_374" ]; then  
 	    count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
 	    splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle  
@@ -46,9 +46,9 @@ for sample_type in TCGA_Breast_1102; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA
 	commit=c4dd02c
 
 	if [ "$frame" == "all" ] ; then
-		target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_run_p${parallel}_${mem}/${sample_type}
+		target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
 	else
-		target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs_p${parallel}_${mem}/${sample_type}
+		target=commit_${commit}_${conf}_${frame}Frame_cap${cap}_runs/${sample_type}
 	fi
 
 	outdir=${base_path}/${target}
@@ -67,7 +67,7 @@ for sample_type in TCGA_Breast_1102; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA
 	### Run command
 	for mutation in ref; do  
 		echo ${log_dir} 
-		error_file={log_dir}/${mutation}.${start_id}.lsf
+		error_file=${log_dir}/${mutation}.${start_id}.lsf
 		output_file=${outdir}/mode_build.${mutation}.${start_id}.log
 		echo ${output_file}
 		
