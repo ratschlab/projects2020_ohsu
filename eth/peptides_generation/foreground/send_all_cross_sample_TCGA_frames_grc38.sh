@@ -13,6 +13,9 @@ batch_size=1 $4
 frames=annot
 conf=conf2
 basedir=/cluster/work/grlab/projects/projects2020_OHSU
+basedir_splice=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes
+#basedir=/cluster/work/grlab_shared/TMP/prelotla/tcga
+#basedir_splice=/cluster/work/grlab_shared/TMP/prelotla/tcga/TCGA_for_neoepitopes
 base_path=${basedir}/peptides_generation/CANCER_eth
 coding_genes=/cluster/work/grlab/projects/projects2020_OHSU/gene_lists/OHSU_gencodev32_proteincodinggeneids.txt
 
@@ -29,16 +32,16 @@ kmer='9'
 #/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 seems to be the realignement + reurun of spladder graph.
 for sample_type in TCGA_Breast_1102 TCGA_Ovarian_374; do # TCGA_All_Normals TCGA_Ovarian_374 TCGA_Breast_1102; do 
 	if [ "$sample_type" == "TCGA_Ovarian_374" ]; then  
-	    count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
-	    splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle  
+	    count_path=${basedir_splice}/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
+	    splice_path=${basedir_splice}/TCGA_Ovarian_374_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle  
 	    sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378.tsv
 	elif [ "$sample_type" == "TCGA_Breast_1102" ]; then
-	   count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 #RECHUNKED NOT AVAILABLE 
-	   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
+	   count_path=${basedir_splice}/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.hdf5 #RECHUNKED NOT AVAILABLE 
+	   splice_path=${basedir_splice}/TCGA_Breast_1102_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
 	   sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_BRCA_1102.tsv
 	elif [ "$sample_type" == "TCGA_All_Normals" ]; then
-	   count_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
-	   splice_path=/cluster/work/grlab/projects/projects2021-immuno_peptides/results/TCGA_for_neoepitopes/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
+	   count_path=${basedir_splice}/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.count.rechunked.hdf5
+	   splice_path=${basedir_splice}/TCGA_All_Normals_results/splicing/spladder/genes_graph_${conf}.merge_graphs.pickle 
 	   sample_file=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_All_Normals/sample_full_All_Normals.tsv
 	fi
 
