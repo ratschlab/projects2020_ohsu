@@ -8,9 +8,9 @@ time_=01
 local_=run_cluster #"run_local"
 parallel=2
 #edge_or_segm=edge
-suffix="smallGene_155m1_minimalPreprocess"
+suffix="smallGene_155m1_minimalPreprocess_test"
 echo "WARNING check activation myimmuno3"
-module load spark
+module load java
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
 ## Cancer Cohorts 
@@ -89,13 +89,21 @@ for mutation_canc in ref; do
 		
     output_file=${output_dir}/${mutation_canc}.cancerspecif.${suffix}.Nec${cohort_expr_lim_normal}.Nn${expr_n_limit_normal}_nbtc.log
 
+submission_id=42
+node_file=./node_file2.txt
 if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
 	echo "${parallelism} ${scratch_mem}" 	
 	echo ${logfile}
 	echo ${output_file}
 	echo $cmd2
         echo '#!/bin/bash' > ./tmp_file
-	echo $cmd2 >> ./tmp_file
-	sbatch --job-name=filt${suffix}_GTEX2019 --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${logfile} -o ${output_file} ./tmp_file
+	echo submission_id=${submission_id} >> ./tmp_file
+	echo 'job_id=$(squeue --format='\''%.18i %.9P %.30j %.8u %.8T %.10M %.9l %.6D %R'\''| grep $USER | grep $submission_id | awk '\'' {print $1} '\'')' >> ./tmp_file
+	echo 'scratch_dir_name=/scratch/slurm-job.${job_id}/projectname_tmp/'  >> ./tmp_file
+	echo 'mkdir ${scratch_dir_name}'  >> ./tmp_file
+	echo $cmd2 '--scratch-dir ${scratch_dir_name}' >> ./tmp_file
+	#--export=submission_id=$submission_id
+	#sbatch --nodelist=${node_file} 
+	sbatch --exclude=gpu-biomed-[01,04,06,09,10,15-21,23] --job-name=filt${submission_id}_${suffix}_GTEX2019 --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${logfile} -o ${output_file} ./tmp_file
 fi    
 done
