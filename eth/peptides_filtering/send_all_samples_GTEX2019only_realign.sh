@@ -3,14 +3,14 @@ set -e
 
 
 ### Lsf and Run Parameters
-mem=50000
-time_=120
+mem=20000
+time_=01
 local_=run_cluster #"run_local"
-parallel=4
+parallel=2
 #edge_or_segm=edge
-suffix="smallGene"
+suffix="smallGene_155m1_minimalPreprocess"
 echo "WARNING check activation myimmuno3"
-
+module load spark
 ### Inputs
 uniprot=/cluster/work/grlab/projects/TCGA/PanCanAtlas/tcga_immuno/uniprot/9mers_uniprot-human-UP000005640_9606.tsv
 ## Cancer Cohorts 
@@ -22,6 +22,7 @@ sample_back='GTEXcore'
 input_Segm_normal='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/mini_Segm_list.txt'
 input_Junc_normal='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/mini_Junc_list.txt'
 whitelist_normal='/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis'
+#whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis_TMP25perc
 tag_normals='Gtexcore'
 batch='False'
 
@@ -34,7 +35,7 @@ kmer='9'
 #TODO adjust parallelism 
 parallelism='1000'
 out_partitions=1
-scratch_mem=1G 270000  #270000 #155000 # 270000 #155000
+scratch_mem=1G   #270000 #155000 # 270000 #155000
 
 cohort_expr_lim_cancer='1'
 sample_expr_lim_cancer='2' #already conf2 
@@ -60,7 +61,7 @@ for mutation_canc in ref; do
     
     
     ## Cmd
-    cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --whitelist-normal ${whitelist_normal} --output-dir $output_dir --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm $(cat ${input_Segm_normal}) --path-normal-matrix-edge $(cat ${input_Junc_normal}) --interm-dir-norm ${output_norm} --tag-prefix 'G'" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? #TODO Uniprot add back #--path-normal-libsize ${libsize_normal}  --normalizer-normal-libsize ${normalizer_normal_libsize} --path-normal-kmer-list ${input_annot_cancer} 
+    cmd000="immunopepper cancerspecif --cores $parallel --mem-per-core $mem --kmer $kmer --whitelist-normal ${whitelist_normal} --output-dir $output_dir --parallelism ${parallelism} --out-partitions ${out_partitions} --path-normal-matrix-segm $(cat ${input_Segm_normal}) --path-normal-matrix-edge $(cat ${input_Junc_normal}) --interm-dir-norm ${output_norm} --tag-prefix 'G' --output-count ${output_count}" #TODO add back scratch for cancer? --scratch-dir 'TMPDIR'" #TODO output count remove? #TODO Uniprot add back #--path-normal-libsize ${libsize_normal}  --normalizer-normal-libsize ${normalizer_normal_libsize} --path-normal-kmer-list ${input_annot_cancer} 
     ## None case
     if [ ${cohort_expr_lim_normal} != 'Any' ]; then
         cmd00="${cmd000} --cohort-expr-support-norm ${cohort_expr_lim_normal}"
@@ -90,9 +91,11 @@ for mutation_canc in ref; do
 
 if [ ! -f "${test_output_exist}/_SUCCESS" ] ; then
 	echo "${parallelism} ${scratch_mem}" 	
-	echo $cmd3
+	echo ${logfile}
+	echo ${output_file}
+	echo $cmd2
         echo '#!/bin/bash' > ./tmp_file
-	echo $cmd_out >> ./tmp_file
-	sbatch --job-name=filt${suffix}_GTEX2019 --cpus-per-task=${parallel} --time=${time_}:00:00 --tmp=${scratch_mem} --mem=${mem} -e ${logfile} -o ${output_file} ./tmp_file
+	echo $cmd2 >> ./tmp_file
+	sbatch --job-name=filt${suffix}_GTEX2019 --cpus-per-task=${parallel} --time=${time_}:00:00 --mem=${mem} -e ${logfile} -o ${output_file} ./tmp_file
 fi    
 done
