@@ -40,8 +40,8 @@ def process_whitelist(path_whitelist, whitelist_normal_tag):
         return whitelist_samples, f'_{whitelist_normal_tag}_'
     else: 
         return None, ''
-    
-    
+
+
 def filter_supeq(df, threshold, cols):
     filter_col = f'filter >={threshold}'
     df[filter_col] = np.sum(df[cols] >= threshold, axis = 1)
@@ -86,7 +86,7 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     except EOFError: 
          print(f'...Cannot read file {path}. Skipping it.')
 
-            
+
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  
     '''Applies a filtering function to many partitions and concatenate the result'''
     
@@ -109,5 +109,5 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
 
     else: 
         df_gene_batch = None
-    
+
     return df_gene_batch, n_partitions

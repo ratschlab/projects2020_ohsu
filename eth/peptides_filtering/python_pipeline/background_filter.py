@@ -1,11 +1,13 @@
+import argparse
+import glob 
+from helpers_filter import *
+import logging
+import multiprocessing as mp 
 import numpy as np
 import os
-import timeit
-import glob 
 import pandas as pd
+import timeit
 import time
-import multiprocessing as mp 
-from helpers_filter import *
 
 
 
@@ -15,15 +17,17 @@ def process_on_cohort(batch_gene):
     
     # --- Background Specific ---
     # Will be run once, hence no proper command line 
-    whitelist_normal_tag = '10-21noBrainTestis'
-    whitelist_normal = '/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis'#", help="file containg whitelist for normal samples", required=False, default=None)
+    whitelist_normal_tag = '10-21overlap'
+    whitelist_normal = '/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist'#", help="file containg whitelist for normal samples", required=False, default=None)
     path_normal_libsize = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/ARCHIV_keep_runs/GTEX2019_commit_v3_TEST_merged3_372a147_medium_run_pya.0.17.1_conf2_annot_ref_chrall_cap/expression_counts.libsize.tsv' #help="libsize file path for normal samples", required=False, default=None)
-    normalizer_normal_libsize = 40000
+    normalizer_normal_libsize = 400000
     filters = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0] 
     sample_pattern = 'SRR'
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
     
+    logging.basicConfig(level=logging.INFO)
+
     do_normalize = True
     n_partitions = 0 #TODO make across processes
      
@@ -77,19 +81,23 @@ def process_on_cohort(batch_gene):
     if res is not None:
         outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
         res.to_csv(outfile, compression = 'gzip', index = None)
-        print(f'Saved to {outfile}', flush=True)
+        logging.info(f'Saved to {outfile}')
 
     
     
     
-##### MAIN ######
-
+##### MAIN #####
 if __name__ == "__main__":
-    processes = 2 
+    parser = argparse.ArgumentParser(description='run specifications')
+    parser.add_argument('--processes', required=True, help='the number of processes for the multiprocessing')
+    args = parser.parse_args()
+    
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    path_cohort = path_cohort[0:10] #TODO remove
+    #path_cohort = path_cohort[0:10] #TODO remove
+    print(f'{len(path_cohort)} batches found', flush=True)
+    print(f'Run with {arg.processes} processes')
 
-    with mp.Pool(processes) as pool:
+    with mp.Pool(arg.processes) as pool:
         pool.map(process_on_cohort, path_cohort) 
 
 
