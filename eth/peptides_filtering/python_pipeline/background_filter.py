@@ -19,7 +19,7 @@ def process_on_cohort(batch_gene):
     whitelist_normal = '/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis'#", help="file containg whitelist for normal samples", required=False, default=None)
     path_normal_libsize = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/ARCHIV_keep_runs/GTEX2019_commit_v3_TEST_merged3_372a147_medium_run_pya.0.17.1_conf2_annot_ref_chrall_cap/expression_counts.libsize.tsv' #help="libsize file path for normal samples", required=False, default=None)
     normalizer_normal_libsize = 40000
-    filters = [0.0, 1.0, 3.0, 6.0, 10.0, 15.0] 
+    filters = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0] 
     sample_pattern = 'SRR'
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
@@ -27,17 +27,23 @@ def process_on_cohort(batch_gene):
     do_normalize = True
     #print(f'Submit {batch_gene} to Pool: with parameter normalize={do_normalize}')
     n_partitions = 0 #TODO make across processes
-    
+     
     # Process library size file
     if do_normalize:
         tag_normalize = '_normalized_'
+        start_time  = timeit.default_timer()
         libsize = process_libsize(path_normal_libsize, normalizer_normal_libsize) #TODO global
+        #print(f'Processed libsize in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
     else:
         tag_normalize = ''
         libsize = None
     
     # Process whitelist
+    start_time  = timeit.default_timer()
     whitelist, whitelist_normal_tag = process_whitelist(whitelist_normal, whitelist_normal_tag) #TODO global
+    #print(f'Processed whitelist in {np.round((timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
 
     expr_matrix = 'ref_graph_kmer_SegmExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
@@ -49,7 +55,8 @@ def process_on_cohort(batch_gene):
                                                                    sample_pattern, 
                                                                    metadata,
                                                                    filters)
-
+    else: 
+        df_gene_batch_filt_Segm = None
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
@@ -60,12 +67,28 @@ def process_on_cohort(batch_gene):
                                                                    sample_pattern, 
                                                                    metadata,
                                                                    filters)
+    else:
+        df_gene_batch_filt_Junc = None
+        
+    start_time  = timeit.default_timer()
+    if (df_gene_batch_filt_Segm is not None) and (df_gene_batch_filt_Junc is not None): 
+        res = pd.concat([df_gene_batch_filt_Segm, df_gene_batch_filt_Junc], axis = 0)
+    elif (df_gene_batch_filt_Segm is not None) and (df_gene_batch_filt_Junc is None):
+        res = df_gene_batch_filt_Segm
+    elif (df_gene_batch_filt_Segm is None) and (df_gene_batch_filt_Junc is not None):
+        res = df_gene_batch_filt_Junc
+    else:
+        res = None
+    #print(f'Processed concat in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
     
-    outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
-    pd.concat([df_gene_batch_filt_Segm, df_gene_batch_filt_Junc], axis = 0).to_csv(outfile, 
-                                                                         compression = 'gzip', 
-                                                                         index = None)
-    print(f'Saved to {outfile}', flush=True)
+    if res is not None:
+        start_time  = timeit.default_timer()
+        outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
+        res.to_csv(outfile, compression = 'gzip', index = None)
+        print(f'Saved to {outfile}', flush=True)
+        #print(f'Processed save CSV in {np.round((timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
     
     
     

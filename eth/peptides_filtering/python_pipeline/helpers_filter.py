@@ -4,7 +4,7 @@ import timeit
 import glob 
 import pandas as pd
 import time
-
+from IPython.core.debugger import set_trace
 
 
 def process_libsize(path_lib, custom_normalizer):
@@ -27,9 +27,10 @@ def process_libsize(path_lib, custom_normalizer):
     return lib
 
 
-def normalization(df, cols, libsize):
-    for sample in cols:
-        df[sample] = np.round(df[sample] / libsize.loc[sample, "libsize_75percent"], 2)
+def normalization(df, cols, libsize, metadata):
+    df_expr = df.loc[:, cols]
+    df_norm_vals = libsize.loc[cols, 'libsize_75percent']
+    df = pd.concat([df.loc[:, metadata], df_expr / df_norm_vals], axis = 1)
     return df
 
 
@@ -62,17 +63,24 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     
     filter_cols = []
     try:
+        start_time  = timeit.default_timer()
         df = pd.read_csv(path, sep = '\t')
+        #print(f'Load in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
+        
           
         sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
         
         if whitelist:
             sample_cols = sample_cols.intersection(whitelist)   
         sample_cols = list(sample_cols)
-
+        
+        start_time  = timeit.default_timer()
         if libsize is not None:
-            df = normalization(df, sample_cols, libsize)
+            df = normalization(df, sample_cols, libsize, metadata)
+        #print(f'Normalize in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
 
+        start_time  = timeit.default_timer()
         for read_level in filters:
             if read_level:
                 df, col = filter_supeq(df, read_level, sample_cols)
@@ -80,6 +88,7 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
             else: # 0 case
                 df, col = filter_supstrict(df, read_level, sample_cols)
                 filter_cols.append(col)
+        #print(f'Filters in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
 
         df = df.loc[:, metadata +  filter_cols]
         return df
@@ -91,23 +100,31 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     '''Applies a filtering function to many partitions and concatenate the result'''
     
     # List partitions for gene batch 
+    start_time  = timeit.default_timer()
     path_partions = glob.glob(os.path.join(expr_matrix, 'part*'))
+    print(f'Processed glob partitions in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
     N_parts = len(path_partions)
     
     if N_parts:
         n_partitions += N_parts
         start_time  = timeit.default_timer()
-        print(f'\n Start filter: {start_time}, {expr_matrix}', flush = True) 
+        #print(f'\n Start filter: {start_time}, {expr_matrix}', flush = True) 
 
         df_gene_batch = []
-        print(f'... {N_parts} parts', flush = True)
+        #print(f'... {N_parts} parts', flush = True)
         for idx, part in enumerate(path_partions):
+            start_time  = timeit.default_timer()
             df_gene_batch.append(filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters))
+            #print(f'Filtered 1 partition in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+        
+        start_time  = timeit.default_timer()
         df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
+        #print(f'Concatenation in {np.round( (timeit.default_timer() - start_time) / 60, 2)} minutes.', flush = True)
+
 
         time_res = timeit.default_timer() - start_time 
-        print(f'Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total partitions so far {n_partitions}', 
-              flush = True) 
+        #print(f'Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total partitions so far {n_partitions}', 
+        #      flush = True) 
     else: 
         df_gene_batch = None
     
