@@ -1,14 +1,13 @@
 import argparse
+from datetime import datetime
 import glob 
 from helpers_filter import *
-import logging
 import multiprocessing as mp 
 import numpy as np
 import os
 import pandas as pd
 import timeit
 import time
-
 
 
 
@@ -26,7 +25,6 @@ def process_on_cohort(batch_gene):
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
     
-    logging.basicConfig(level=logging.INFO)
 
     do_normalize = True
     n_partitions = 0 #TODO make across processes
@@ -81,7 +79,9 @@ def process_on_cohort(batch_gene):
     if res is not None:
         outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
         res.to_csv(outfile, compression = 'gzip', index = None)
-        logging.info(f'Saved to {outfile}')
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print(f'{current_time}: Saved to {outfile}', flush=True)
 
     
     
@@ -89,15 +89,15 @@ def process_on_cohort(batch_gene):
 ##### MAIN #####
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='run specifications')
-    parser.add_argument('--processes', required=True, help='the number of processes for the multiprocessing')
+    parser.add_argument('--processes', type=int, required=True, help='the number of processes for the multiprocessing')
     args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
     #path_cohort = path_cohort[0:10] #TODO remove
     print(f'{len(path_cohort)} batches found', flush=True)
-    print(f'Run with {arg.processes} processes')
+    print(f'Run with {args.processes} processes')
 
-    with mp.Pool(arg.processes) as pool:
+    with mp.Pool(args.processes) as pool:
         pool.map(process_on_cohort, path_cohort) 
 
 

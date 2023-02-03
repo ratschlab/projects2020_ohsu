@@ -1,9 +1,10 @@
+from datetime import datetime
+import glob
 import numpy as np
 import os
-import timeit
-import glob 
 import pandas as pd
 import time
+import timeit
 from IPython.core.debugger import set_trace
 
 
@@ -84,7 +85,9 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
         df = df.loc[:, metadata +  filter_cols]
         return df
     except EOFError: 
-         print(f'...Cannot read file {path}. Skipping it.')
+         now = datetime.now()
+         current_time = now.strftime("%H:%M:%S")
+         print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
 
 
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  
@@ -94,7 +97,10 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     start_time  = timeit.default_timer()
     path_partions = glob.glob(os.path.join(expr_matrix, 'part*'))
     N_parts = len(path_partions)
-    
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+    print(f'{current_time}: ... {N_parts} parts', flush=True)
+
     if N_parts:
         n_partitions += N_parts
 
@@ -105,7 +111,9 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
         df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
 
         time_res = timeit.default_timer() - start_time
-        print(f'Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
 
     else: 
         df_gene_batch = None
