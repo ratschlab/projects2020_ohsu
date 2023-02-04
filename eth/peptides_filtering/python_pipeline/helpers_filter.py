@@ -61,31 +61,34 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
         2. Normalize, applies the whitelist
         3. Applies all the filters to the partition'''
     
-    filter_cols = []
-    df = pd.read_csv(path, sep = '\t')
-    sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
-    #print('after read', flush=True) 
-    if whitelist:
-        sample_cols = sample_cols.intersection(whitelist)   
-    sample_cols = list(sample_cols)
-    #print('after whitelist', flush=True)
-    if libsize is not None:
-        df = normalization(df, sample_cols, libsize, metadata)
-    #print('after normalise', flush=True)
-    for read_level in filters:
-        if read_level:
-            df, col = filter_supeq(df, read_level, sample_cols)
-            filter_cols.append(col)
-        else: # 0 case
-            df, col = filter_supstrict(df, read_level, sample_cols)
-            filter_cols.append(col)
-    #print('after filter', flush=True)
-    df = df.loc[:, metadata +  filter_cols]
-    return df
-         #now = datetime.now()
-         #current_time = now.strftime("%H:%M:%S")
+    df = None
+    try:
+        filter_cols = []
+        df = pd.read_csv(path, sep = '\t')
+        sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
+        #print('after read', flush=True) 
+        if whitelist:
+            sample_cols = sample_cols.intersection(whitelist)   
+        sample_cols = list(sample_cols)
+        #print('after whitelist', flush=True)
+        if libsize is not None:
+            df = normalization(df, sample_cols, libsize, metadata)
+        #print('after normalise', flush=True)
+        for read_level in filters:
+            if read_level:
+                df, col = filter_supeq(df, read_level, sample_cols)
+                filter_cols.append(col)
+            else: # 0 case
+                df, col = filter_supstrict(df, read_level, sample_cols)
+                filter_cols.append(col)
+        #print('after filter', flush=True)
+        df = df.loc[:, metadata +  filter_cols]
+             #now = datetime.now()
+             #current_time = now.strftime("%H:%M:%S")
          #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
-
+    except EOF:
+        print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
+    return df
 
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  
     '''Applies a filtering function to many partitions and concatenate the result'''
@@ -105,7 +108,8 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
         for idx, part in enumerate(path_partions):
             tmp=filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters)
      #       print('before append', flush=True)
-            df_gene_batch.append(tmp)
+            if tmp is not None:
+                df_gene_batch.append(tmp)
      #   print('after all loop', flush=True) 
         df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
         print('after concat', flush=True)
