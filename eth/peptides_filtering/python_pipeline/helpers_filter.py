@@ -5,7 +5,6 @@ import os
 import pandas as pd
 import time
 import timeit
-from IPython.core.debugger import set_trace
 
 
 def process_libsize(path_lib, custom_normalizer):
@@ -63,31 +62,29 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
         3. Applies all the filters to the partition'''
     
     filter_cols = []
-    try:
-        df = pd.read_csv(path, sep = '\t')
-        sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
-        
-        if whitelist:
-            sample_cols = sample_cols.intersection(whitelist)   
-        sample_cols = list(sample_cols)
-        
-        if libsize is not None:
-            df = normalization(df, sample_cols, libsize, metadata)
-
-        for read_level in filters:
-            if read_level:
-                df, col = filter_supeq(df, read_level, sample_cols)
-                filter_cols.append(col)
-            else: # 0 case
-                df, col = filter_supstrict(df, read_level, sample_cols)
-                filter_cols.append(col)
-
-        df = df.loc[:, metadata +  filter_cols]
-        return df
-    except EOFError: 
-         now = datetime.now()
-         current_time = now.strftime("%H:%M:%S")
-         print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
+    df = pd.read_csv(path, sep = '\t')
+    sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
+    #print('after read', flush=True) 
+    if whitelist:
+        sample_cols = sample_cols.intersection(whitelist)   
+    sample_cols = list(sample_cols)
+    #print('after whitelist', flush=True)
+    if libsize is not None:
+        df = normalization(df, sample_cols, libsize, metadata)
+    #print('after normalise', flush=True)
+    for read_level in filters:
+        if read_level:
+            df, col = filter_supeq(df, read_level, sample_cols)
+            filter_cols.append(col)
+        else: # 0 case
+            df, col = filter_supstrict(df, read_level, sample_cols)
+            filter_cols.append(col)
+    #print('after filter', flush=True)
+    df = df.loc[:, metadata +  filter_cols]
+    return df
+         #now = datetime.now()
+         #current_time = now.strftime("%H:%M:%S")
+         #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
 
 
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  
@@ -97,23 +94,25 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     start_time  = timeit.default_timer()
     path_partions = glob.glob(os.path.join(expr_matrix, 'part*'))
     N_parts = len(path_partions)
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-    print(f'{current_time}: ... {N_parts} parts', flush=True)
+    #now = datetime.now()
+    #current_time = now.strftime("%H:%M:%S")
+    #print(f'{current_time}: ... {N_parts} parts', flush=True)
 
     if N_parts:
         n_partitions += N_parts
 
         df_gene_batch = []
         for idx, part in enumerate(path_partions):
-            df_gene_batch.append(filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters))
-        
+            tmp=filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters)
+     #       print('before append', flush=True)
+            df_gene_batch.append(tmp)
+     #   print('after all loop', flush=True) 
         df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
-
+        print('after concat', flush=True)
         time_res = timeit.default_timer() - start_time
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
+        #now = datetime.now()
+        #current_time = now.strftime("%H:%M:%S")
+        #print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
 
     else: 
         df_gene_batch = None

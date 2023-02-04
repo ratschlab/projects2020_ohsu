@@ -24,6 +24,7 @@ def process_on_cohort(batch_gene):
     sample_pattern = 'SRR'
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
+    
 
     do_normalize = True
     n_partitions = 0 #TODO make across processes
@@ -83,25 +84,24 @@ def process_on_cohort(batch_gene):
         current_time=''
         print(f'{current_time}: Saved to {outfile}', flush=True)
 
-def handler(error):
-    print(f'Error: {error}', flush=True)
+    
     
     
 ##### MAIN #####
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='run specifications')
-    parser.add_argument('--processes', type=int, required=True, help='the number of processes for the multiprocessing')
-    args = parser.parse_args()
+    #parser = argparse.ArgumentParser(description='run specifications')
+    #parser.add_argument('--processes', type=int, required=True, help='the number of processes for the multiprocessing')
+    #args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
     path_cohort=np.sort(path_cohort)[0:1000]
     #path_cohort = path_cohort[0:10] #TODO remove
     print(f'{len(path_cohort)} batches found', flush=True)
-    print(f'Run with {args.processes} processes')
+    #print(f'Run with {args.processes} processes')
+    for p in path_cohort:
+        process_on_cohort(p)
+   # with mp.Pool(args.processes) as pool:
+   #     pool.map(process_on_cohort, path_cohort) 
 
-    with mp.Pool(args.processes) as pool:
-        pool.map_async(process_on_cohort, path_cohort,  error_callback=handler) 
-        pool.close()
-        pool.join()
 
 
