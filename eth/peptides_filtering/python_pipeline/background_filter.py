@@ -39,7 +39,7 @@ def process_on_cohort(batch_gene):
     
     # Process whitelist
     whitelist, whitelist_normal_tag = process_whitelist(whitelist_normal, whitelist_normal_tag) #TODO global
-
+    
     expr_matrix = 'ref_graph_kmer_SegmExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
@@ -82,6 +82,7 @@ def process_on_cohort(batch_gene):
         #current_time = now.strftime("%H:%M:%S")
         current_time=''
         print(f'{current_time}: Saved to {outfile}', flush=True)
+    return 'done'
 
 def handler(error):
     print(f'Error: {error}', flush=True)
@@ -94,14 +95,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    path_cohort=np.sort(path_cohort)#[0:1000]
+    path_cohort=path_cohort[0:1000]
     #path_cohort = path_cohort[0:10] #TODO remove
     print(f'{len(path_cohort)} batches found', flush=True)
     print(f'Run with {args.processes} processes')
 
-    with mp.Pool(args.processes) as pool:
-        pool.map_async(process_on_cohort, path_cohort,  error_callback=handler) 
-        pool.close()
-        pool.join()
+    pool = mp.Pool(args.processes)
+    result = pool.map_async(process_on_cohort, path_cohort,  error_callback=handler, chunksize=2) 
+    result.wait()
+    pool.close()
+    pool.join()
 
 

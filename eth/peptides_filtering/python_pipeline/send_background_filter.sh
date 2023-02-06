@@ -6,15 +6,15 @@
 #res_file=${log_dir}/py_filter_background_${suffix}.out
 
 #SBATCH --time=120:00:00
-#SBATCH --cpus-per-task=100
+#SBATCH --cpus-per-task=30
 #SBATCH --mem=1G
 #SBATCH --job-name="background"
-#SBATCH --output=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_large.out
-#SBATCH --error=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_large.err
+#SBATCH --output=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_forloop.out
+#SBATCH --error=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_forloop.err
 
 
 #Specifies that the job will be requeued after a node
 
 
 #TODO add the number of processes
-python ./background_filter.py --processes 100
+python ./background_filter.py --processes 30
