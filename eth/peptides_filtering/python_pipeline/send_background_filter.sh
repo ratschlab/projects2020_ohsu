@@ -9,8 +9,8 @@
 #SBATCH --cpus-per-task=10
 #SBATCH --mem=1G
 #SBATCH --job-name="background"
-#SBATCH --output=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_rew_None_notfilter.out
-#SBATCH --error=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_rew_None_notfilter.err
+#SBATCH --output=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_rew_None_notfilter2.out
+#SBATCH --error=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf/py_filter_background_map_async_rew_None_notfilter2.err
 
 
 #Specifies that the job will be requeued after a node
