@@ -66,7 +66,7 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     try:
         filter_cols = []
         #df = pd.read_csv(path, sep = '\t')
-        df = pd.DataFrame([ [1,2,3], [4,5,6]], columns = ['SRR1', 'SRR2', 'kmer'])
+        df = pd.DataFrame([ [1,2,3, 'b', False, False, False], [4,5,6, 'a', True, True, True]], columns = ['SRR1', 'SRR2', 'kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction'])
         sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
         print('...read', flush=True)
         #print('after read', flush=True) 
