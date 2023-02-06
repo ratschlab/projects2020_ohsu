@@ -87,7 +87,13 @@ def process_on_cohort(batch_gene):
 def handler(error):
     print(f'Error: {error}', flush=True)
     
-    
+def dummy(path_cohort):
+    print(path_cohort, flush=True)
+    try:
+        print('hello')
+    except:
+        print('NONE')
+
 ##### MAIN #####
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='run specifications')
