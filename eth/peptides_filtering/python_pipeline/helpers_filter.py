@@ -63,32 +63,33 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     
     df = None
     
-    filter_cols = []
-    df = pd.read_csv(path, sep = '\t')
-    sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
-    print('...', flush=True)
-    #print('after read', flush=True) 
-    if whitelist:
-        sample_cols = sample_cols.intersection(whitelist)   
-    sample_cols = list(sample_cols)
-    #print('after whitelist', flush=True)
-    if libsize is not None:
-        df = normalization(df, sample_cols, libsize, metadata)
-    #print('after normalise', flush=True)
-    for read_level in filters:
-        if read_level:
-            df, col = filter_supeq(df, read_level, sample_cols)
-            filter_cols.append(col)
-        else: # 0 case
-            df, col = filter_supstrict(df, read_level, sample_cols)
-            filter_cols.append(col)
-    #print('after filter', flush=True)
-    df = df.loc[:, metadata +  filter_cols]
-         #now = datetime.now()
-         #current_time = now.strftime("%H:%M:%S")
-     #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
-    #except EOF:
-    #    print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
+    try:
+        filter_cols = []
+        df = pd.read_csv(path, sep = '\t')
+        sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
+        print('...read', flush=True)
+        #print('after read', flush=True) 
+        if whitelist:
+            sample_cols = sample_cols.intersection(whitelist)   
+        sample_cols = list(sample_cols)
+        #print('after whitelist', flush=True)
+        if libsize is not None:
+            df = normalization(df, sample_cols, libsize, metadata)
+        #print('after normalise', flush=True)
+        for read_level in filters:
+            if read_level:
+                df, col = filter_supeq(df, read_level, sample_cols)
+                filter_cols.append(col)
+            else: # 0 case
+                df, col = filter_supstrict(df, read_level, sample_cols)
+                filter_cols.append(col)
+        #print('after filter', flush=True)
+        df = df.loc[:, metadata +  filter_cols]
+             #now = datetime.now()
+             #current_time = now.strftime("%H:%M:%S")
+         #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
+    except EOFError:
+        print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
     return df
 
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  
@@ -101,7 +102,6 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     #now = datetime.now()
     #current_time = now.strftime("%H:%M:%S")
     #print(f'{current_time}: ... {N_parts} parts', flush=True)
-
     if N_parts:
         n_partitions += N_parts
 
