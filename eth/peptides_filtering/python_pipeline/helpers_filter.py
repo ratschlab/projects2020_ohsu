@@ -65,7 +65,8 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     
     try:
         filter_cols = []
-        df = pd.read_csv(path, sep = '\t')
+        #df = pd.read_csv(path, sep = '\t')
+        df = pd.DataFrame([ [1,2,3], [4,5,6]], columns = ['SRR1', 'SRR2', 'kmer'])
         sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
         print('...read', flush=True)
         #print('after read', flush=True) 
@@ -102,24 +103,23 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     #now = datetime.now()
     #current_time = now.strftime("%H:%M:%S")
     #print(f'{current_time}: ... {N_parts} parts', flush=True)
+    df_gene_batch = None
     if N_parts:
         n_partitions += N_parts
-
+        print(f'processing {expr_matrix}', flush=True)
         df_gene_batch = []
         for idx, part in enumerate(path_partions):
-            tmp=filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters)
-     #       print('before append', flush=True)
+            tmp = filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters)
             if tmp is not None:
                 df_gene_batch.append(tmp)
-     #   print('after all loop', flush=True) 
-        df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
-     #   print('after concat', flush=True)
+        if df_gene_batch:
+            df_gene_batch = pd.concat(df_gene_batch, axis = 0)   
+        else: 
+            df_gene_batch = None
         time_res = timeit.default_timer() - start_time
         #now = datetime.now()
         #current_time = now.strftime("%H:%M:%S")
         #print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
 
-    else: 
-        df_gene_batch = None
 
     return df_gene_batch, n_partitions
