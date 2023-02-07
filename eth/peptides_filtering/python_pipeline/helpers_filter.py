@@ -66,11 +66,8 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     
     try:
         filter_cols = []
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        print(f'...read {current_time}', flush=True)
+        #print(f'...read {current_time}', flush=True)
         df = pd.read_csv(path, sep = '\t')
-        #df = pd.DataFrame([ [1,2,3, 'b', False, False, False], [4,5,6, 'a', True, True, True]], columns = ['SRR1', 'SRR2', 'kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction'])
         sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
         #print('after read', flush=True) 
         if whitelist:
@@ -91,9 +88,7 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
         df = df.loc[:, metadata +  filter_cols]
              #now = datetime.now()
              #current_time = now.strftime("%H:%M:%S")
-         #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
     except (EOFError, pandas.errors.EmptyDataError) as e:
-        current_time=''
         print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
     return df
 
@@ -104,8 +99,6 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     start_time  = timeit.default_timer()
     path_partions = glob.glob(os.path.join(expr_matrix, 'part*'))
     N_parts = len(path_partions)
-    #now = datetime.now()
-    #current_time = now.strftime("%H:%M:%S")
     #print(f'{current_time}: ... {N_parts} parts', flush=True)
     df_gene_batch = None
     if N_parts:
@@ -121,9 +114,9 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
         else: 
             df_gene_batch = None
         time_res = timeit.default_timer() - start_time
-        #now = datetime.now()
-        #current_time = now.strftime("%H:%M:%S")
-        #print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print(f'{current_time}: Processed {N_parts} parts in {np.round(time_res/ 60, 2)} minutes. Total parts seen {n_partitions}',flush = True)
 
 
     return df_gene_batch, n_partitions

@@ -78,21 +78,14 @@ def process_on_cohort(batch_gene):
     if res is not None:
         outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
         res.to_csv(outfile, compression = 'gzip', index = None)
-        #now = datetime.now()
-        #current_time = now.strftime("%H:%M:%S")
-        current_time=''
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
         print(f'{current_time}: Saved to {outfile}', flush=True)
     return 'done'
 
 def handler(error):
     print(f'Error: {error}', flush=True)
     
-def dummy(path_cohort):
-    print(path_cohort, flush=True)
-    try:
-        print('hello')
-    except:
-        print('NONE')
 
 ##### MAIN #####
 if __name__ == "__main__":
@@ -101,10 +94,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    path_cohort=path_cohort[920:1000]
+    #path_cohort=path_cohort[920:1000]
     #path_cohort = path_cohort[0:10] #TODO remove
     print(f'{len(path_cohort)} batches found', flush=True)
-    print(f'Run with {args.processes} processes')
+    print(f'Run with {args.processes} processes', flush=True)
+    print(f'---- Starting multiprocessing ----', flush=True)
 
     pool = mp.Pool(args.processes)
     result = pool.map_async(process_on_cohort, path_cohort,  error_callback=handler, chunksize=2) 
