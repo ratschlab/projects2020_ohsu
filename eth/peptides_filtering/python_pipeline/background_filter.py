@@ -101,7 +101,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    path_cohort=path_cohort[0:1000]
+    path_cohort=path_cohort[920:1000]
     #path_cohort = path_cohort[0:10] #TODO remove
     print(f'{len(path_cohort)} batches found', flush=True)
     print(f'Run with {args.processes} processes')

@@ -3,6 +3,7 @@ import glob
 import numpy as np
 import os
 import pandas as pd
+import pandas
 import time
 import timeit
 
@@ -65,10 +66,12 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
     
     try:
         filter_cols = []
-        df = pd.read_csv(path, sep = '\t', nrows=1) #TODO update
+        now = datetime.now()
+        current_time = now.strftime("%H:%M:%S")
+        print(f'...read {current_time}', flush=True)
+        df = pd.read_csv(path, sep = '\t')
         #df = pd.DataFrame([ [1,2,3, 'b', False, False, False], [4,5,6, 'a', True, True, True]], columns = ['SRR1', 'SRR2', 'kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction'])
         sample_cols = set([ col for col in df.columns if sample_pattern in col])# --- Background Specific ---
-        print('...read', flush=True)
         #print('after read', flush=True) 
         if whitelist:
             sample_cols = sample_cols.intersection(whitelist)   
@@ -89,7 +92,8 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
              #now = datetime.now()
              #current_time = now.strftime("%H:%M:%S")
          #print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
-    except EOFError:
+    except (EOFError, pandas.errors.EmptyDataError) as e:
+        current_time=''
         print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
     return df
 
@@ -106,7 +110,7 @@ def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pa
     df_gene_batch = None
     if N_parts:
         n_partitions += N_parts
-        print(f'processing {expr_matrix}', flush=True)
+        #print(f'processing {expr_matrix}', flush=True)
         df_gene_batch = []
         for idx, part in enumerate(path_partions):
             tmp = filter_function(idx, part, libsize, whitelist, sample_pattern, metadata, filters)
