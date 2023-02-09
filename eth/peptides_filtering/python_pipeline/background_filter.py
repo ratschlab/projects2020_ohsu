@@ -24,7 +24,7 @@ def process_on_cohort(batch_gene):
     sample_pattern = 'SRR'
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
-
+    do_overwrite=False  # do not overwrite computed files
     do_normalize = True
     n_partitions = 0 #TODO make across processes
      
@@ -40,28 +40,33 @@ def process_on_cohort(batch_gene):
     # Process whitelist
     whitelist, whitelist_normal_tag = process_whitelist(whitelist_normal, whitelist_normal_tag) #TODO global
     
+    # Define outputs
+    outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
+
     expr_matrix = 'ref_graph_kmer_SegmExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
-        df_gene_batch_filt_Segm, n_partitions = filter_on_partition(os.path.join(batch_gene , expr_matrix),
-                                                                   n_partitions, 
-                                                                   libsize, 
-                                                                   whitelist, 
-                                                                   sample_pattern, 
-                                                                   metadata,
-                                                                   filters)
+        if do_overwrite or (not os.path.exists(outfile)):
+            df_gene_batch_filt_Segm, n_partitions = filter_on_partition(os.path.join(batch_gene , expr_matrix),
+                                                                        n_partitions,
+                                                                        libsize, 
+                                                                        whitelist, 
+                                                                        sample_pattern, 
+                                                                        metadata,
+                                                                        filters)
     else: 
         df_gene_batch_filt_Segm = None
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
-        df_gene_batch_filt_Junc, n_partitions = filter_on_partition(os.path.join(batch_gene , expr_matrix),
-                                                                   n_partitions, 
-                                                                   libsize, 
-                                                                   whitelist, 
-                                                                   sample_pattern, 
-                                                                   metadata,
-                                                                   filters)
+        if do_overwrite or (not os.path.exists(outfile)):
+            df_gene_batch_filt_Junc, n_partitions = filter_on_partition(os.path.join(batch_gene , expr_matrix),
+                                                                        n_partitions, 
+                                                                        libsize, 
+                                                                        whitelist, 
+                                                                        sample_pattern, 
+                                                                        metadata,
+                                                                        filters)
     else:
         df_gene_batch_filt_Junc = None
         
@@ -76,7 +81,6 @@ def process_on_cohort(batch_gene):
 
     
     if res is not None:
-        outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
         res.to_csv(outfile, compression = 'gzip', index = None)
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
