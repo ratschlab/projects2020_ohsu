@@ -91,15 +91,22 @@ def handler(error):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='run specifications')
     parser.add_argument('--processes', type=int, required=True, help='the number of processes for the multiprocessing')
+    parser.add_argument('--start-id', type=int, required=False, default=None, help='start id of the subset of batches')
+    parser.add_argument('--end-id', type=int, required=False, default=None, help='end id of the subset of batches')
     args = parser.parse_args()
     
     path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    #path_cohort=path_cohort[920:1000]
-    #path_cohort = path_cohort[0:10] #TODO remove
+    if args.start_id is not None and args.end_id is not None: 
+        path_cohort=path_cohort[args.start_id:args.end_id]
+    elif args.start_id is not None:
+        path_cohort=path_cohort[args.start_id:]
+    elif args.end_id is not None:
+        path_cohort=path_cohort[:args.end_id]
+
+    print(f'Start id: {args.start_id} and End id: {args.end_id}', flush=True)
     print(f'{len(path_cohort)} batches found', flush=True)
     print(f'Run with {args.processes} processes', flush=True)
     print(f'---- Starting multiprocessing ----', flush=True)
-
     pool = mp.Pool(args.processes)
     result = pool.map_async(process_on_cohort, path_cohort,  error_callback=handler, chunksize=2) 
     result.wait()
