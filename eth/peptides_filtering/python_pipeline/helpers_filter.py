@@ -89,7 +89,7 @@ def filter_function(idx, path, libsize, whitelist, sample_pattern, metadata, fil
              #now = datetime.now()
              #current_time = now.strftime("%H:%M:%S")
     except (EOFError, pandas.errors.EmptyDataError) as e:
-        print(f'{current_time}...Cannot read file {path}. Skipping it.', flush=True)
+        print(f'Cannot read file {path}. Skipping it.', flush=True)
     return df
 
 def filter_on_partition(expr_matrix, n_partitions, libsize, whitelist, sample_pattern, metadata, filters):  

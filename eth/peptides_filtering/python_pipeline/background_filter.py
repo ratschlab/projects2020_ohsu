@@ -44,6 +44,8 @@ def process_on_cohort(batch_gene):
     outfile = os.path.join(batch_gene, f'ref_graph_kmer{tag_normalize}filtered{whitelist_normal_tag}.gz')
 
     expr_matrix = 'ref_graph_kmer_SegmExpr'
+    df_gene_batch_filt_Segm = None
+    df_gene_batch_filt_Junc = None
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
         if do_overwrite or (not os.path.exists(outfile)):
@@ -54,8 +56,6 @@ def process_on_cohort(batch_gene):
                                                                         sample_pattern, 
                                                                         metadata,
                                                                         filters)
-    else: 
-        df_gene_batch_filt_Segm = None
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     if os.path.exists(os.path.join(batch_gene , expr_matrix)) and \
        os.path.exists(os.path.join(batch_gene , 'output_sample_IS_SUCCESS')):
@@ -67,8 +67,6 @@ def process_on_cohort(batch_gene):
                                                                         sample_pattern, 
                                                                         metadata,
                                                                         filters)
-    else:
-        df_gene_batch_filt_Junc = None
         
     if (df_gene_batch_filt_Segm is not None) and (df_gene_batch_filt_Junc is not None): 
         res = pd.concat([df_gene_batch_filt_Segm, df_gene_batch_filt_Junc], axis = 0)

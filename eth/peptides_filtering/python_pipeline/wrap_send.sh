@@ -1,7 +1,7 @@
 #!/bin/bash
 
-start_gene=35000
-end_gene=45000
+start_gene=30000
+end_gene=50000
 hours=120
 cpus=30
 mem=20G
