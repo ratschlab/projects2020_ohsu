@@ -12,10 +12,8 @@ import time
 
 
 def process_on_cohort(batch_gene, whitelist, whitelist_tag, path_libsize, normalizer, filters, sample_pattern, do_overwrite=False, do_normalize=True):
-    ''' Main code for background cohort filtering'''
+    ''' Main code for filtering'''
     
-    # --- Background Specific ---
-    # Will be run once, hence no proper command line 
     metadata = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated', 'isCrossJunction']
     # ---------------------------
     n_partitions = 0 #TODO make across processes
@@ -90,33 +88,33 @@ if __name__ == "__main__":
     parser.add_argument('--path-cohort', type=str, required=False, default=None, help='immunopepper output path containing the batch folders')
     parser.add_argument('--whitelist-tag', type=str, required=False, default=None, help='suffix to add to the output file') 
     parser.add_argument('--whitelist', type=str, required=False, default=None, help='path to the whitelist of samples. File without header with sample names')
-    parser.add_argument('--path_libsize', type=str, required=False, default=None, help='path to the library size. First column sample, Second column libsize_75percent') 
-    parser.add_argument('--normalizer_libsize', type=str, required=False, default=None, help='factor by which to multiply after the division by the library size. Default median of libsize')
-    parser.add_argument('--filters', type=str, required=False, default=None, help='Thresholds for filtering (list of floats). The number of samples >= (or >0) to each threshold will be computed')
-    parser.add_argument('--sample_pattern', type=str, required=False, default=None, help='Commun naming pattern shared by all the sample names') 
-    parser.add_argument('--do_overwrite', type=str, required=False, default=None, help='Overwrite the outputs. Otherwise, missing outputs in the corresponding batches')
-    parser.add_argument('--do_normalize', type=str, required=False, default=None, help='If set, perform a normalisation with the library size')
+    parser.add_argument('--path-libsize', type=str, required=False, default=None, help='path to the library size. First column sample, Second column libsize_75percent') 
+    parser.add_argument('--normalizer-libsize', type=float, required=False, default=None, help='factor by which to multiply after the division by the library size. Default median of libsize')
+    parser.add_argument('--filters', nargs='+', type=float, required=False, default=None, help='Thresholds for filtering (list of floats). The number of samples >= (or >0) to each threshold will be computed')
+    parser.add_argument('--sample-pattern', type=str, required=False, default=None, help='Commun naming pattern shared by all the sample names') 
+    parser.add_argument('--do-overwrite', action="store_true", required=False, default=False, help='Overwrite the outputs. Otherwise, missing outputs in the corresponding batches')
+    parser.add_argument('--do-normalize', action="store_true", required=False, default=False, help='If set, perform a normalisation with the library size')
     args = parser.parse_args()
     
-    path_cohort = glob.glob('/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone/*')
-    whitelist_tag = '10-21overlap_TEST'
-    whitelist = '/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist'#", help="file containg whitelist for normal samples", required=False, default=None)
-    path_libsize = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/ARCHIV_keep_runs/GTEX2019_commit_v3_TEST_merged3_372a147_medium_run_pya.0.17.1_conf2_annot_ref_chrall_cap/expression_counts.libsize.tsv' #help="libsize file path for normal samples", required=False, default=None)
-    normalizer_libsize = 400000
-    filters = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
-    sample_pattern = 'SRR'
-    do_overwrite = False  # do not overwrite computed files
-    do_normalize = True
-    
-    input_args = [(batch_gene, whitelist, whitelist_tag, path_libsize, normalizer_libsize, filters, sample_pattern, do_overwrite, do_normalize) for batch_gene in path_cohort] 
-    print(input_args[0], flush=True) 
+    path_cohort = glob.glob(args.path_cohort + '/*')
+ #   whitelist_tag = '10-21overlap_TEST'
+ #   whitelist = '/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist'#", help="file containg whitelist for normal samples", required=False, default=None)
+ #   path_libsize = '/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/ARCHIV_keep_runs/GTEX2019_commit_v3_TEST_merged3_372a147_medium_run_pya.0.17.1_conf2_annot_ref_chrall_cap/expression_counts.libsize.tsv' #help="libsize file path for normal samples", required=False, default=None)
+ #   normalizer_libsize = 400000
+ #   filters = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
+ #   sample_pattern = 'SRR'
+ #   do_overwrite = False  # do not overwrite computed files
+ #   do_normalize = True
+
+
+    input_args = [(batch_gene, args.whitelist, args.whitelist_tag, args.path_libsize, args.normalizer_libsize, args.filters, args.sample_pattern, args.do_overwrite, args.do_normalize) for batch_gene in path_cohort] 
     if args.start_id is not None and args.end_id is not None: 
         path_cohort=path_cohort[args.start_id:args.end_id]
     elif args.start_id is not None:
         path_cohort=path_cohort[args.start_id:]
     elif args.end_id is not None:
         path_cohort=path_cohort[:args.end_id]
-
+    print(args, flush=True)
     print(f'Start id: {args.start_id} and End id: {args.end_id}', flush=True)
     print(f'{len(path_cohort)} batches found', flush=True)
     print(f'Run with {args.processes} processes', flush=True)

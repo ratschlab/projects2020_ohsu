@@ -1,8 +1,8 @@
 #!/bin/bash
-#SBATCH -o /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/lsf/py_filter_brca_large_30p_20G_0-None.out
-#SBATCH -e /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/lsf/py_filter_brca_large_30p_20G_0-None.err
-#SBATCH -J brca_0_None
-#SBATCH --time=120:00:00
+#SBATCH -o /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/lsf/py_filter_brca_large_TEST_30p_20G_0-50000.out
+#SBATCH -e /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/lsf/py_filter_brca_large_TEST_30p_20G_0-50000.err
+#SBATCH -J brca_0_50000
+#SBATCH --time=04:00:00
 #SBATCH --cpus-per-task=30
 #SBATCH --mem=20G
-python ./foreground_filter.py --processes 30
+python ./cohort_filter.py --processes 30 --start-id 0 --end-id 50000 --path-cohort /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/cohort_mutNone --whitelist-tag TEST --whitelist /cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_BRCA_1102_format.tsv --path-libsize /cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/expression_counts.libsize.tsv --normalizer-libsize 400000 --filters 0.0 1.0 2.0 3.0 5.0 10.0 --sample-pattern TCGA --do-normalize --do-overwrite
