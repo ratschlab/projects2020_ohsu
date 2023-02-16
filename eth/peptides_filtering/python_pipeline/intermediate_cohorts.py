@@ -37,7 +37,6 @@ cohort_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_
 time_res = timeit.default_timer() - start_time 
 print(time_res)
 
-
 # Cancer all raw files 
 start_time  = timeit.default_timer()
 path_cohort = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*'))
@@ -120,13 +119,13 @@ cancer_targets = normalization(cancer_targets, sample_cols, libsize, metadata )
 target_kmers = set(cancer_targets['kmer'])
 
 
-len(target_kmers)
+print(f'Unique cancer kmers'{ len(target_kmers)}')
 
 
-cancer_targets.shape
+print(f'Loading: Size cancer targets: { cancer_targets.shape}')
 
 
-cancer_targets.head()
+display(cancer_targets.head())
 
 
 # restrict expressed in target samples - hardcoded number of targets
@@ -138,14 +137,14 @@ cancer_targets = cancer_targets.loc[(cancer_targets[target_samples[0]] > 0) | \
                   (cancer_targets[target_samples[4]] > 0) ]
 
 
-cancer_targets.shape
+print(f'Restricting to 5 samples: {cancer_targets.shape}')
 
 
 cancer_targets = cancer_targets.drop_duplicates() # drop duplicates
 
 
 
-cancer_targets.shape
+print(f'Drop Duplicates: cancer target size {cancer_targets.shape}')
 
 
 # Load annotation - OK 12 min 
@@ -161,7 +160,7 @@ time_res = timeit.default_timer() - start_time
 print(time_res)
 
 
-len(cancer_targets_annotated)
+print(f'Loading: Annotated unique kmers: {len(cancer_targets_annotated)}')
 
 
 # Load cancer cohort - 11 minutes
@@ -177,7 +176,7 @@ time_res = timeit.default_timer() - start_time
 print(time_res)
 
 
-len(df_cancer_cohort)
+print(f'Loading: Cancer cohort intermediate file size {len(df_cancer_cohort)}')
 
 
 # Load GTEX cohort - OK 1h50
@@ -194,22 +193,12 @@ time_res = timeit.default_timer() - start_time
 print(time_res)
 
 
-len(df_gtex_cohort)
+print(f'Loading: Normal cohort intermediate file size {len(df_gtex_cohort)}')
 
 
 # ## Merge
 
-cancer_targets.shape
-
-
-len(cancer_targets_annotated)
-
-
-len(df_gtex_cohort)
-
-
-len(df_cancer_cohort)
-
+print(f'Prior to merge: cancer targets size {cancer_targets.shape}')
 
 df_gtex_cohort = pd.concat(df_gtex_cohort, axis = 0)
 
@@ -220,10 +209,10 @@ df_gtex_cohort = df_gtex_cohort.drop_duplicates()
 df_cancer_cohort = df_cancer_cohort.drop_duplicates()
 
 
-len(df_gtex_cohort)
+print(f'Concat and drop duplicates: Normal cohort {len(df_gtex_cohort)}')
 
 
-len(df_cancer_cohort)
+print(f'Concat and drop duplicates: Cancer cohort {len(df_cancer_cohort)}')
 
 
 # cohorts
@@ -243,7 +232,7 @@ cancer_targets_annotated = cancer_targets_annotated.drop_duplicates()
 cancer_targets = cancer_targets.merge(cancer_targets_annotated, on = 'kmer', how = 'left')
 
 
-cancer_targets.shape
+print(f'After merge annotation: cancer targets size {cancer_targets.shape}')
 
 
 # Merge cancer on coord and kmer col
@@ -252,10 +241,10 @@ cancer_targets = df_cancer_cohort.loc[:, metadata + \
                       if 'filter' in col]].merge(cancer_targets , on = metadata, how = 'right')
 
 
-cancer_targets.shape
+print(f'After merge Cancer cohort: cancer targets size {cancer_targets.shape}, merge on metadata columns')
 
 
-cancer_targets.head()
+display(cancer_targets.head())
 
 
 # Merge normals on kmer col
@@ -264,18 +253,14 @@ cancer_targets = df_gtex_cohort.loc[:, ['kmer'] + \
                       if 'filter' in col]].merge(cancer_targets , on = ['kmer'] , how = 'right')
 
 
-cancer_targets.head()
+print(f'After merge Normal cohort: cancer targets size {cancer_targets.shape}, merge on kmer columns')
 
-
-cancer_targets.shape
-
-
-cancer_targets.head()
+display(cancer_targets.head())
 
 
 intermediate_output = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/filtering_intermediate/complete_cancer_candidates_missing_162_45.tsv.gz'
 
+print(f'Save intermediate table to {intermediate_output}')
 
 cancer_targets.to_csv(intermediate_output, compression='gzip', sep = '\t', index=None)
-
 
