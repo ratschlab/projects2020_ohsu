@@ -12,7 +12,8 @@ import multiprocessing as mp
 import logging
 import sys 
 from pathlib import Path
-
+from helpers_filter import process_libsize
+from helpers_filter import normalisation
 
 base_cancer = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102'
 base_gtex = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref'
@@ -119,7 +120,7 @@ cancer_targets = normalization(cancer_targets, sample_cols, libsize, metadata )
 target_kmers = set(cancer_targets['kmer'])
 
 
-print(f'Unique cancer kmers'{ len(target_kmers)}')
+print(f'Unique cancer kmers { len(target_kmers)}')
 
 
 print(f'Loading: Size cancer targets: { cancer_targets.shape}')
@@ -258,7 +259,7 @@ print(f'After merge Normal cohort: cancer targets size {cancer_targets.shape}, m
 display(cancer_targets.head())
 
 
-intermediate_output = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/filtering_intermediate/complete_cancer_candidates_missing_162_45.tsv.gz'
+intermediate_output = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/filtering_intermediate/complete_cancer_candidates_missing_79.tsv.gz'
 
 print(f'Save intermediate table to {intermediate_output}')
 
