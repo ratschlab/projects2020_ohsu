@@ -1,7 +1,7 @@
 #!/bin/bash
 
 start_gene=0
-end_gene=60608
+end_gene=60609
 hours=24
 cpus=30
 mem=20G
@@ -33,6 +33,20 @@ elif  [ ${run_cohort} == 'brca' ]; then
 	path_libsize='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/expression_counts.libsize.tsv'
 	normalizer_libsize=400000
 	sample_pattern='TCGA'
+elif  [ ${run_cohort} == 'ov' ]; then
+        # ---- Cohort dependant Submission Parameters ----
+	job_name=ov_${start_gene}_${end_gene}
+	suffix=py_filter_ov_large
+	launch_script=send_foreground_filter_o.sh
+	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/lsf
+	# ---- Cohort dependant Run Parameters ----
+	path_cohort='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/cohort_mutNone'
+	whitelist_tag='full'
+	whitelist='/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCGA_foreground/sample_full_Ov_378_format.tsv'
+	path_libsize='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/expression_counts.libsize.tsv'
+	normalizer_libsize=400000
+	sample_pattern='TCGA'
+
 fi 
 
 
