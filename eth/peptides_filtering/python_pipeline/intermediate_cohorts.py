@@ -46,6 +46,7 @@ if __name__ == "__main__":
     start_time  = timeit.default_timer()
     cohort_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*', interm_cancer_cohort))
     time_res = timeit.default_timer() - start_time 
+    print(f'{len(cohort_cancer)} cohort cancer file')
     print(time_res)
 
     # Cancer all raw files 
@@ -59,6 +60,7 @@ if __name__ == "__main__":
     start_time  = timeit.default_timer()
     cohort_gtex = glob.glob(os.path.join(base_gtex,'cohort_mutNone/tmp_out_ref_batch_*', interm_gtex_cohort)) #path_gtex_cohort
     time_res = timeit.default_timer() - start_time 
+    print(f'{len(cohort_gtex)} cohort cancer file')
     print(time_res)
 
 
@@ -66,6 +68,7 @@ if __name__ == "__main__":
     start_time  = timeit.default_timer()
     annot_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*/ref_annot_kmer.gz'))
     time_res = timeit.default_timer() - start_time 
+    print(f'{len(annot_cancer)} cohort cancer file')
     print(time_res)
 
 
