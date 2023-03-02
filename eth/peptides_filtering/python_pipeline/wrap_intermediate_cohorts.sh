@@ -14,8 +14,8 @@ launch_script=send_inter_cohorts.sh
 # ----- ANALYSIS Parameters -----
 sample_type='ov'
 
-base_gtex='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref'
-interm_gtex_cohort='ref_graph_kmer_normalized_filtered_10-21overlap_.gz'
+base_normal='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref'
+interm_normal_cohort='ref_graph_kmer_normalized_filtered_10-21overlap_.gz'
 metadata=$( echo 'kmer' 'coord' 'junctionAnnotated' 'readFrameAnnotated' 'isCrossJunction')
 normalizer_libsize=400000
 if [ "${sample_type}" == 'brca' ]; then 
@@ -46,7 +46,7 @@ echo "#SBATCH -J ${job_name}" >> ${launch_script}
 echo "#SBATCH --time=${hours}:00:00" >> ${launch_script}
 echo "#SBATCH --cpus-per-task=${cpus}" >> ${launch_script}
 echo "#SBATCH --mem=${mem}" >> ${launch_script}
-cmd="python ./intermediate_cohorts.py --base-gtex ${base_gtex} --interm-gtex-cohort ${interm_gtex_cohort} --metadata ${metadata} --normalizer-libsize ${normalizer_libsize} --intermediate-output ${intermediate_output} --base-cancer ${base_cancer} --target-samples ${target_samples} --interm-cancer-cohort ${interm_cancer_cohort} --path-cancer-libsize ${path_cancer_libsize} "
+cmd="python ./intermediate_cohorts.py --base-normal ${base_normal} --interm-normal-cohort ${interm_normal_cohort} --metadata ${metadata} --normalizer-libsize ${normalizer_libsize} --intermediate-output ${intermediate_output} --base-cancer ${base_cancer} --cancer-targets ${target_samples} --interm-cancer-cohort ${interm_cancer_cohort} --path-cancer-libsize ${path_cancer_libsize} "
 echo $cmd >>  ${launch_script}
 
 echo "Output to ${log_file}"

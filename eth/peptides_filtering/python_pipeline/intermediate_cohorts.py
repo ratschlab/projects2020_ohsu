@@ -27,21 +27,22 @@ if __name__ == "__main__":
     parser.add_argument('--path-cancer-libsize', type=str, required=True, help='file with cancer libsize')
     parser.add_argument('--normalizer-libsize', type=int, required=True, help='normalizer')
     parser.add_argument('--metadata', nargs='+', type=str, required=False, default=None, help='Metadata of intermediate files')
-    parser.add_argument('--intermediate-output', type=str, required=True, help='name of output file with merged ready to filter matrix'
+    parser.add_argument('--intermediate-output', type=str, required=True, help='name of output file with merged ready to filter matrix') 
     args = parser.parse_args()
 
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     sample_lim = 1
-    base_cancer = args.base-cancer
-    base_normal = args.base-normal 
-    cancer_targets = args.cancer-targets
-    interm_cancer_cohort = args.interm-cancer-cohort
-    interm_normal_cohort = args.interm-normal-cohort
-    path_libsize = args.path-cancer-libsize
-    normalizer_libsize = args.normalizer-libsize
+    base_cancer = args.base_cancer
+    base_normal = args.base_normal 
+    cancer_targets = args.cancer_targets
+    interm_cancer_cohort = args.interm_cancer_cohort
+    interm_normal_cohort = args.interm_normal_cohort
+    path_libsize = args.path_cancer_libsize
+    normalizer_libsize = args.normalizer_libsize
     metadata = args.metadata
-    intermediate_output = args.intermediate-output
+    intermediate_output = args.intermediate_output
 
+    print('Start')
     # Cancer cohort files - 3 min 
     start_time  = timeit.default_timer()
     cohort_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*', interm_cancer_cohort))
