@@ -29,12 +29,13 @@ if __name__ == "__main__":
     parser.add_argument('--metadata', nargs='+', type=str, required=False, default=None, help='Metadata of intermediate files')
     parser.add_argument('--intermediate-output', type=str, required=True, help='name of output file with merged ready to filter matrix') 
     args = parser.parse_args()
-
+    
+    print(args)
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     sample_lim = 1
     base_cancer = args.base_cancer
     base_normal = args.base_normal 
-    cancer_targets = args.cancer_targets
+    target_samples = args.cancer_targets
     interm_cancer_cohort = args.interm_cancer_cohort
     interm_normal_cohort = args.interm_normal_cohort
     path_libsize = args.path_cancer_libsize
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 
     # GTEX cohort files 4.5 min
     start_time  = timeit.default_timer()
-    cohort_gtex = glob.glob(os.path.join(base_gtex,'cohort_mutNone/tmp_out_ref_batch_*', interm_gtex_cohort)) #path_gtex_cohort
+    cohort_gtex = glob.glob(os.path.join(base_normal,'cohort_mutNone/tmp_out_ref_batch_*', interm_normal_cohort)) #path_gtex_cohort
     time_res = timeit.default_timer() - start_time 
     print(f'{len(cohort_gtex)} cohort cancer file')
     print(time_res)

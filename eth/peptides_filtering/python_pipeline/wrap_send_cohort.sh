@@ -2,15 +2,15 @@
 
 start_gene=0
 end_gene=60609
-hours=24
-cpus=30
-mem=20G
+hours=120
+cpus=100
+mem=60G
 run_cohort=gtex
 
 if [ ${run_cohort} == 'gtex' ]; then
 	# ---- Cohort dependant Submission Parameters ----
 	job_name=back_${start_gene}_${end_gene}
-	suffix=py_filter_gtex_large
+	suffix=py_filter_gtex_large_mem
 	launch_script=send_cohort_filter.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf
 	# ---- Cohort dependant Run Parameters ----
