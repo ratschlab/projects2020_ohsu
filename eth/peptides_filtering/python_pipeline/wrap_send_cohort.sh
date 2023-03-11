@@ -1,21 +1,21 @@
 #!/bin/bash
 
-start_gene=0
-end_gene=60609
+start_gene=$1
+end_gene=$2 #60609
 hours=120
-cpus=100
+cpus=$3
 mem=60G
 run_cohort=gtex
 
 if [ ${run_cohort} == 'gtex' ]; then
 	# ---- Cohort dependant Submission Parameters ----
 	job_name=back_${start_gene}_${end_gene}
-	suffix=py_filter_gtex_large_mem
+	suffix=py_filter_gtex_large_mem_nooverlap
 	launch_script=send_cohort_filter.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf
 	# ---- Cohort dependant Run Parameters ----
 	path_cohort='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone'
-	whitelist_tag='10-21overlap'
+	whitelist_tag='10-21overlap_order'
 	whitelist='/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist'
 	path_libsize='/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/ARCHIV_keep_runs/GTEX2019_commit_v3_TEST_merged3_372a147_medium_run_pya.0.17.1_conf2_annot_ref_chrall_cap/expression_counts.libsize.tsv' 
 	normalizer_libsize=400000

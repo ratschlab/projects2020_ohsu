@@ -107,13 +107,13 @@ if __name__ == "__main__":
  #   do_normalize = True
 
 
-    input_args = [(batch_gene, args.whitelist, args.whitelist_tag, args.path_libsize, args.normalizer_libsize, args.filters, args.sample_pattern, args.do_overwrite, args.do_normalize) for batch_gene in path_cohort] 
     if args.start_id is not None and args.end_id is not None: 
         path_cohort=path_cohort[args.start_id:args.end_id]
     elif args.start_id is not None:
         path_cohort=path_cohort[args.start_id:]
     elif args.end_id is not None:
         path_cohort=path_cohort[:args.end_id]
+    input_args = [(batch_gene, args.whitelist, args.whitelist_tag, args.path_libsize, args.normalizer_libsize, args.filters, args.sample_pattern, args.do_overwrite, args.do_normalize) for batch_gene in path_cohort]
     print(args, flush=True)
     print(f'Start id: {args.start_id} and End id: {args.end_id}', flush=True)
     print(f'{len(path_cohort)} batches found', flush=True)
