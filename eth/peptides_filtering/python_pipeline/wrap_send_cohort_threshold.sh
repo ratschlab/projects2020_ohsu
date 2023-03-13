@@ -11,7 +11,7 @@ if [ ${run_cohort} == 'gtex' ]; then
 	# ---- Cohort dependant Submission Parameters ----
 	job_name=back_${start_gene}_${end_gene}
 	suffix=py_filter_gtex_large_mem_nooverlap
-	launch_script=send_cohort_filter.sh
+	launch_script=send_background_threshold.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf
 	# ---- Cohort dependant Run Parameters ----
 	path_cohort='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/cohort_mutNone'
@@ -24,7 +24,7 @@ elif  [ ${run_cohort} == 'brca' ]; then
 	# ---- Cohort dependant Submission Parameters ----
 	job_name=brca_${start_gene}_${end_gene}
 	suffix=py_filter_brca_large
-	launch_script=send_foreground_filter.sh
+	launch_script=send_foreground_threshold_b.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/lsf
 	# ---- Cohort dependant Run Parameters ----
 	path_cohort='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/cohort_mutNone'
@@ -37,7 +37,7 @@ elif  [ ${run_cohort} == 'ov' ]; then
         # ---- Cohort dependant Submission Parameters ----
 	job_name=ov_${start_gene}_${end_gene}
 	suffix=py_filter_ov_large
-	launch_script=send_foreground_filter_o.sh
+	launch_script=send_foreground_threshold_o.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/lsf
 	# ---- Cohort dependant Run Parameters ----
 	path_cohort='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/cohort_mutNone'
@@ -63,7 +63,7 @@ echo "#SBATCH -J ${job_name}" >> ${launch_script}
 echo "#SBATCH --time=${hours}:00:00" >> ${launch_script}
 echo "#SBATCH --cpus-per-task=${cpus}" >> ${launch_script}
 echo "#SBATCH --mem=${mem}" >> ${launch_script}
-cmd="python ./cohort_filter.py --processes ${cpus} --start-id ${start_gene} --end-id ${end_gene} --path-cohort ${path_cohort} --whitelist-tag ${whitelist_tag} --whitelist ${whitelist} --path-libsize ${path_libsize} --normalizer-libsize ${normalizer_libsize} --filters 0.0 1.0 2.0 3.0 5.0 10.0 --sample-pattern ${sample_pattern} --do-normalize " #--do-overwrite"
+cmd="python ./cohort_threshold.py --processes ${cpus} --start-id ${start_gene} --end-id ${end_gene} --path-cohort ${path_cohort} --whitelist-tag ${whitelist_tag} --whitelist ${whitelist} --path-libsize ${path_libsize} --normalizer-libsize ${normalizer_libsize} --filters 0.0 1.0 2.0 3.0 5.0 10.0 --sample-pattern ${sample_pattern} --do-normalize " #--do-overwrite"
 echo $cmd >>  ${launch_script}
 
 echo "Output to ${log_file}"
