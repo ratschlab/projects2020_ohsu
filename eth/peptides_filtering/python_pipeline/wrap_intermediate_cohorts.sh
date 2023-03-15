@@ -12,7 +12,7 @@ launch_script=send_inter_cohorts.sh
 
 
 # ----- ANALYSIS Parameters -----
-sample_type='brca'
+sample_type='ov'
 
 base_normal='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref'
 interm_normal_cohort='ref_graph_kmer_normalized_filtered_10-21overlap_order_.gz'
