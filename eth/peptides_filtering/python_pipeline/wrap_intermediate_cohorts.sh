@@ -4,7 +4,7 @@
 hours=48
 cpus=1
 mem=120G
-tag='order_r'
+tag='order_r_complete'
 suffix="pool_interm_${tag}"
 job_name='bix_matrix'
 
@@ -12,24 +12,24 @@ launch_script=send_inter_cohorts.sh
 
 
 # ----- ANALYSIS Parameters -----
-sample_type='ov'
+sample_type='brca'
 
 base_normal='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref'
-interm_normal_cohort='ref_graph_kmer_normalized_filtered_10-21overlap_order_.gz'
+interm_normal_cohort='ref_graph_kmer_normalized_filtered_10-21overlap_order_.gz' #threshold file
 metadata=$( echo 'kmer' 'coord' 'junctionAnnotated' 'readFrameAnnotated' 'isCrossJunction')
 normalizer_libsize=400000
 if [ "${sample_type}" == 'ov' ]; then 
 	base_cancer='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374'
 	target_samples=$(echo 'TCGA25131901A01R156513all' 'TCGA25131301A01R156513all' 'TCGA61200801A02R156813all' 'TCGA24143101A01R156613all' 'TCGA24229801A01R156913all')
-	interm_cancer_cohort='ref_graph_kmer_normalized_filtered_full_.gz'
+	interm_cancer_cohort='ref_graph_kmer_normalized_filtered_full_.gz' #threshold file
 elif [ "${sample_type}" == 'brca' ]; then 
     	base_cancer='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102'
 	target_samples=$(echo 'TCGAC8A12P01A11RA11507all' 'TCGAAOA0JM01A21RA05607all' 'TCGABHA18V01A11RA12D07all' 'TCGAA2A0D201A21RA03407all' 'TCGAA2A0SX01A12RA08407all')
-	interm_cancer_cohort='ref_graph_kmer_normalized_filtered__.gz'
+	interm_cancer_cohort='ref_graph_kmer_normalized_filtered__.gz' #threshold file
 fi
 path_cancer_libsize=${base_cancer}/expression_counts.libsize.tsv
 intermediate_folder=${base_cancer}/filtering_intermediate
-intermediate_output=${intermediate_folder}/complete_cancer_candidates_${tag}.tsv.gz
+intermediate_output=${intermediate_folder}/complete_cancer_candidates_${tag}.tsv.gz #table file
 mkdir -p ${intermediate_folder}
 
 # ----- Logging -----

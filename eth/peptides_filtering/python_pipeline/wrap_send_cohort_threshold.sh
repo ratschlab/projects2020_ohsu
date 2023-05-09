@@ -10,7 +10,7 @@ run_cohort=gtex
 if [ ${run_cohort} == 'gtex' ]; then
 	# ---- Cohort dependant Submission Parameters ----
 	job_name=back_${start_gene}_${end_gene}
-	suffix=py_filter_gtex_large_mem_nooverlap
+	suffix=py_filter_gtex_large_mem_nooverlap_completionmissing
 	launch_script=send_background_threshold.sh
 	log_dir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/GTEX2019_eth/GTEX2019_c4dd02c_conf2_RFall_ref/lsf
 	# ---- Cohort dependant Run Parameters ----
