@@ -24,33 +24,24 @@ from helpers_ffi import *
 # - GTEX?
 
 
-run_type = 'brca'
 
-# Inputs
+##### MAIN #####
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='run specifications')
+    parser.add_argument('--target-samples', type=str, nargs='+' required=True, help='IDs of samples to be filtered')
+    parser.add_argument('--basedir', type=str, required=False, default=None, help='Folder to save output')
+    parser.add_argument('--intermediate-output', type=str, required=True, help='intermediate table of foreground merged with the background kmers')
+    parser.add_argument('--filtering-id', type=str, required=True, help='Name of the filtering experiment performed')
+    parser.add_argument('--Threshold-target', nargs='+', type=str, required=True, default=None, 
+                        help='Number of reads to use as expression threshold in cohort sample')
+    parser.add_argument('--Threshold-cancer-cohort', nargs='+', type=str, required=True, default=None, help='Number of reads to use as expression threshold in each of the required cancer cohort samples')
+    parser.add_argument('N-samples-cancer', nargs='+', type=str, required=True, default=None, help='Number of samples required which need to pass the threshold in the cancer cohort')
+    parser.add_argument('Threshold-normal-cohort', nargs='+', type=str, required=True, default=None, help='Number of reads to use as expression threshold in at least one sample of the normal cohort')
+    parser.add_argument('N-samples-normal', nargs='+', type=str, required=True, default=None, help='Number of samples which need to have any number of reads in the normal cohort')
+    parser.add_argument('filter-annot', action="store_true", required=False, default=False)
+    args = parser.parse_args()
 
-if run_type == 'brca':
-    target_samples = ['TCGA-AO-A0JM-01A-21R-A056-07.all',
-                      'TCGA-C8-A12P-01A-11R-A115-07.all',
-                      'TCGA-BH-A18V-01A-11R-A12D-07.all',
-                      'TCGA-A2-A0D2-01A-21R-A034-07.all',
-                      'TCGA-A2-A0SX-01A-12R-A084-07.all']
-    basedir = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102'
-    intermediate_output = os.path.join(basedir, 'filtering_intermediate/complete_cancer_candidates_order_r.tsv.gz')
-elif run_type == 'ov':
-    target_samples = ['TCGA-25-1319-01A-01R-1565-13.all',
-                      'TCGA-25-1313-01A-01R-1565-13.all',
-                      'TCGA-61-2008-01A-02R-1568-13.all',
-                      'TCGA-24-1431-01A-01R-1566-13.all',
-                      'TCGA-24-2298-01A-01R-1569-13.all']
-    basedir = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374'
-    intermediate_output = os.path.join(basedir, 'filtering_intermediate/complete_cancer_candidates_order_r.tsv.gz')
-
-
-# Outputs
-filtering_id = 'filters_22March_order_wany_wAnnot'
-
-output_dir = os.path.join(basedir, 'filtering_samples', filtering_id)
-pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
+    print(args, flush=True)
 
 
 # Discussion 02/22 Choices
@@ -64,48 +55,53 @@ pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
 # + A case with not foreground
 
 
-# Parameters
-Threshold_target = [0.0]
-Threshold_cancer_cohort = [None, 0.0, 2.0, ] # choices = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
-N_samples_cancer = [None, 1, 5] # choices 1 to 1102 for BRCA and 374 for OV   
+# Parameters varying with the experimental setup #Should be used on the fly, but for now easier to extract variables
+Threshold_target = args.Threshold_target
+Threshold_cancer_cohort = [float(i) if i is not None else None for i in args.Threshold_cancer_cohort] # choices = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
+N_samples_cancer = [int(i) if i is not None else None for i in args.N_samples_cancer] # choices 1 to 1102 for BRCA and 374 for OV   
 
-Threshold_normal_cohort = [0.0, 1.0, 3.0, None]   # choices = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
-N_samples_normal = [1, 2, 10, None] #choices 1 to max number of samples in Normal whitelist
+Threshold_normal_cohort = [float(i) if i is not None else None for i in args.Threshold_normal_cohort]   # choices = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
+N_samples_normal = [int(i) if i is not None else None for i in args.N_samples_normal] #choices 1 to max number of samples in Normal whitelist
+filter_annot = args.filter_annot
+basedir = args.basedir
+target_samples = args.target_samples
+intermediate_output = args.intermediate_output 
+filtering_id = args.filtering_id
 
+             
+                        
+output_dir = os.path.join(basedir, 'filtering_samples', filtering_id)
+pathlib.Path(output_dir).mkdir(exist_ok=True, parents=True)
+                        
+# Parameters fixed for now, dependant on the previous filtering scripts
 tag_cancer = 'cancerCohort'
 tag_normal = 'gtexCohort'
-
-
 tag_prefix = 'G_'
 mutation_mode = 'ref'
 save_tag = 'GtexCohort'
-
 metadata_save = ['kmer', 'coord', 'junctionAnnotated', 'readFrameAnnotated']
 
-filter_annot = False
 
 
 # Load matrix to be filtered
 df_load = pd.read_csv(intermediate_output, sep = '\t')
-print(f'Loaded {intermediate_output}')
+print(f'Loaded {intermediate_output}', flush=True)
 df_load = df_load.rename({'batch': f'batch_{run_type}'}, axis = 1)
 df_load.shape
-
-
 df_load.head()
-df_load.shape
+print(df_load.shape, flush=True)
 
 
 for cancer_sample_ori in target_samples: # TODO update
     # Sample naming
     target_sample = cancer_sample_ori.replace('-', '').replace('.', '')
     cancer_sample_ori = cancer_sample_ori.replace('.all', '')
-    print(f'-------- processing {target_sample} -------- \n')
+    print(f'-------- processing {target_sample} -------- \n', flush=True)
     
     # Summary file for sample
     summary_file = f'{tag_prefix}filtered_df_{cancer_sample_ori}_samp_chrt_norm_mot.tsv'
     summary_path = os.path.join(output_dir, summary_file)
-    print(f'Saving to summary file {summary_path}')
+    print(f'Saving to summary file {summary_path}', flush=True)
     
 
     df_expr = []
@@ -203,7 +199,7 @@ for cancer_sample_ori in target_samples: # TODO update
                                                         f'FiltNormals{save_tag}'
                                                         f'Cohortlim{threshold_normal_cohort_save}'
                                                         f'Across{n_samples_normal_save}.tsv.gz'))
-                        print(f'Saving outputs to: {base_path_final} \n')
+                        print(f'Saving outputs to: {base_path_final} \n', flush=True)
                         df.loc[:, metadata_save].to_csv(base_path_final, compression = 'gzip', index = None, sep = '\t')
 
 
