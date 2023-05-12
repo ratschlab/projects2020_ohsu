@@ -57,7 +57,7 @@ if __name__ == "__main__":
 
 
     # Parameters varying with the experimental setup #Should be used on the fly, but for now easier to extract variables
-    Threshold_target = args.Threshold_target
+    Threshold_target = [float(i) if i != 'None' else None for i in args.Threshold_target]
     Threshold_cancer_cohort = [float(i) if i != 'None' else None for i in args.Threshold_cancer_cohort] # choices = [0.0, 1.0, 2.0, 3.0, 5.0, 10.0]
     N_samples_cancer = [int(i) if i != 'None' else None for i in args.N_samples_cancer] # choices 1 to 1102 for BRCA and 374 for OV   
 
@@ -69,6 +69,10 @@ if __name__ == "__main__":
     intermediate_output = args.intermediate_output 
     filtering_id = args.filtering_id
 
+    print(Threshold_target, flush=True)
+    print(Threshold_cancer_cohort, flush=True)
+    print(N_samples_cancer, flush=True)
+    print(Threshold_normal_cohort, flush=True)
     print(N_samples_normal, flush=True)
 
 
