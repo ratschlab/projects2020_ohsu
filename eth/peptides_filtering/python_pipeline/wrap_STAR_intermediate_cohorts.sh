@@ -12,7 +12,7 @@ launch_script=send_star_inter_cohorts.sh
 
 
 # ----- ANALYSIS Parameters -----
-sample_type='brca'
+sample_type='ov'
 
 
 path_star='/cluster/work/grlab/projects/GTEx/rna_gencode32_realign/results'
