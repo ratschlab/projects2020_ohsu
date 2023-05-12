@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument('--intermediate-output', type=str, required=True, help='name of output file with merged ready to filter matrix') 
     args = parser.parse_args()
     
-    print(args)
+    print(args, flush=True)
     expr_matrix = 'ref_graph_kmer_JuncExpr'
     sample_lim = 1
     base_cancer = args.base_cancer
@@ -43,48 +43,48 @@ if __name__ == "__main__":
     metadata = args.metadata
     intermediate_output = args.intermediate_output
 
-    print('Start')
+    print('Start', flush=True)
     # Cancer cohort files - 3 min 
     start_time  = timeit.default_timer()
     cohort_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*', interm_cancer_cohort))
     time_res = timeit.default_timer() - start_time 
-    print(f'{len(cohort_cancer)} cohort cancer file')
-    print(time_res)
+    print(f'{len(cohort_cancer)} cohort cancer file', flush=True)
+    print(time_res, flush=True)
 
     # Cancer all raw files 
     start_time  = timeit.default_timer()
     path_cohort = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*'))
     time_res = timeit.default_timer() - start_time 
-    print(time_res)
+    print(time_res, flush=True)
 
 
     # GTEX cohort files 4.5 min
     start_time  = timeit.default_timer()
     cohort_gtex = glob.glob(os.path.join(base_normal,'cohort_mutNone/tmp_out_ref_batch_*', interm_normal_cohort)) #path_gtex_cohort
     time_res = timeit.default_timer() - start_time 
-    print(f'{len(cohort_gtex)} cohort gtex file')
-    print(time_res)
+    print(f'{len(cohort_gtex)} cohort gtex file', flush=True)
+    print(time_res, flush=True)
 
 
     # Annot
     start_time  = timeit.default_timer()
     annot_cancer = glob.glob(os.path.join(base_cancer, 'cohort_mutNone/tmp_out_ref_batch_*/ref_annot_kmer.gz'))
     time_res = timeit.default_timer() - start_time 
-    print(f'{len(annot_cancer)} cohort annot cancer file')
-    print(time_res)
+    print(f'{len(annot_cancer)} cohort annot cancer file', flush=True)
+    print(time_res, flush=True)
 
 
     # Out directory
     outdir = os.path.join(base_cancer, 'filtered_cancer') 
     Path(outdir).mkdir(parents=True, exist_ok=True)
-    print(f'Creating directory {outdir}')
+    print(f'Creating directory {outdir}', flush=True)
 
 
     # Sample output dir
     for target_sample in target_samples:
         outdir_sample = os.path.join(outdir, target_sample)
         Path(outdir).mkdir(parents=True, exist_ok=True)
-        print(f'Creating directory {outdir_sample}')
+        print(f'Creating directory {outdir_sample}', flush=True)
 
 
     # # Create large intermediate table
@@ -120,7 +120,7 @@ if __name__ == "__main__":
     cancer_targets = pd.concat(df_expr, axis = 0)
 
     time_res = timeit.default_timer() - start_time 
-    print(time_res)
+    print(time_res, flush=True)
 
 
     metadata = metadata + ['batch']
@@ -135,10 +135,10 @@ if __name__ == "__main__":
     target_kmers = set(cancer_targets['kmer'])
 
 
-    print(f'Unique cancer kmers { len(target_kmers)}')
+    print(f'Unique cancer kmers { len(target_kmers)}', flush=True)
 
 
-    print(f'Loading: Size cancer targets: { cancer_targets.shape}')
+    print(f'Loading: Size cancer targets: { cancer_targets.shape}', flush=True)
 
 
     print(cancer_targets.head())
@@ -153,14 +153,14 @@ if __name__ == "__main__":
                       (cancer_targets[target_samples[4]] > 0) ]
 
 
-    print(f'Restricting to 5 samples: {cancer_targets.shape}')
+    print(f'Restricting to 5 samples: {cancer_targets.shape}', flush=True)
 
 
     cancer_targets = cancer_targets.drop_duplicates() # drop duplicates
 
 
 
-    print(f'Drop Duplicates: cancer target size {cancer_targets.shape}')
+    print(f'Drop Duplicates: cancer target size {cancer_targets.shape}', flush=True)
 
 
     # Load annotation - OK 12 min 
@@ -173,32 +173,32 @@ if __name__ == "__main__":
         annot = set(annot['kmer'])
         cancer_targets_annotated.update(target_kmers.intersection(annot))
     time_res = timeit.default_timer() - start_time 
-    print(time_res)
+    print(time_res, flush=True)
 
 
-    print(f'Loading: Annotated unique kmers: {len(cancer_targets_annotated)}')
+    print(f'Loading: Annotated unique kmers: {len(cancer_targets_annotated)}', flush=True)
 
 
     # Load cancer cohort - 11 minutes
     start_time  = timeit.default_timer()
     df_cancer_cohort = []
-    print(f'Reading cohort cancer')
+    print(f'Reading cohort cancer', flush=True)
     for path in cohort_cancer:
         tmp_cancer = pd.read_csv(path, sep = ',') 
         tmp_cancer = tmp_cancer.loc[tmp_cancer['isCrossJunction'] == True]
         tmp_cancer['batch'] = path.split('/')[-2].split('_')[-1]
         df_cancer_cohort.append(tmp_cancer)
     time_res = timeit.default_timer() - start_time 
-    print(time_res)
+    print(time_res, flush=True)
 
 
-    print(f'Loading: Cancer cohort intermediate file size {len(df_cancer_cohort)}')
+    print(f'Loading: Cancer cohort intermediate file size {len(df_cancer_cohort)}', flush=True)
 
 
     # Load GTEX cohort - OK 1h50
     start_time  = timeit.default_timer()
     df_gtex_cohort = []
-    print(f'Reading cohort gtex')
+    print(f'Reading cohort gtex', flush=True)
     for idx, path in enumerate(cohort_gtex):
         tmp_gtex = pd.read_csv(path, sep = ',')
         tmp_kmer = set(tmp_gtex['kmer'])
@@ -206,15 +206,15 @@ if __name__ == "__main__":
         tmp_gtex = tmp_gtex.set_index('kmer').loc[tmp_kmer].reset_index()
         df_gtex_cohort.append(tmp_gtex)
     time_res = timeit.default_timer() - start_time 
-    print(time_res)
+    print(time_res, flush=True)
 
 
-    print(f'Loading: Normal cohort intermediate file size {len(df_gtex_cohort)}')
+    print(f'Loading: Normal cohort intermediate file size {len(df_gtex_cohort)}', flush=True)
 
 
     # ## Merge
 
-    print(f'Prior to merge: cancer targets size {cancer_targets.shape}')
+    print(f'Prior to merge: cancer targets size {cancer_targets.shape}', flush=True)
 
     df_gtex_cohort = pd.concat(df_gtex_cohort, axis = 0)
 
@@ -225,10 +225,10 @@ if __name__ == "__main__":
     df_cancer_cohort = df_cancer_cohort.drop_duplicates()
 
 
-    print(f'Concat and drop duplicates: Normal cohort {len(df_gtex_cohort)}')
+    print(f'Concat and drop duplicates: Normal cohort {len(df_gtex_cohort)}', flush=True)
 
 
-    print(f'Concat and drop duplicates: Cancer cohort {len(df_cancer_cohort)}')
+    print(f'Concat and drop duplicates: Cancer cohort {len(df_cancer_cohort)}', flush=True)
 
 
     # cohorts
@@ -248,7 +248,7 @@ if __name__ == "__main__":
     cancer_targets = cancer_targets.merge(cancer_targets_annotated, on = 'kmer', how = 'left')
 
 
-    print(f'After merge annotation: cancer targets size {cancer_targets.shape}')
+    print(f'After merge annotation: cancer targets size {cancer_targets.shape}', flush=True)
 
 
     # Merge cancer on coord and kmer col
@@ -257,10 +257,10 @@ if __name__ == "__main__":
                           if 'filter' in col]].merge(cancer_targets , on = metadata, how = 'right')
 
 
-    print(f'After merge Cancer cohort: cancer targets size {cancer_targets.shape}, merge on metadata columns')
+    print(f'After merge Cancer cohort: cancer targets size {cancer_targets.shape}, merge on metadata columns', flush=True)
 
 
-    print(cancer_targets.head())
+    print(cancer_targets.head(), flush=True)
 
 
     # Merge normals on kmer col
@@ -269,13 +269,13 @@ if __name__ == "__main__":
                           if 'filter' in col]].merge(cancer_targets , on = ['kmer'] , how = 'right')
 
 
-    print(f'After merge Normal cohort: cancer targets size {cancer_targets.shape}, merge on kmer columns')
+    print(f'After merge Normal cohort: cancer targets size {cancer_targets.shape}, merge on kmer columns', flush=True)
 
     print(cancer_targets.head())
 
 
 
-    print(f'Save intermediate table to {intermediate_output}')
+    print(f'Save intermediate table to {intermediate_output}', flush=True)
 
     cancer_targets.to_csv(intermediate_output, compression='gzip', sep = '\t', index=None)
 
