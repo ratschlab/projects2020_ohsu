@@ -4,5 +4,6 @@ Count number of samples assing a threshold
 Join the background on the foreground table
 2) wrap_intermediate_cohorts.sh intermediate_cohorts.py 
 Filter depending on filter criteria defined
-3) p20230216_d_filtering_table_thresholds-updated.ipynb
+3) wrap_filtering_from_intermed.sh filtering_from_intermediate.py (formerly
+p20230216_d_filtering_table_thresholds-updated.ipynb)
 

@@ -83,12 +83,13 @@ def h5_expression(expression_h5, chrm, strand, jx_idx_h5, index_whitelist_sample
 def get_junction_counts(junction_start, junction_end, 
                         chrm, strand, expression_h5, 
                         index_whitelist_samples, lib_75_per_sample, normalizer):
-    strand_complementary = {'-' : '+', '-': '+'}
+    strand_complementary = {'+':'-', '-':'+'}
     
     # Indexes 
     jx_idx_h5 = h5_indexes(junction_start, junction_end, chrm, strand, expression_h5)
     if len(jx_idx_h5) == 0:
-        jx_idx_h5 = h5_indexes(junction_start, junction_end, chrm, strand_complementary[strand], expression_h5)
+        strand = strand_complementary[strand]
+        jx_idx_h5 = h5_indexes(junction_start, junction_end, chrm, strand, expression_h5)
 
     # Expression     
     if len(jx_idx_h5 >0):
@@ -98,7 +99,7 @@ def get_junction_counts(junction_start, junction_end,
                                           jx_idx_h5, index_whitelist_samples, lib_75_per_sample, normalizer)
     else:
         normalized_counts = None
-        print(f'Error: No {chrm}:{strand}:junction_start {chrm}:{strand}:junction_start matching {junction_start}:{junction_end}')
+        print(f'Error: No {chrm}:strand:junction_start {chrm}:strand:junction_end matching {junction_start}:{junction_end}')
     return normalized_counts
 
 
