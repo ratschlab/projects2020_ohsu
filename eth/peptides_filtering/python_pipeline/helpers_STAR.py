@@ -99,7 +99,7 @@ def get_junction_counts(junction_start, junction_end,
                                           jx_idx_h5, index_whitelist_samples, lib_75_per_sample, normalizer)
     else:
         normalized_counts = None
-        print(f'Error: No {chrm}:strand:junction_start {chrm}:strand:junction_end matching {junction_start}:{junction_end}')
+        print(f'Error: No {chrm}:strand:junction_start {chrm}:strand:junction_end matching {junction_start}:{junction_end}', flush=True)
     return normalized_counts
 
 
@@ -123,7 +123,7 @@ def collect_expression_thresholds(libsize, whitelist, normalizer, filter_thresho
     libsize_normal, whitelist_normal = read_libsize_whitelist(libsize, whitelist)
     counter = 0
     for chrm, jxS in chr_jx.items(): # Per chromosome
-        print(f'{chrm}: with {len(jxS)} junctions')
+        print(f'{chrm}: with {len(jxS)} junctions', flush=True)
         # Expression file
         expression_h5, index_whitelist_samples, lib_75_per_sample = preprocess_STAR_projected(chrm, 
                                                                                           path_star, 
@@ -133,7 +133,7 @@ def collect_expression_thresholds(libsize, whitelist, normalizer, filter_thresho
         for jx in jxS: # Per junction
             counter +=1
             if counter % 500 == 0:
-                print(f'....{counter}')
+                print(f'....{counter}', flush=True)
             junction_start = int(jx.split(':')[0])
             junction_end = int(jx.split(':')[1])
             normalized_counts = get_junction_counts(junction_start, junction_end, 
@@ -147,6 +147,6 @@ def collect_expression_thresholds(libsize, whitelist, normalizer, filter_thresho
             res.append(metadata)
 
         expression_h5.close() 
-        print(start_time - timeit.default_timer())
+        print(f'{timeit.default_timer() - start_time} seconds', flush=True)
         
     return res
