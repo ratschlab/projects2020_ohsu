@@ -103,23 +103,24 @@ if __name__ == "__main__":
         # Sample naming
         target_sample = cancer_sample_ori.replace('-', '').replace('.', '')
         cancer_sample_ori = cancer_sample_ori.replace('.all', '')
-        print(f'-------- processing {target_sample} -------- \n', flush=True)
+        print(f'-------- processing {target_sample} -------- \n')
 
         # Summary file for sample
         summary_file = f'{tag_prefix}filtered_df_{cancer_sample_ori}_samp_chrt_norm_mot.tsv'
         summary_path = os.path.join(output_dir, summary_file)
-        print(f'Saving to summary file {summary_path}', flush=True)
+        print(f'Saving to summary file {summary_path}')
 
 
-        df_expr = []
-        report_count = [] 
-        report_steps = []
         for threshold_target in Threshold_target:
             for threshold_cancer_cohort in Threshold_cancer_cohort:
                 for n_samples_cancer in N_samples_cancer:
                     for threshold_normal_cohort in Threshold_normal_cohort:
                         for n_samples_normal in N_samples_normal:
-                            if (n_samples_cancer is None) ^ (threshold_cancer_cohort is None):
+
+                            df_expr = []
+                            report_count = [] 
+                            report_steps = []
+                            if (n_samples_cancer is None) and (threshold_cancer_cohort != 0): #Only None, None as condition TODO
                                 continue
                             if (n_samples_normal is None) and (threshold_normal_cohort is None):
                                 continue
@@ -131,7 +132,7 @@ if __name__ == "__main__":
 
                             df = df_load.copy()
                             # Make correction for number samples passing theshold in cohort. We want to exclude the target sample in counting
-                            if (n_samples_cancer is not None) and (threshold_cancer_cohort is not None):
+                            if (n_samples_cancer is not None): #TODO 
                                 df[adjusted_threshold_col] = df[get_threshold_colname(threshold_cancer_cohort, tag_cancer)]
                                 df.loc[df[target_sample] >= threshold_cancer_cohort, adjusted_threshold_col] -=1 
 
@@ -144,9 +145,13 @@ if __name__ == "__main__":
                             output_count(df, report_count, report_steps, 'Filter_Sample')
 
 
-                            # Filter for cancer cancer cohort 
-                            if (n_samples_cancer is not None) and (threshold_cancer_cohort is not None):
+                            # Filter for cancer cancer cohort #TODO
+                            if (n_samples_cancer is not None): #skip if both 
                                 df = filter_cancer_cohort(df, n_samples_cancer, adjusted_threshold_col)
+                            if threshold_cancer_cohort: 
+                                threshold_cancer_cohort_save = threshold_cancer_cohort 
+                            else: 
+                                threshold_cancer_cohort_save = 'Any'
                             output_count(df, report_count, report_steps, 'Filter_Sample_Cohort')
 
 
@@ -197,21 +202,19 @@ if __name__ == "__main__":
 
 
                             # Save outputs 
-                            # outpaths
+                            # outpaths #TODO
                             base_path_final = os.path.join(output_dir,
                                                            (f'{tag_prefix}{cancer_sample_ori}_'
                                                             f'SampleLim{threshold_target}'
-                                                            f'CohortLim{threshold_cancer_cohort}'
+                                                            f'CohortLim{threshold_cancer_cohort_save}'
                                                             f'Across{n_samples_cancer}_'
                                                             f'FiltNormals{save_tag}'
                                                             f'Cohortlim{threshold_normal_cohort_save}'
                                                             f'Across{n_samples_normal_save}.tsv.gz'))
-                            print(f'Saving outputs to: {base_path_final} \n', flush=True)
+                            print(f'Saving outputs to: {base_path_final} \n')
                             df.loc[:, metadata_save].to_csv(base_path_final, compression = 'gzip', index = None, sep = '\t')
 
-
-        save_output_count(summary_path, report_count, report_steps, '', cancer_sample_ori, mutation_mode,
-                          threshold_target, threshold_cancer_cohort, n_samples_cancer,
-                              threshold_normal_cohort, n_samples_normal, save_tag)
-
-
+                            #TODO 
+                            save_output_count(summary_path, report_count, report_steps, '', cancer_sample_ori, mutation_mode,
+                                              threshold_target, threshold_cancer_cohort_save, n_samples_cancer,
+                                                  threshold_normal_cohort_save, n_samples_normal_save, save_tag)
