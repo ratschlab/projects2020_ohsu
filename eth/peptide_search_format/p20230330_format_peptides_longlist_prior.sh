@@ -3,7 +3,7 @@ basedir=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCE
 
 # Generate all the longlists #all samples?
 cd ${basedir}filtering_samples/filters_22March_order_wany_wAnnot
-zcat G_TCGA*Filt*tsv.gz |  cut -f1-2 -d '       ' |grep -v kmer | smt_peptides_longlist_prior.shrt | uniq > G_TCGA_Allsamples_all_exp_kmer_longlist.tsv
+zcat G_TCGA*Filt*tsv.gz |  cut -f1-2 -d '       ' |grep -v kmer | sort | uniq > G_TCGA_Allsamples_all_exp_kmer_longlist.tsv
 
 # Generate the metadata for the samples of interest
 cd ${basedir}

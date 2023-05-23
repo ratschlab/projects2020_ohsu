@@ -98,7 +98,18 @@ if __name__ == "__main__":
     df_load.head()
     print(df_load.shape, flush=True)
 
+    # prepare data
+    for threshold_normal_cohort in Threshold_normal_cohort:
+        if threshold_normal_cohort is not None: 
+            reformat_col =  get_threshold_colname(threshold_normal_cohort, tag_normal)
+            df_load[reformat_col] = df_load[reformat_col].fillna(0.0)
 
+    for threshold_cancer_cohort in Threshold_cancer_cohort:
+        if threshold_cancer_cohort is not None: 
+            reformat_col =  get_threshold_colname(threshold_cancer_cohort, tag_cancer)
+            df_load[reformat_col] = df_load[reformat_col].fillna(0.0)
+    
+    # Filter
     for cancer_sample_ori in target_samples: # TODO update
         # Sample naming
         target_sample = cancer_sample_ori.replace('-', '').replace('.', '')
@@ -131,6 +142,20 @@ if __name__ == "__main__":
 
 
                             df = df_load.copy()
+                            
+                            # Expression in gtex cohort >= threshold 
+                            if threshold_normal_cohort is not None:
+                                recurrence_custom =  max_recurrence_over_kmer(df, 
+                                                                              get_threshold_colname(threshold_normal_cohort, tag_normal), 
+                                                                              max_threshold_col)
+                            # Expression in gtex cohort > 0  
+                            recurrence_custom_base = max_recurrence_over_kmer(df, 
+                                                                              get_threshold_colname(0.0, tag_normal),
+                                                                              max_threshold_col_base) 
+
+
+
+                            
                             # Make correction for number samples passing theshold in cohort. We want to exclude the target sample in counting
                             if (n_samples_cancer is not None): #TODO 
                                 df[adjusted_threshold_col] = df[get_threshold_colname(threshold_cancer_cohort, tag_cancer)]
@@ -153,20 +178,6 @@ if __name__ == "__main__":
                             else: 
                                 threshold_cancer_cohort_save = 'Any'
                             output_count(df, report_count, report_steps, 'Filter_Sample_Cohort')
-
-
-
-                            # Expression in gtex cohort >= threshold 
-                            if threshold_normal_cohort is not None:
-                                recurrence_custom =  max_recurrence_over_kmer(df, 
-                                                                              get_threshold_colname(threshold_normal_cohort, tag_normal), 
-                                                                              max_threshold_col)
-
-                            # Expression in gtex cohort > 0  
-                            recurrence_custom_base = max_recurrence_over_kmer(df, 
-                                                                              get_threshold_colname(0.0, tag_normal),
-                                                                              max_threshold_col_base) 
-
 
 
 

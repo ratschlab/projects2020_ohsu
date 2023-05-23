@@ -13,8 +13,8 @@ launch_script=send_filtering_from_intermediate.py
 
 # ----- ANALYSIS Parameters -----
 star_run='False'
-sample_type='brca'
-filtering_id='filters_15May_order_wany_cp_wAnnot'
+sample_type='ov'
+filtering_id='filters_19May_order_5ge_wAnnot'
 if [ "${sample_type}" == 'ov' ]; then
 	base_cancer='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374'
 	samples='TCGA-25-1319-01A-01R-1565-13.all TCGA-25-1313-01A-01R-1565-13.all TCGA-61-2008-01A-02R-1568-13.all TCGA-24-1431-01A-01R-1566-13.all TCGA-24-2298-01A-01R-1569-13.all'

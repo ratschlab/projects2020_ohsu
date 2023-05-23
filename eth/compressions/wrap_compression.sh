@@ -37,7 +37,7 @@ for i in {1..9}; do for j in {0..9}; do
 	echo "#SBATCH --time=${hours}:00:00" >> ${launch_script}
 	echo "#SBATCH --cpus-per-task=${cpus}" >> ${launch_script}
 	echo "#SBATCH --mem=${mem}" >> ${launch_script}
-	cmd="while read line; do for part in \${line}/*Expr*/* ; do new_name=\$(echo \$part | sed 's,\.gz,\.lz,g') ; cat \$part | gzip -d -c | plzip -6 -o \$new_name ; if [ -f \$new_name ] ; then echo \$part; chmod 440 \${new_name} ; chmod 660 \${part}; rm \${part} ;fi; done; done < files_${i}${j}.txt"
+	cmd="while read line; do for part in \${line}/*Expr*/*gz ; do new_name=\$(echo \$part | sed 's,\.gz,\.lz,g') ; cat \$part | gzip -d -c | plzip -6 -f -o \$new_name ; if  [ -f \$new_name ] && [ -s \$new_name ] ; then echo \$part; chmod 440 \${new_name} ; chmod 660 \${part}; rm \${part} ;fi; done; done < files_${i}${j}.txt"
 #echo "$cmd"
 	echo $cmd >>  ${launch_script}
 
