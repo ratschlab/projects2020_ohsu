@@ -1,6 +1,6 @@
 #!/bin/bash
-sample_type="brca"
-STAR='_STAR'
+sample_type="ov"
+STAR=''
 filter_pattern=filtering_samples/filters_19May_order_5ge_wAnnot
 make_longlist=False
 extract_metadata=True
