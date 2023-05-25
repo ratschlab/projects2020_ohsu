@@ -316,16 +316,20 @@ def print_stats(print_, kmer, pep_seq, strand, pep_orig_coord, pep_modi_coord, j
         print('peptide length', len(pep_seq))
 
 
-def readlines_custom(file_):
-    with gzip.open(file_, 'rb') as fp: 
-        lines = fp.readlines()
-        for j, line in enumerate(lines):
-            line = line.decode().replace('\n', '').split('\t')
-            if '\\t' in line[0]:
-                splitted_p = line[0].split('\\t') #correction temp
-                kmer, coord, peptide = splitted_p
-                line = [kmer, coord, peptide] + line[1:]
-            else:
-                line = [kmer, coord] + line #Use previous kmer instance
-            lines[j] = line
-    return lines
+def readlines_custom(file_=None, pandas_df=None):
+    if file_ is not None:
+        with gzip.open(file_, 'rb') as fp: 
+            lines = fp.readlines()
+            for j, line in enumerate(lines):
+                line = line.decode().replace('\n', '').split('\t')
+                if '\\t' in line[0]:
+                    splitted_p = line[0].split('\\t') #correction temp
+                    kmer, coord, peptide = splitted_p
+                    line = [kmer, coord, peptide] + line[1:]
+                else:
+                    line = [kmer, coord] + line #Use previous kmer instance
+                lines[j] = line
+        return lines
+    elif pandas_df is not None:
+        lines = pandas_df.iterrows()
+        return lines
