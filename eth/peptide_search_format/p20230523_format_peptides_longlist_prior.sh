@@ -1,7 +1,7 @@
 #!/bin/bash
-sample_type="ov"
+sample_type="brca"
 STAR=''
-filter_pattern=filtering_samples/filters_19May_order_5ge_wAnnot
+filter_pattern=filtering_samples/filters_19May_order_5ge_wAnnot_GPstar
 make_longlist=False
 extract_metadata=True
 if [ "${sample_type}" == "ov" ] ; then 
@@ -29,8 +29,8 @@ if [ "${extract_metadata}" == "True" ]; then
 	for sample in ${sample_list}; do
 		metadata_pool=${base_dir}/tmp_pooled_ref_sample_peptides_meta.tsv
 		extracted_metadata=${base_dir}/${filter_pattern}/G_${sample}_grep_metadata_raw.tsv
-		input_longlist=${base_dir}/${filter_pattern}${STAR}/G_${sample}_kmer_longlist.tsv.gz
 		input_longlist2=${base_dir}/${filter_pattern}${STAR}/G_${sample}_kmer_longlist.tsv
+		input_longlist=${input_longlist2}.gz
 		rm ${extracted_metadata}
 		echo "...extract metadata ${filter_pattern}${STAR} $sample"
 		gunzip ${input_longlist}
