@@ -1,44 +1,26 @@
-
 #!/bin/bash
 
-ppmError=40
-overwrite=T
-# path for ETH extract peptide folder
-folder=/eternity/data/eth_pnnl_ohsu_datashare/andy/results/20230712-eth-ohsu-brca/20230712-extract-peptides
+crux_home=~/util/crux-4.1.Linux.x86_64/bin/crux
+scripts_home=/cluster/home/prelotla/github/projects2020_immunopepper_analysis/pepQuery/tryspine_digestion/andy_lin_scripts
+gitfolder=${PWD}
 
-for f in $folder/eth/G*;
+fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list.txt
+fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2023_data/OHSU_fasta_list.txt
+basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics
+outdir=${basedir}/neighbors_joint
+mkdir -p ${outdir}
+
+overwrite='T'
+h_sapien_fasta=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_200707/tests/pepquery/tutorial_data/tests/data_simulated/data/pepquery_mode/uniprot-proteome_UP000005640.fasta
+while read f;
 do
+    curF=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
+
+    pepsimdir=${outdir}/${sample}
+    ohsu_dir=${basedir}/OSHU/${sample}
+    eth_dir=${basedir}/ETH/${sample}
+    cd ${pepsimdir} 
     echo $f
-    curF=$(basename $f)
-	tmp_file=${curF/G_/}
-    mkdir $tmp_file
-    cd $tmp_file
-
-    # generate irrelevant peptides
-    ~/projects/ohsu-eth-collab/bin/crux-toolkit/Release/src/crux tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/irrelevant ~/projects/ohsu-eth-collab/fasta/hsapiens.fasta tide-indicies/irrelevant
-    echo
-
-    # generate relevant index
-    # TODO NOTE USING -filter-unique.fasta here and -filter.fasta below.
-    # This is done to generate neighbors faster
-	ohsu_file=${curF/G/J}
-    cat $folder/eth/$curF/peptide-extracted-filter-unique.fasta $folder/ohsu/$ohsu_file/peptide-extracted-filter-unique.fasta >relevant-peptides.fasta
-    ~/projects/ohsu-eth-collab/bin/crux-toolkit/Release/src/crux tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/relevant relevant-peptides.fasta tide-indicies/relevant 
-    echo
-
-    # generate neighbors
-    python3 ~/projects/ohsu-eth-collab/bin/subset-neighbor-search/pepsim.py --min-score 0.25 --frag-bin-size 0.02 --mz-thresh $ppmError tide-indicies/relevant/tide-index.peptides.txt tide-indicies/irrelevant/tide-index.peptides.txt >simPeptides.txt
-    echo
-
-    # legacy command code. In practice this does not do anything except convert to a fasta file
-    python3 ~/projects/ohsu-eth-collab/bin/filter-similar-peptides.py simPeptides.txt 0.25
-
-    # combine neighbors and relevant
-    # TODO same as note above
-    cat simPeptides_filter.fa relevant-peptides.fasta >finalDb.fasta
-    echo
-
-    ~/projects/ohsu-eth-collab/bin/crux-toolkit/Release/src/crux tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/final finalDb.fasta tide-indicies/final
-
-    cd ../
-done
+    echo "results in ${outdir}"
+    sbatch ${gitfolder}/script_index.sh ${crux_home} ${scripts_home} ${eth_dir} ${ohsu_dir} ${overwrite} ${h_sapien_fasta}
+done < ${fa_eth} #same fa_eth works too
