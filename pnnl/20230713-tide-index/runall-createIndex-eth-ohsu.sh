@@ -1,7 +1,7 @@
 #!/bin/bash
 
 crux_home=~/util/crux-4.1.Linux.x86_64/bin/crux
-scripts_home=/cluster/home/prelotla/github/projects2020_immunopepper_analysis/pepQuery/tryspine_digestion/andy_lin_scripts
+scripts_home=/cluster/home/prelotla/github/projects2020_ohsu/pnnl/andy_bin
 gitfolder=${PWD}
 
 fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list.txt
@@ -14,11 +14,12 @@ overwrite='T'
 h_sapien_fasta=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_200707/tests/pepquery/tutorial_data/tests/data_simulated/data/pepquery_mode/uniprot-proteome_UP000005640.fasta
 while read f;
 do
-    curF=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
+    sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
 
     pepsimdir=${outdir}/${sample}
-    ohsu_dir=${basedir}/OSHU/${sample}
-    eth_dir=${basedir}/ETH/${sample}
+    mkdir -p ${pepsimdir} 
+    ohsu_dir=${basedir}/OSHU/${sample}/trypsine_digest
+    eth_dir=${basedir}/ETH/${sample}/trypsine_digest
     cd ${pepsimdir} 
     echo $f
     echo "results in ${outdir}"
