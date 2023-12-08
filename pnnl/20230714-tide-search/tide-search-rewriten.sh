@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 crux_home=~/util/crux-4.1.Linux.x86_64/bin/crux
 gitfolder=${PWD}
 
@@ -18,13 +19,13 @@ do
 	
 	database=${basedir}/neighbors_joint/${sample}/tide-indicies/final # finalDb.fasta # Do we need the indices there concatenated....?
 
-	for partition in ${ms_datadir}/${sample}/*mzML*; do 
+	for partition in ${ms_datadir}/${sample}/*mzML*gz; do 
 		part_name=$(basename ${partition}| sed 's/\.mzML\.gz//g')
 		searchdir=${outdir}/${sample}/${part_name}
 		mkdir -p ${searchdir}
 		cd ${searchdir}
 		echo $f
 		echo "results in ${outdir}"
-		sh ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
+		sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
 	done
 done < ${fa_eth} #same fa_eth works too

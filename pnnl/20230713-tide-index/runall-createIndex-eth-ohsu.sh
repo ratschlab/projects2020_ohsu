@@ -11,7 +11,8 @@ outdir=${basedir}/neighbors_joint
 mkdir -p ${outdir}
 
 overwrite='T'
-h_sapien_fasta=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_200707/tests/pepquery/tutorial_data/tests/data_simulated/data/pepquery_mode/uniprot-proteome_UP000005640.fasta
+#h_sapien_fasta=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_200707/tests/pepquery/tutorial_data/tests/data_simulated/data/pepquery_mode/uniprot-proteome_UP000005640.fasta
+h_sapien_fasta=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_200707/tests/pepquery/tutorial_data/tests/data_simulated/data/pepquery_mode/hsapiens.fasta
 while read f;
 do
     sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
