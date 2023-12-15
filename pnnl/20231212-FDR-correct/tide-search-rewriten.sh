@@ -16,33 +16,16 @@ overwrite='T'
 while read f;
 do
     	sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
-	echo $f
-	echo "results in ${basedir}"
 	
+	database=${basedir}/neighbors_joint/${sample}/tide-indicies/final # finalDb.fasta # Do we need the indices there concatenated....?
 
-	for partition in ${ms_datadir}/${sample}/*mzML*gz; do 
+	for partition in ${ms_datadir}/${sample}/*mzML*gz; do # One more folder? 
 		part_name=$(basename ${partition}| sed 's/\.mzML\.gz//g')
-		
-		# Union experiments search
 		searchdir=${outdir}/${sample}/${part_name}
 		mkdir -p ${searchdir}
 		cd ${searchdir}
-		database=${basedir}/neighbors_joint/${sample}/tide-indicies/final
-		sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
-		
-		# Pipeline ETH search
-		searchdir=${basedir}/ETH/${sample}/tide_search/${part_name}
-		mkdir -p ${searchdir}
-		cd ${searchdir}
-		database=${basedir}/ETH/${sample}/neighbors/tide-indicies/final
-		sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
-
-
-		# Pipeline OHSU search
-		searchdir=${basedir}/OHSU/${sample}/tide_search/${part_name}
-		mkdir -p ${searchdir}
-		cd ${searchdir}
-		database=${basedir}/OHSU/${sample}/neighbors/tide-indicies/final
+		echo $f
+		echo "results in ${outdir}"
 		sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
 	done
 done < ${fa_eth} #same fa_eth works too
