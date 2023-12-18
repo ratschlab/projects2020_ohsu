@@ -12,9 +12,9 @@ scripts_home=$2
 overwrite=$3
 h_sapiens_fasta=$4
 dir_irrelevant=$5
-folder_pipeline1=$3
-folder_pipeline2=$4
-union_pipelines=$5
+folder_pipeline1=$6
+folder_pipeline2=$7
+union_pipelines=$8
 
 ppmError=40
 
