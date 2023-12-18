@@ -4,7 +4,7 @@
 #SBATCH --output=search.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --time=24:00:00
+#SBATCH --time=72:00:00
 #SBATCH --mem-per-cpu=2GB
 
 crux_home=$1

@@ -13,11 +13,10 @@ outdir=${basedir}/tide_search_joint
 mkdir -p ${outdir}
 
 overwrite='T'
+run_incomplete='F'
 while read f;
 do
     	sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
-	echo $f
-	echo "results in ${basedir}"
 	
 
 	for partition in ${ms_datadir}/${sample}/*mzML*gz; do 
@@ -27,8 +26,12 @@ do
 		searchdir=${outdir}/${sample}/${part_name}
 		mkdir -p ${searchdir}
 		cd ${searchdir}
+		echo $searchdir
 		database=${basedir}/neighbors_joint/${sample}/tide-indicies/final
-		sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
+		if  ([[ "${run_incomplete}" == 'T' ]] && [[ -f ${searchdir}/*spectrumrecords.tmp ]]) || [[ "${run_incomplete}" == 'F' ]] ; then 
+			echo ${searchdir}
+			sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
+		fi
 		
 		# Pipeline ETH search
 		searchdir=${basedir}/ETH/${sample}/tide_search/${part_name}
