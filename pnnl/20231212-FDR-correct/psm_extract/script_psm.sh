@@ -4,8 +4,8 @@
 #SBATCH --output=psm.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --time=04:00:00
-#SBATCH --mem-per-cpu=20GB
+#SBATCH --time=72:00:00
+#SBATCH --mem-per-cpu=100GB
 
 script_home=$1
 list_experiments=$2

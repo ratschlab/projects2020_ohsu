@@ -8,6 +8,7 @@ fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2
 
 basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics
 outdir=${basedir}/tide_search_joint
+overwrite='T'
 
 while read f;
 do
@@ -16,18 +17,17 @@ do
         searchdir=${outdir}/${sample}
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
-	sbatch script_confidence.sh ${crux_home} ${output_dir} ${search_output}
+	sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
 		
 	# Pipeline ETH search (Pool)
 	searchdir=${basedir}/ETH/${sample}/tide_search
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
-	sbatch script_confidence.sh ${crux_home} ${output_dir} ${search_output}
+	sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
 
 	# Pipeline OHSU search (Pool)
 	searchdir=${basedir}/OHSU/${sample}/tide_search
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
-	sbatch script_confidence.sh  ${crux_home} ${output_dir} ${search_output}
+	sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
 done < ${fa_eth} #same fa_eth works too
-~

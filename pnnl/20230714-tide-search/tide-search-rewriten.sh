@@ -28,10 +28,10 @@ do
 		cd ${searchdir}
 		echo $searchdir
 		database=${basedir}/neighbors_joint/${sample}/tide-indicies/final
-		if  ([[ "${run_incomplete}" == 'T' ]] && [[ -f ${searchdir}/*spectrumrecords.tmp ]]) || [[ "${run_incomplete}" == 'F' ]] ; then 
+#		if  ([[ "${run_incomplete}" == 'T' ]] && [[ -f ${searchdir}/*spectrumrecords.tmp ]]) || [[ "${run_incomplete}" == 'F' ]] ; then 
 			echo ${searchdir}
 			sbatch ${gitfolder}/script_search.sh ${crux_home} ${overwrite} ${searchdir} ${partition} ${database}
-		fi
+#		fi
 		
 		# Pipeline ETH search
 		searchdir=${basedir}/ETH/${sample}/tide_search/${part_name}

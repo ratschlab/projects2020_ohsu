@@ -4,8 +4,8 @@
 #SBATCH --output=index.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --time=48:00:00
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --time=24:00:00
+#SBATCH --mem-per-cpu=50GB
 
 crux_home=$1
 scripts_home=$2
@@ -19,8 +19,8 @@ union_pipelines=$8
 ppmError=40
 
 # generate irrelevant peptides
-${crux_home} tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir ${dir_irrelevant}/tide-indicies/irrelevant ${h_sapiens_fasta} tide-indicies/irrelevant
-echo
+#${crux_home} tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir ${dir_irrelevant}/tide-indicies/irrelevant ${h_sapiens_fasta} tide-indicies/irrelevant
+echo SKIPPING IRRELEVANT INDEX
 
 # generate relevant index
 # TODO NOTE USING -filter-unique.fasta here and -filter.fasta below.
@@ -44,7 +44,11 @@ python3 ${scripts_home}/filter-similar-peptides.py simPeptides.txt 0.25
 
 # combine neighbors and relevant
 # TODO same as note above
-cat simPeptides_filter.fa relevant-peptides.fasta >finalDb.fasta
+if [[ ${union_pipelines} == 'T' ]]; then
+	cat simPeptides_filter.fa relevant-peptides.fasta >finalDb.fasta
+else 
+	cat simPeptides_filter.fa ${folder_pipeline1}/peptide-extracted-filter-unique.fasta >finalDb.fasta
+fi
 echo
 
 ${crux_home} tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/final finalDb.fasta tide-indicies/final

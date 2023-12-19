@@ -5,10 +5,12 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --time=24:00:00
-#SBATCH --mem-per-cpu=2GB
+#SBATCH --mem-per-cpu=50GB
 
 crux_home=$1
 output_dir=$2
 search_output=$3
+overwrite=$4
 
-${crux_home} assign-confidence --output-dir ${output_dir} ${search_output} 
+echo "${crux_home} assign-confidence --output-dir ${output_dir} ${search_output} --overwrite $overwrite"
+${crux_home} assign-confidence --output-dir ${output_dir} ${search_output} --overwrite $overwrite 
