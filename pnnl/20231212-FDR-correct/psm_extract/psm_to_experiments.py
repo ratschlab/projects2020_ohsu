@@ -23,17 +23,19 @@ def psm_to_experiments(list_experiments, search_out_folder, save_folder, create_
 
             print('...read search result')
             df_search = pd.concat([pd.read_csv(part, sep = '\t') for part in partitions])
+            print(df_search.shape)
 
             print('...extract rows IDS corresponding to peptides')
             id_to_SearchRow = search_result_rows(df_search)
-            
+            print(len(id_to_SearchRow))
+
             print('...process experiment map')
             id_to_pep, id_to_exp, exp_to_id = experiments_maps(exp_all[sample])
-
+            print(len(id_to_exp))
 
             print('...select experiment rows')
             select_rows = select_search_result(id_to_exp, id_to_SearchRow)
-
+            print(len(select_rows))
                                       
             print('...save experiments')
             reconstruct_experiment(select_rows, df_search, save_folder, sample, rerank=rerank_psm)

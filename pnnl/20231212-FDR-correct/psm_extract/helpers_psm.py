@@ -48,7 +48,7 @@ def search_result_rows(df_search):
         if idx is np.nan:
             print('ERROR: Search not successful on all fractions of sample. Please RERUN')
         for name_ in idx.split(','):
-            if 'pep-ID' not in name_:
+            if 'pepID' not in name_:
                 continue
             pep_ix = int(name_.split('-')[1].replace('(1)', ''))
             id_to_row[pep_ix].append(i)
