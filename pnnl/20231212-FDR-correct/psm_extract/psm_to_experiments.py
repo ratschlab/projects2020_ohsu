@@ -4,6 +4,8 @@ import pandas as pd
 from collections import defaultdict
 import glob
 import timeit
+import argparse
+import numpy as np
 
 from helpers_psm import reader_tide_results, reader_experiments, experiments_maps, search_result_rows, select_search_result, reconstruct_experiment
 
@@ -24,7 +26,7 @@ def psm_to_experiments(list_experiments, search_out_folder, save_folder, create_
 
             print('...extract rows IDS corresponding to peptides')
             id_to_SearchRow = search_result_rows(df_search)
-
+            
             print('...process experiment map')
             id_to_pep, id_to_exp, exp_to_id = experiments_maps(exp_all[sample])
 
@@ -32,7 +34,7 @@ def psm_to_experiments(list_experiments, search_out_folder, save_folder, create_
             print('...select experiment rows')
             select_rows = select_search_result(id_to_exp, id_to_SearchRow)
 
-
+                                      
             print('...save experiments')
             reconstruct_experiment(select_rows, df_search, save_folder, sample, rerank=rerank_psm)
 
@@ -40,8 +42,6 @@ def psm_to_experiments(list_experiments, search_out_folder, save_folder, create_
         if n_samples_process < 1:
             break
 
-        else: 
-            print(f'skip {sample}')
 
 
 
@@ -56,5 +56,6 @@ if __name__ == "__main__":
                         action='store_true',  
                         help='wheather to apply re-ranking of the psm within condition and partition')
     args = parser.parse_args()
+    print(args)
     psm_to_experiments(args.list_experiments, args.search_out_folder, args.save_folder,
                        args.create_sample_subfolder, args.rerank_psm)
