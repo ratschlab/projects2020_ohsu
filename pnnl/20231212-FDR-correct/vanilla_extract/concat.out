@@ -1,0 +1,4 @@
+/var/spool/slurm/job3540468/slurm_script: line 9: This scripts concatenates the search results across all partitions (except the reference) and extract the relevant peptides (discards the neighbors): command not found
+/var/spool/slurm/job3540471/slurm_script: line 9: This scripts concatenates the search results across all partitions (except the reference) and extract the relevant peptides (discards the neighbors): command not found
+output is /cluster/work/grlab/projects/projects2020_OHSU/proteomics/OHSU/TCGA-25-1319/tide_search/tide-search-concat.txt
+output is /cluster/work/grlab/projects/projects2020_OHSU/proteomics/OHSU/TCGA-61-2008/tide_search/tide-search-concat.txt
