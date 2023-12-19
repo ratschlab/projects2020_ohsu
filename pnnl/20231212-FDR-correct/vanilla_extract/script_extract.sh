@@ -6,12 +6,13 @@
 #SBATCH --time=04:00:00
 #SBATCH --mem-per-cpu=1GB
 
-'''This scripts concatenates the search results across all partitions (except the reference) and extract the relevant peptides (discards the neighbors)'''
+#'''This scripts concatenates the search results across all partitions (except the reference) and extract the relevant peptides (discards the neighbors)'''
 search_out_folder=$1
 
 cd ${search_out_folder}
 counter=0 
 res=tide-search-concat.txt
+touch $res
 echo "output is ${search_out_folder}/${res}"
 
 for folder in *; do 

@@ -38,7 +38,7 @@ def psm_to_experiments(list_experiments, search_out_folder, save_folder, create_
             print(len(select_rows))
                                       
             print('...save experiments')
-            reconstruct_experiment(select_rows, df_search, save_folder, sample, rerank=rerank_psm)
+            reconstruct_experiment(select_rows, df_search, save_folder, sample, rerank=rerank_psm, create_sample_subfolder=create_sample_subfolder)
 
 
         if n_samples_process < 1:

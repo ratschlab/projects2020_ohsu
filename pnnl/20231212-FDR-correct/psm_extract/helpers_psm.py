@@ -65,7 +65,7 @@ def select_search_result(id_to_exp, id_to_SearchRow):
     return select_rows
 
 
-def reconstruct_experiment(select_rows_pipeline, df_search, save_folder, sample, rerank=True):
+def reconstruct_experiment(select_rows_pipeline, df_search, save_folder, sample, rerank=True, create_sample_subfolder=True):
     '''Selects all the rows from the initial experiment
     Re-calculates the xcorr rank per experiment and partition'''
     df_search_i = df_search.reset_index()

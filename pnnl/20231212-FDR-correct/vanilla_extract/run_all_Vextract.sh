@@ -14,14 +14,17 @@ do
     	sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
 	# Union experiments search
         searchdir=${outdir}/${sample}
+	cd $searchdir
 	sbatch ${gitfolder}/script_extract.sh ${searchdir}
 		
 	# Pipeline ETH search
 	searchdir=${basedir}/ETH/${sample}/tide_search
+	cd $searchdir
 	sbatch ${gitfolder}/script_extract.sh ${searchdir}
 
 	# Pipeline OHSU search
 	searchdir=${basedir}/OHSU/${sample}/tide_search
+	cd $searchdir
 	sbatch ${gitfolder}/script_extract.sh ${searchdir}
 
 done < ${fa_eth} #same fa_eth works too
