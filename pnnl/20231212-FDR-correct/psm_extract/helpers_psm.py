@@ -77,7 +77,7 @@ def reconstruct_experiment(select_rows_pipeline, df_search, save_folder, sample,
         if rerank:
             df_experiment['xcorr rank'] = df_experiment.groupby(['original target sequence', 'file', 'scan'])\
             ['xcorr score'].rank(method='first', ascending=False)
-
+            df_experiment['xcorr rank'] = df_experiment['xcorr rank'].astype('int')
         df_experiment = df_experiment.drop_duplicates()
 
         if create_sample_subfolder:
