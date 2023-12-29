@@ -139,20 +139,54 @@ def get_filter(filter):
 def sorting(data):
     if PLOT_SORT_BY =='x-axis sorted by size of intersection':
     # Pandas sorting by intersection
-        data.sort_values(by=['sample','size_intersection'], inplace = True, ascending=[False,False])
+        data=data.sort_values(by=['sample','size_intersection'], ascending=[False,False])
+        print('I')
     
     elif PLOT_SORT_BY =='x-axis sorted by size of intersection and priority':
-        data.sort_values(['size_intersection', 'priority'], inplace = True,ascending = [False, True])
+        data=data.sort_values(['size_intersection', 'priority'],ascending = [False, True])
+        print('I+P')
         
     elif PLOT_SORT_BY=='x-axis sorted by size of JP-specific set':
-        data.sort_values(by=['sample','size_ohsu\eth'], inplace = True, ascending=[False,False])
+        data=data.sort_values(by=['sample','size_ohsu\eth'], ascending=[False,False])
+        print('JP')
         
     elif PLOT_SORT_BY=='x-axis sorted by size of JP-specific set and priority': 
-        data.sort_values(['size_ohsu\eth', 'priority'], inplace = True,ascending = [False, True])
+        data=data.sort_values(['size_ohsu\eth', 'priority'],ascending = [False, True])
+        print('JP+P')
         
     elif PLOT_SORT_BY=='x-axis sorted by size of GP-specific set':
-        data.sort_values(by=['sample','size_eth\ohsu'], inplace = True, ascending=[False,False])
+        data=data.sort_values(by=['sample','size_eth\ohsu'], ascending=[False,False])
+        print('GP')
         
     elif PLOT_SORT_BY=='x-axis sorted by size of GP-specific set and priority':
-        data.sort_values(['size_eth\ohsu', 'priority'], inplace = True,ascending = [False, True])
+        data=data.sort_values(['size_eth\ohsu', 'priority'],ascending = [False, True])
+        print('GP+P')
+    else:
+        print("Choose right filter")
+    return data
+
+
+def sorting_GP(data):
+    if PLOT_GP_SORT_BY =='x-axis sorted by size of intersection':
+    # Pandas sorting by intersection
+        data=data.sort_values(by=['sample','GP from Inter NF'], ascending=[False,False])
+        print('I')
+    elif PLOT_GP_SORT_BY=='x-axis sorted by size of GP-specific set':
+        data=data.sort_values(['sample', 'GP from GP NF'],ascending = [False, False])
+        print('GP')
+    else:
+        print("Choose right filter")
+    return data
+
+
+def sorting_JP(data):
+    if PLOT_JP_SORT_BY =='x-axis sorted by size of intersection':
+    # Pandas sorting by intersection
+        data = data.sort_values(by=['sample','JP from Inter NF'], ascending=[False,False])
+        print('I')
+    elif PLOT_JP_SORT_BY=='x-axis sorted by size of JP-specific set':
+        data=data.sort_values(by=['sample','JP from JP NF'], ascending=[False,False])
+        print('JP')
+    else:
+        print("Choose right filter")
     return data

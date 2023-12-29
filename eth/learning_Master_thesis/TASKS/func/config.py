@@ -114,9 +114,12 @@ STORY_OF_FILTER_COOR='intersection'
 # 'unstacked' or 'stacked'
 PLOT_TYPE='unstacked'
 
-# 'x-axis sorted by size of intersection' or 'x-axis sorted by total' or 'x-axis sorted by size of GP-specific set' or 'x-axis sorted by size of JP-specific set'
-PLOT_SORT_BY='x-axis sorted by size of intersection and priority'
+# 'x-axis sorted by size of intersection and priority' or 'x-axis sorted by total' or 'x-axis sorted by size of GP-specific set and priority' or 'x-axis sorted by size of JP-specific set and priority'
+PLOT_SORT_BY='x-axis sorted by size of GP-specific set and priority'
 
+PLOT_GP_SORT_BY='x-axis sorted by size of GP-specific set' #x-axis sorted by size of intersection or x-axis sorted by size of GP-specific set
+
+PLOT_JP_SORT_BY='x-axis sorted by size of JP-specific set' #x-axis sorted by size of intersection or x-axis sorted by size of JP-specific set
 # Priority task
 # PLOT_SORT_BY_PRIORITY=0
 

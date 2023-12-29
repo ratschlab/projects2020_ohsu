@@ -127,3 +127,32 @@ def plotting_nf_barplot(axis,fffb2,bottoml,sample,path_sample_nf,path_sample_nf_
     plt.savefig(path_sample_nf, dpi=300,bbox_inches='tight')
     plt.savefig(path_sample_nf_pdf, dpi=300,bbox_inches='tight')
     plt.show()
+
+
+def plotting_JP_GP(FILTER,JP_INTER_NF,JP_JP_NF,sample,bar_position,FF,FB,path_sample,path_sample_pdf,JP=True,ySalt='',coord=True):
+    plt.figure(figsize=(16,10))
+    fig, ax1 = plt.subplots(nrows=1,ncols=1)
+    bw=0.4
+    salt = 'coordinate' if coord else 'kmer'
+    p1 = ax1.bar(np.arange(len(FILTER))-bw,JP_INTER_NF,bw,label=f'filtered {salt} came from intersection non-filtered', edgecolor='white',color=COLORS['coordinates from intersection'],zorder=1)
+    dt = 'JP\GP' if JP else 'GP\JP'
+    p1 = ax1.bar(np.arange(len(FILTER)),JP_JP_NF,bw,label=f'filtered coordinate came from {dt} non-filtered', edgecolor='white',color=COLORS['coordinates from JP\GP'] if JP else COLORS['coordinates from GP\JP'],zorder=2)
+
+    plt.suptitle('-'.join([sample[0:4], sample[4:6], sample[6:10], sample[10:13], sample[13:16], sample[16:20], sample[20:22]])+'\n'+PLOT_JP_SORT_BY if JP else PLOT_GP_SORT_BY,size=15,x=0.55,y=1.15)
+    ax1.set_xticks([pos+bw/2 for pos in bar_position])
+    ax1.set_xticklabels(FF,rotation=90,ha='center', fontsize=10)
+    ax1.tick_params(labelsize=10)
+    ax1.set_xlabel('Filter foreground',size=10)
+    ax1.set_ylabel(f'Number of coordinates (JP\GP filtered set){ySalt}',size=10)
+    ax1.legend(fontsize=10,loc='center left',bbox_to_anchor=(1,0.5))
+    ax1.grid(axis='y', zorder=0)
+
+        
+    # Add second axis
+    ax_sec = ax1.secondary_xaxis('top')
+    ax_sec.set_xticks([pos+bw/2 for pos in bar_position])
+    ax_sec.set_xticklabels(FB,rotation=90,ha='center',fontsize=10)
+    ax_sec.set_xlabel('Filter background',size=10)
+    plt.savefig(path_sample_pdf, dpi=300,bbox_inches='tight')
+    plt.savefig(path_sample, dpi=300,bbox_inches='tight')
+    plt.show()
