@@ -12,7 +12,7 @@ search_out_folder=$1
 cd ${search_out_folder}
 counter=0 
 res=tide-search-concat.txt
-touch $res
+rm $res
 echo "output is ${search_out_folder}/${res}"
 
 for folder in *; do 
