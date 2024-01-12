@@ -6,13 +6,13 @@ import glob
 import timeit
 import numpy as np
 
-def reader_FDR_results(search_out_folder):
+
+def reader_FDR_results(search_out_folder, sample_search_out_folder):
     search_res = dict()
     for path in glob.glob(os.path.join(search_out_folder, 'assign-confidence.target.txt')): 
-        sample = path.split('/')[-3]
+        sample = path.split('/')[sample_search_out_folder]
         search_res[sample] = path 
     return search_res
-
 
 def reader_experiments(list_experiments):
     '''Read files with path lists'''
@@ -78,7 +78,7 @@ def reconstruct_experiment_FDR(select_rows_pipeline, df_search, save_folder, sam
         if create_sample_subfolder:
             path_save = os.path.join(save_folder, sample, 'assign_conf_pooled_FDR') 
         else:
-            path_save = os.path.join(save_folder)
+            path_save = os.path.join(save_folder, sample)
 
         Path(path_save).mkdir(parents=True, exist_ok=True)
         path_save = os.path.join(path_save, f'tsearch-{experiment_id}.txt')

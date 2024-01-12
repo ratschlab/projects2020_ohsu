@@ -7,12 +7,12 @@ import timeit
 import argparse
 import numpy as np
 
-from helpers_psm import reader_FDR_results, reader_experiments, experiments_maps, search_result_rows, select_search_result, reconstruct_experiment_FDR
+from helpers_split import reader_FDR_results, reader_experiments, experiments_maps, search_result_rows, select_search_result, reconstruct_experiment_FDR
 
 
-def FDR_to_experiments(list_experiments, search_out_folder, save_folder, create_sample_subfolder):
+def FDR_to_experiments(list_experiments, search_out_folder, save_folder, create_sample_subfolder, sample_search_out_folder):
     exp_all = reader_experiments(list_experiments)
-    FDR_res = reader_FDR_results(search_out_folder)
+    FDR_res = reader_FDR_results(search_out_folder, sample_search_out_folder)
 
     n_samples_process = 10
     for sample, FDR_file in FDR_res.items():
@@ -49,11 +49,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Takes results from FDR and splits them between experimental conditions')
     parser.add_argument("--list-experiments", help='file containing the paths to the experiment files per sample')
     parser.add_argument("--search-out-folder",help='path (with wildcards) of the tide search results folder containing the FDR file')
+    parser.add_argument("--sample-search-out-folder", default=7, type=int,
+                        help='position of the sample name in the path')
     parser.add_argument("--save-folder",help='base folder to save results')
     parser.add_argument("--create-sample-subfolder", default=False, action='store_true', 
                         help='wheather to create a subfolder with the sample name when saving')
 
+
     args = parser.parse_args()
     print(args)
-    psm_to_experiments(args.list_experiments, args.search_out_folder, args.save_folder,
-                       args.create_sample_subfolder, args.rerank_psm)
+    FDR_to_experiments(args.list_experiments, args.search_out_folder, args.save_folder,
+                       args.create_sample_subfolder, args.sample_search_out_folder)
