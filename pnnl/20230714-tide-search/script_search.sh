@@ -4,9 +4,9 @@
 #SBATCH --output=search.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --time=24:00:00
+#SBATCH --time=04:00:00
 #SBATCH --mem-per-cpu=50GB
-#SBATCH --nodelist=compute-biomed-22
+#SBATCH --exclude=compute-biomed-10
 crux_home=$1
 overwrite=$2
 output_dir=$3

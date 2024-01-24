@@ -3,10 +3,12 @@
 
 gitfolder=${PWD}
 crux_home=/cluster/home/prelotla/util/crux-4.1.Linux.x86_64/bin/crux
-fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list.txt
+#fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list.txt
+fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list_fix2jx_24012024.txt
 fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2023_data/OHSU_fasta_list.txt
 
-basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics
+#basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics
+basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fix2jx_24012024
 outdir=${basedir}/tide_search_joint
 overwrite='T'
 

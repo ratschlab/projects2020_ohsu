@@ -4,8 +4,9 @@
 #SBATCH --output=index.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
-#SBATCH --time=24:00:00
+#SBATCH --time=04:00:00
 #SBATCH --mem-per-cpu=50GB
+#SBATCH --exclude=compute-biomed-10
 
 crux_home=$1
 scripts_home=$2

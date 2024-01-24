@@ -1,0 +1,41 @@
+SKIPPING IRRELEVANT INDEX
+union pipelines
+cat: /ETH/TCGA-A2-A0D2/trypsine_digest/peptide-extracted-filter-unique.fasta: No such file or directory
+cat: /OHSU/TCGA-A2-A0D2/trypsine_digest/peptide-extracted-filter-unique.fasta: No such file or directory
+INFO: Writing results to output directory 'tide-indicies/relevant'.
+INFO: CPU: compute-biomed-17
+INFO: Crux version: 4.1-87cb9f4-2023-10-05
+INFO: Wed Jan 24 16:03:05 CET 2024
+INFO: Beginning tide-index.
+INFO: Running tide-index...
+WARNING: The output directory 'tide-indicies/relevant' already exists.
+Existing files will be overwritten.
+INFO: Reading relevant-peptides.fasta and computing unmodified target peptides...
+WARNING: Found protein ID without sequence: 
+INFO: Cleaved 0 protein sequences in total.
+FATAL: No target sequences generated.  Is 'relevant-peptides.fasta' a FASTA file?
+
+Read 0 peptides from tide-indicies/relevant/tide-index.peptides.txt.
+Traceback (most recent call last):
+  File "/cluster/home/prelotla/github/projects2020_ohsu/pnnl/andy_bin/subset-neighbor-search/pepsim.py", line 334, in <module>
+    main()
+  File "/cluster/home/prelotla/github/projects2020_ohsu/pnnl/andy_bin/subset-neighbor-search/pepsim.py", line 266, in main
+    (list1, masses1) = read_peptides(in_file_name1)
+  File "/cluster/home/prelotla/github/projects2020_ohsu/pnnl/andy_bin/subset-neighbor-search/pepsim.py", line 158, in read_peptides
+    (peptide_list, mass_list) = sort_peptide_list(peptide_list, mass_list)
+ValueError: not enough values to unpack (expected 2, got 0)
+
+Printed 0 lines out of 0
+
+INFO: Writing results to output directory 'tide-indicies/final'.
+INFO: CPU: compute-biomed-17
+INFO: Crux version: 4.1-87cb9f4-2023-10-05
+INFO: Wed Jan 24 16:03:09 CET 2024
+INFO: Beginning tide-index.
+INFO: Running tide-index...
+WARNING: The output directory 'tide-indicies/final' already exists.
+Existing files will be overwritten.
+INFO: Reading finalDb.fasta and computing unmodified target peptides...
+WARNING: Found protein ID without sequence: 
+INFO: Cleaved 0 protein sequences in total.
+FATAL: No target sequences generated.  Is 'finalDb.fasta' a FASTA file?
