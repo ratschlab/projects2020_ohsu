@@ -248,6 +248,13 @@ def write_fasta(write_, filepointer, pep_seq, pep_idx, aa_junction_pos,
             pep_idx+=1
             filepointer.write(pep_handle2 + '\n')
             filepointer.write(pep_seq + '\n')
+        #### 01/2024 ADDITION
+#         elif kmer in pep_seq:
+#             filepointer.write(pep_handle1 + '\n')
+#             filepointer.write(pep_seq + '\n')
+#             filepointer.write(pep_handle2 + '\n')
+#             filepointer.write(pep_seq + '\n')
+#         #### END 01/2024 ADDDITION
         return pep_idx
 
 
