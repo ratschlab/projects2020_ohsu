@@ -46,7 +46,7 @@ for pipeline in ETH OHSU; do
 		if [[ ${FDR_method} == 'crux' ]]; then
 			sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${conf_folder} ${experiment} ${overwrite}
 		elif [[ ${FDR_method} == 'crema' ]]; then
-		        sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${eval_fdr} ${threshold} ${FDR_dir}
+		        sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${experiment} ${eval_fdr} ${threshold} ${conf_folder}
 		fi
 	   done
 	done
