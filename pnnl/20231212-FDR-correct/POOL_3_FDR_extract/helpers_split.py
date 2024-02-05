@@ -9,7 +9,7 @@ import numpy as np
 
 def reader_FDR_results(search_out_folder, sample_search_out_folder):
     search_res = dict()
-    for path in glob.glob(os.path.join(search_out_folder, 'assign-confidence.target.txt')): 
+    for path in glob.glob(os.path.join(search_out_folder, 'crema.peptides.txt')): # 'assign-confidence.target.txt')): 
         sample = path.split('/')[sample_search_out_folder]
         search_res[sample] = path 
     return search_res
@@ -64,7 +64,7 @@ def select_search_result(id_to_exp, id_to_SearchRow):
     return select_rows
 
 
-def reconstruct_experiment_FDR(select_rows_pipeline, df_search, save_folder, sample, create_sample_subfolder=True):
+def reconstruct_experiment_FDR(select_rows_pipeline, df_search, save_folder, sample, create_sample_subfolder):
     '''Selects all the rows from the initial experiment
     Save'''
     df_search_i = df_search.reset_index()
@@ -76,7 +76,7 @@ def reconstruct_experiment_FDR(select_rows_pipeline, df_search, save_folder, sam
         
 
         if create_sample_subfolder:
-            path_save = os.path.join(save_folder, sample, 'assign_conf_pooled_FDR') 
+            path_save = os.path.join(save_folder, sample, create_sample_subfolder) 
         else:
             path_save = os.path.join(save_folder, sample)
 

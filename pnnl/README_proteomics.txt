@@ -24,20 +24,34 @@ script_index.sh
 script_search.sh
 tide-search-rewriten.sh
 
-4) Extract the PSM from single experiments
+4) Extract the PSM and compute the FDR 
 ./20231212-FDR-correct:
-psm_extract
+4.1) Extract the PSM for the "POOL" and the "Union"
+ ./20231212-FDR-correct/POOL_1_concat_extract/
+ run_all_Vextract.sh
+ script_extract.sh
+4.2) Run the FDR for the "POOL" and the "Union" 
+ ./20231212-FDR-correct/POOL_2_conf_assign
+ runall_conf_union_pool.sh
+ script_confidence.sh
+4.3) Separate the hits per experiment
+./20231212-FDR-correct/POOL_3_FDR_extract
+FDR_to_experiments.py
+helpers_split.py
+runall_split.sh
+script_split.sh
+4.a) Extract the PSM for the "single" experiments (Need to re-rank and
+separate per experiment)
+./20231212-FDR-correct/SINGLE_1_psm_extract
+helpers_psm.py
+psm_to_experiments.py
+runall_psm.sh
+script_psm.sh
+4.b) Run the FDR for every single experiment
+./20231212-FDR-correct/SINGLE_2_conf_assign
+runall_conf_single.sh
+script_confidence.sh
 
-4.bis) Extract the PSM from "Pool" and "Union" experiments
-./20231212-FDR-correct:
-vanilla_extract
-
-5) Run the FDR and assign confidence 
-./20231212-FDR-correct
-conf_assign
-
-6) Extract the PSM from each experiments from "Pool" and "Union" files
-TODO
 
 ## Other relevant codes
 andy_bin:

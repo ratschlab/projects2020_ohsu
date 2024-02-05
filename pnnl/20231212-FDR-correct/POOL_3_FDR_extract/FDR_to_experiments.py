@@ -52,8 +52,8 @@ if __name__ == "__main__":
     parser.add_argument("--sample-search-out-folder", default=7, type=int,
                         help='position of the sample name in the path')
     parser.add_argument("--save-folder",help='base folder to save results')
-    parser.add_argument("--create-sample-subfolder", default=False, action='store_true', 
-                        help='wheather to create a subfolder with the sample name when saving')
+    parser.add_argument("--create-sample-subfolder", default=False, 
+                        help='if path is provided, creates a folder with the sample name and an additional subfolder when saving')
 
 
     args = parser.parse_args()
