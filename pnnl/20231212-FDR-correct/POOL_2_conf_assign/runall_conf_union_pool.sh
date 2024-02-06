@@ -4,8 +4,6 @@ gitfolder=${PWD}
 
 ### Crema-specific parameters
 crema_script=/cluster/home/prelotla/github/projects2020_ohsu/pnnl/20231212-FDR-correct/FDR_scripts/script_crema.py
-eval_fdr=0.05
-threshold=0.05
 
 ### Crux-specific parameters
 crux_home=/cluster/home/prelotla/util/crux-4.1.Linux.x86_64/bin/crux
@@ -21,7 +19,7 @@ fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2
 #basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fix2jx_24012024
 basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024
 outdir=${basedir}/tide_search_joint
-FDR_method='crema' # 'crux' 'crema'
+FDR_method='crux' # 'crux' 'crema'
 while read f;
 do
     	sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
@@ -30,11 +28,13 @@ do
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
 	if [[ ${FDR_method} == 'crux' ]]; then 
-		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
-	elif [[ ${FDR_method} == 'crema' ]]; then
-	        FDR_dir=${searchdir}/FDRcrema_${threshold}
+		FDR_dir=${searchdir}/FDRcrux
 		mkdir -p ${FDR_dir}
-		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${eval_fdr} ${threshold} ${FDR_dir} 
+		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${FDR_dir} ${search_output} ${overwrite}
+	elif [[ ${FDR_method} == 'crema' ]]; then
+	        FDR_dir=${searchdir}/FDRcrema
+		mkdir -p ${FDR_dir}
+		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${FDR_dir} 
 	else
 		echo "unknown ${FDR_method}"
 	fi
@@ -44,11 +44,13 @@ do
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
 	if [[ ${FDR_method} == 'crux' ]]; then
-		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
-	elif [[ ${FDR_method} == 'crema' ]]; then
-	        FDR_dir=${searchdir}/FDRcrema_${threshold}
+		FDR_dir=${searchdir}/FDRcrux
 		mkdir -p ${FDR_dir}
-		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${eval_fdr} ${threshold} ${FDR_dir}
+		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${FDR_dir} ${search_output} ${overwrite}
+	elif [[ ${FDR_method} == 'crema' ]]; then
+	        FDR_dir=${searchdir}/FDRcrema
+		mkdir -p ${FDR_dir}
+		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${FDR_dir}
 	else
 		echo "unknown ${FDR_method}"
 	fi
@@ -58,11 +60,13 @@ do
 	search_output=${searchdir}/tide-search-concat.txt
 	cd $searchdir
 	if [[ ${FDR_method} == 'crux' ]]; then
-		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${searchdir} ${search_output} ${overwrite}
-	elif [[ ${FDR_method} == 'crema' ]]; then
-		FDR_dir=${searchdir}/FDRcrema_${threshold}
+		FDR_dir=${searchdir}/FDRcrux
 		mkdir -p ${FDR_dir}
-		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${eval_fdr} ${threshold} ${FDR_dir}
+		sbatch ${gitfolder}/script_confidence.sh ${crux_home} ${FDR_dir} ${search_output} ${overwrite}
+	elif [[ ${FDR_method} == 'crema' ]]; then
+		FDR_dir=${searchdir}/FDRcrema
+		mkdir -p ${FDR_dir}
+		sbatch ${gitfolder}/script_confidence_crema.sh ${crema_script} ${search_output} ${FDR_dir}
 	else
 		echo "unknown ${FDR_method}"
 	fi

@@ -9,8 +9,7 @@
 
 crema_script=$1
 input_files=$2
-eval_fdr=$3
-threshold=$4
-outdir=$5
+outdir=$3
 
-python ${crema_script} --input-files ${input_files} --eval-fdr ${eval_fdr} --threshold ${threshold} --outdir ${outdir}
+echo "python ${crema_script} --input-files ${input_files} --outdir ${outdir}"
+python ${crema_script} --input-files ${input_files} --outdir ${outdir}

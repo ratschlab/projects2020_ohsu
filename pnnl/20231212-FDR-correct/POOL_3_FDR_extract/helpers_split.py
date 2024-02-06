@@ -9,7 +9,7 @@ import numpy as np
 
 def reader_FDR_results(search_out_folder, sample_search_out_folder):
     search_res = dict()
-    for path in glob.glob(os.path.join(search_out_folder, 'crema.peptides.txt')): # 'assign-confidence.target.txt')): 
+    for path in glob.glob(search_out_folder):
         sample = path.split('/')[sample_search_out_folder]
         search_res[sample] = path 
     return search_res

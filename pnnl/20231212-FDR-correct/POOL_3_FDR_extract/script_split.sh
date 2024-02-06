@@ -16,8 +16,8 @@ make_sub_folder=$6
 
 if [ -z "$make_sub_folder" ]; then
 	python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos}
-	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos}"
+	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos}" >> ${script_home}/run_example.sh
 else
 	python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos} --create-sample-subfolder ${make_sub_folder}
-	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos} --create-sample-subfolder ${make_sub_folder}"
+	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos} --create-sample-subfolder ${make_sub_folder}" >> ${script_home}/run_example.sh
 fi
