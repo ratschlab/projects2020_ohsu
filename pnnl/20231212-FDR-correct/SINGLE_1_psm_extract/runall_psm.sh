@@ -13,7 +13,7 @@ sbatch ${gitfolder}/script_psm.sh ${gitfolder} ${experiment_list} "${search_res}
 
 
 
-experiment_list='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_experiments_per_peptides_list.txt'
+experiment_list='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_experiments_per_peptides_list_25012024.txt'
 search_res="${proteomics_dir}/ETH/*/tide_search"
 out_folder="${proteomics_dir}/ETH"
 cd ${out_folder}

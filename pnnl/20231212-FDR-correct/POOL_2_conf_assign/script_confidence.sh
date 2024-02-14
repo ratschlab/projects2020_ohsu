@@ -5,7 +5,8 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --time=04:00:00
-#SBATCH --mem-per-cpu=50GB
+#SBATCH --mem-per-cpu=100GB
+#SBATCH --exclude compute-biomed-10
 
 crux_home=$1
 output_dir=$2

@@ -12,10 +12,10 @@ search_out_folder=$1
 cd ${search_out_folder}
 counter=0 
 res=tide-search-concat.txt
-rm $res
+rm ${search_out_folder}/$res
 echo "output is ${search_out_folder}/${res}"
 
-for folder in *; do 
+for folder in TCGA*; do 
     if [[  $(echo ${folder} | grep -c fA) -eq 0 ]] && [[ $(echo ${folder} | grep -c POOL) -eq 0  ]]; then 
         counter=$((counter+1)) 
 	if [[ ${counter} -eq 1 ]] ;then 

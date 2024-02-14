@@ -19,7 +19,7 @@ fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2
 #basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fix2jx_24012024
 basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024
 outdir=${basedir}/tide_search_joint
-FDR_method='crux' # 'crux' 'crema'
+FDR_method='crux' #'crux' # 'crux' 'crema'
 while read f;
 do
     	sample=$(basename $f | cut -d '_' -f2 | cut -d '-' -f1-3 )
