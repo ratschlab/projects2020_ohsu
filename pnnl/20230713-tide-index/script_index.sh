@@ -5,7 +5,7 @@
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --time=04:00:00
-#SBATCH --mem-per-cpu=50GB
+#SBATCH --mem-per-cpu=4GB
 #SBATCH --exclude=compute-biomed-10
 
 crux_home=$1
@@ -27,8 +27,8 @@ echo SKIPPING IRRELEVANT INDEX
 # TODO NOTE USING -filter-unique.fasta here and -filter.fasta below.
 # This is done to generate neighbors faster
 if [[ ${union_pipelines} == 'T' ]]; then
-echo "union pipelines"
 	python3 ${scripts_home}/20240216_debug_joint_proteomics.py --file-eth ${folder_pipeline1}/peptide-extracted-filter-unique.fasta --file-ohsu ${folder_pipeline2}/peptide-extracted-filter-unique.fasta --save-folder '.' --map-eth-folder ${folder_pipeline1} --map-ohsu-folder ${folder_pipeline2} # Concatenates and re-indexes. Outputs joint-peptide-extracted-filter-unique.fasta
+	echo "union pipelines"
 	${crux_home} tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/relevant joint-peptide-extracted-filter-unique.fasta tide-indicies/relevant
 else
 	echo "single pipeline"

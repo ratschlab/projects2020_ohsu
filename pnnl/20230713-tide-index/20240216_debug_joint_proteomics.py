@@ -18,7 +18,7 @@ def get_pep_ids(fa_path):
 def fasta_reindex(fasta_eth, fasta_ohsu, save_folder, path_map_eth, path_map_ohsu):
 
     # Parse IDS
-    print(f'Reading {fasta_eth} \n {fasta_ohsu')
+    print(f'Reading {fasta_eth} \n {fasta_ohsu}')
     pep_eth, pep_to_ID_eth = get_pep_ids(fasta_eth)
     pep_ohsu, pep_to_ID_ohsu = get_pep_ids(fasta_ohsu)
 
@@ -33,13 +33,14 @@ def fasta_reindex(fasta_eth, fasta_ohsu, save_folder, path_map_eth, path_map_ohs
     shared_to_ohsu = {}
     shared_to_eth = {}
     for idx, pep in enumerate(pep_ohsu.union(pep_eth)):
-        id_string = f'>pepID-{idx}'
+        id_text = f'pepID-{idx}'
+        id_string = '>' + id_text
         file_write.append(id_string)
         file_write.append(str(pep))
         if pep in pep_ohsu:
-            shared_to_ohsu[id_string] = pep_to_ID_ohsu[pep]
+            shared_to_ohsu[id_text] = pep_to_ID_ohsu[pep]
         if pep in pep_eth:
-            shared_to_eth[id_string] = pep_to_ID_eth[pep]
+            shared_to_eth[id_text] = pep_to_ID_eth[pep]
 
     # Write result
     path_save = os.path.join(save_folder, 'joint-peptide-extracted-filter-unique.fasta')
