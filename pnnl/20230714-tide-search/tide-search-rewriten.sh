@@ -5,13 +5,11 @@ crux_home=~/util/crux-4.1.Linux.x86_64/bin/crux
 gitfolder=${PWD}
 
 #fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list.txt
-#fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list_fix2jx_24012024.txt
 fa_eth=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_fasta_list_fixMerge_25012024.txt
 fa_ohsu=/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2023_data/OHSU_fasta_list.txt
 ms_datadir=/cluster/work/grlab/projects/TCGA/PanCanAtlas/peptides_neoantigen/analysis_pancan/ccell_rerun_2018/data/cptac
 
 #basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics
-#basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fix2jx_24012024
 basedir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024
 outdir=${basedir}/tide_search_joint
 mkdir -p ${outdir}

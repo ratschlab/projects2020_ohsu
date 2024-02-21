@@ -28,6 +28,7 @@ echo SKIPPING IRRELEVANT INDEX
 # This is done to generate neighbors faster
 if [[ ${union_pipelines} == 'T' ]]; then
 	python3 ${scripts_home}/20240216_debug_joint_proteomics.py --file-eth ${folder_pipeline1}/peptide-extracted-filter-unique.fasta --file-ohsu ${folder_pipeline2}/peptide-extracted-filter-unique.fasta --save-folder '.' --map-eth-folder ${folder_pipeline1} --map-ohsu-folder ${folder_pipeline2} # Concatenates and re-indexes. Outputs joint-peptide-extracted-filter-unique.fasta
+	ln -s joint-peptide-extracted-filter-unique.fasta relevant-peptides.fasta
 	echo "union pipelines"
 	${crux_home} tide-index --overwrite $overwrite --mods-spec C+57.02146,K+144.102063 --nterm-peptide-mods-spec X+144.102063 --peptide-list T --output-dir tide-indicies/relevant joint-peptide-extracted-filter-unique.fasta tide-indicies/relevant
 else
