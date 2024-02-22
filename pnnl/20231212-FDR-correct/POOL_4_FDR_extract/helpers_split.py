@@ -71,7 +71,7 @@ def reconstruct_experiment_FDR(select_rows_pipeline, df_search, save_folder, sam
     for experiment_id in select_rows_pipeline:
         print(f'.....{experiment_id}')
 
-        df_experiment = df_search_i.loc[select_rows_pipeline[experiment_id]]
+        df_experiment = df_search_i.loc[list(select_rows_pipeline[experiment_id])]
         df_experiment = df_experiment.drop_duplicates()
         
 

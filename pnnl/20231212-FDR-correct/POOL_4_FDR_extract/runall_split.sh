@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### General inputs
-FDR_method='crema' #'crux' # 'crux' 'crema'
+FDR_method='crux' #'crux' # 'crux' 'crema'
 proteomics_dir='/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024'
 gitfolder=${PWD}
 rm ${gitfolder}/run_example.sh
@@ -11,10 +11,12 @@ echo "example run in ${gitfolder}/run_example.sh"
 
 if [[ ${FDR_method} == 'crux' ]]; then
 	save_suffix='_crux'
-	input_suffix="FDRcrux/assign-confidence.target.txt"
+	FDR_folder='FDRcrux'
+	input_suffix="${FDR_folder}/assign-confidence.target.txt"
 elif [[ ${FDR_method} == 'crema' ]]; then
 	save_suffix="_crema"
-	input_suffix="FDRcrema/crema.peptides.txt"
+	FDR_folder='FDRcrema'
+	input_suffix="${FDR_folder}/crema.peptides.txt"
 else
 	echo "unknown ${FDR_method}"
 fi
@@ -45,7 +47,7 @@ sbatch ${gitfolder}/script_split.sh ${gitfolder} ${experiment_list} "${search_re
 
 ### UNION EXTRACT OHSU EXP
 experiment_list='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_Oct2023_data/OHSU_experiments_per_peptides_list.txt'
-search_res="${proteomics_dir}/tide_search_joint/*/${input_suffix}"
+search_res="${proteomics_dir}/tide_search_joint/*/${FDR_folder}/FDR_file_OHSU.tsv" #specific peptides to pipeline OHSU
 out_folder="${proteomics_dir}/assign_conf_joint_to_OHSU${save_suffix}"
 sample_pos=8
 make_sub_folder=''
@@ -54,9 +56,9 @@ cd ${out_folder}
 echo ${out_folder}
 sbatch ${gitfolder}/script_split.sh ${gitfolder} ${experiment_list} "${search_res}" ${out_folder} ${sample_pos} ${make_sub_folder}
 
-### INUIN EXTRACT ETH EXP
+### UNION EXTRACT ETH EXP
 experiment_list='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/ETH_Oct2023_data/ETH_experiments_per_peptides_list_25012024.txt'
-search_res="${proteomics_dir}/tide_search_joint/*/${input_suffix}"
+search_res="${proteomics_dir}/tide_search_joint/*/${FDR_folder}/FDR_file_ETH.tsv" # specific peptides to pipeline ETH
 out_folder="${proteomics_dir}/assign_conf_joint_to_ETH${save_suffix}"
 sample_pos=8
 make_sub_folder=''
