@@ -11,7 +11,7 @@ overwrite='T'
 
 ## General inputs
 proteomics_dir=/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024
-FDR_method='crux' # 'crux' 'crema'
+FDR_method='crema' # 'crux' 'crema'
 
 for pipeline in ETH OHSU; do 
 	if [[ "${pipeline}" == 'OHSU' ]]; then

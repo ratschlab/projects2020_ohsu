@@ -4,7 +4,7 @@ import argparse
 def crema_py_API(input_files:list, outdir:str):
 
     psms = crema.read_tide(input_files, pairing_file_name=None)
-    results = psms.assign_confidence(pep_fdr_type="peptide-only", score_column='xcorr score', eval_fdr=0.05, threshold='q-value')
+    results = psms.assign_confidence(pep_fdr_type="psm-peptide", score_column='xcorr score', eval_fdr=0.05, threshold='q-value')
     results.to_txt(output_dir=outdir,  file_root=None, sep="\t", decoys=False)
 
 
