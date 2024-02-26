@@ -19,14 +19,9 @@ from helpers_barplot_intersection_kmers import compare_OHSU_ETH, kmer_in_bi_exon
 
   
 
-def process_proteomics_results(proteomicsdir:str, 
-                               samples_breast:list, samples_ov:list, 
-#                                basedir_breast:str, basedir_ov:str, 
+def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_ov:list, 
                                fasta_base_OHSU:str, fasta_base_ETH:str, kmer_files_OHSU:str, 
-                               pipelines:list, 
-                               MS_FDR:str, MS_strategy:str, FDR_limit:float, 
-#                               filtering_path_suffix:str, 
-                               save_folder:str):
+                               pipelines:list, MS_FDR:str, MS_strategy:str, FDR_limit:float, save_folder:str):
     
     if MS_FDR == '_crema':
         FDR_file = 'crema.peptides.txt'
@@ -48,14 +43,17 @@ def process_proteomics_results(proteomicsdir:str,
 
     samples_store_kmers = {}
     samples_store_pep = {}
-    samples_store_rates = {}
+    samples_store_rates_peps = {}
+    samples_store_rates_kmers = {}
 
     for sample in all_samples:
 
         sample_short = '-'.join(sample.split('-')[0:3])
+        
         samples_store_kmers[sample] = defaultdict(dict)
         samples_store_pep[sample] = defaultdict(dict)
-        samples_store_rates[sample] = defaultdict(dict)
+        samples_store_rates_peps[sample] = defaultdict(dict)
+        samples_store_rates_kmers[sample] = defaultdict(dict)
         
         for pipeline in pipelines:
             path_single = os.path.join(proteomicsdir, pipeline, sample_short, 
@@ -93,36 +91,44 @@ def process_proteomics_results(proteomicsdir:str,
                     if MS_strategy == 'joint':
                         df = os.path.join(path_pool_union, f'tsearch-{original_name}.txt')
 
-                    val, val_rate, peptides, df_filtered = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue)
+                    val, val_rate_tryptic_pep, peptides, df_filtered = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue)
 
-                    if df_filtered.shape[0]:
-                        df_filtered = validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
-                                                               fasta_base_ETH, sample, experiment, 
-                                                               pipeline)
-                        samples_store_kmers[sample][cut_name][pipeline] = set(df_filtered['kmer'])
-                    else:
-                        samples_store_kmers[sample][cut_name][pipeline] = set()
-                    
+                    df_filtered, val_rate_kmers = validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
+                                                           fasta_base_ETH, sample, experiment, 
+                                                           pipeline)
+
+                        
+                    samples_store_kmers[sample][cut_name][pipeline] = set(df_filtered['kmer'])
                     samples_store_pep[sample][cut_name][pipeline] = peptides
-                    samples_store_rates[sample][cut_name][pipeline] = val_rate
+                    samples_store_rates_peps[sample][cut_name][pipeline] = val_rate_tryptic_pep
+                    samples_store_rates_kmers[sample][cut_name][pipeline] = val_rate_kmers
                     
                     print(f'{len( samples_store_kmers[sample][cut_name][pipeline])} validated kmers')
 
                     print('\n')
+                    
     # Performs sets comparisons
     compare_kmers = compare_OHSU_ETH(samples_store_kmers, read_from_disk)
-    compare_kmers = pd.DataFrame(compare_kmers)
     compare_peptides = compare_OHSU_ETH(samples_store_pep, read_from_disk)
-    compare_peptides = pd.DataFrame(compare_peptides)
+    peptide_rates = format_validation_rates(samples_store_rates_peps, read_from_disk)
+    kmers_rates = format_validation_rates(samples_store_rates_kmers, read_from_disk)
     
     path_data_pep = os.path.join(save_folder, f'data_peptides{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_kmers = os.path.join(save_folder, f'data_kmers{MS_FDR}_{MS_strategy}.tsv.gz')
+    path_data_peptide_rates = os.path.join(save_folder, f'data_peptides-rates{MS_FDR}_{MS_strategy}.tsv.gz')
+    path_data_kmers_rates = os.path.join(save_folder, f'data_kmers-rates{MS_FDR}_{MS_strategy}.tsv.gz')
 
     compare_peptides.to_csv(path_data_pep, sep = '\t', index = None)
     print(f'Saved data to {path_data_pep}')
     
     compare_kmers.to_csv(path_data_kmers, sep = '\t', index = None)
     print(f'Saved data to {path_data_kmers}')
+    
+    peptide_rates.to_csv(path_data_peptide_rates, sep = '\t', index = None)
+    print(f'Saved data to {path_data_peptide_rates}')
+    
+    kmers_rates.to_csv(path_data_kmers_rates, sep = '\t', index = None)
+    print(f'Saved data to {path_data_kmers_rates}')
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Loads proteomics results and extract validated kmers and peptides for plotting')
@@ -147,6 +153,7 @@ if __name__ == "__main__":
     parser.add_argument("--save-folder", help='base folder to save results')
     args = parser.parse_args()
     print(args)
+    
     process_proteomics_results(args.proteomicsdir, 
                                args.samples_breast, args.samples_ov, 
 #                               args.basedir_breast, args.basedir_ov, 

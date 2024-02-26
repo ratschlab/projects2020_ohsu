@@ -133,58 +133,66 @@ def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
                              fasta_base_ETH, sample, experiment, pipeline):
     '''Takes validated tryptic peptides and outputs validated kmers'''
     # Get filtered peptides passing the FDR for the given experiment
-    df_filtered_summary = search_result_peptides_ids(df_filtered)
-
-
-    # Get Fasta file path 
-    # Get kmer files path
-    if pipeline == 'OHSU':
-        fasta_file = f'{fasta_base_OHSU}/J_{sample}_pool_kmer.fa'
-        file_kmer = f'J_{sample}_{experiment[1:]}.tsv' 
-        kmers_experiment = tar_reader(kmer_files_OHSU, file_kmer)
-    elif pipeline == 'ETH':
-        fasta_file = f'{fasta_base_ETH}/G_{sample}_pool_kmer_25012024.fa.gz'
-        file_kmer = os.path.join(fasta_base_ETH, f'G_{sample}_{experiment}.tsv.gz')
-        file_kmer = glob.glob(file_kmer)[0]
-        kmers_experiment = pd.read_csv(file_kmer, sep = '\t')
-        #Extract coordinates
-        coord_mx = explode_immunopepper_coord(kmers_experiment, coord_col = 'coord', sep=':')
-
-        kmers_experiment = pd.concat([kmers_experiment, 
-                                coord_mx[['strand', 'junction_coordinate1', 'junction_coordinate2']]], axis = 1)
-    else:
-        print(f'ERROR {pipeline} not correctly defined')
-
-    # Load fasta file
-    fasta_file = glob.glob(fasta_file)[0]
-    # Extract ids and peptides from fasta
-    id_to_peptide_fasta = get_pep_ids(fasta_file)
-
-
-    # Get the junction coordinates from the fasta file
-    fasta_coordinates = get_pep_coord(fasta_file)
-
-
-    # Add the junction coordinates to the filtered DF
-    df_filtered_jx = fasta_coordinates.merge(df_filtered_summary, on = 'pepID', how = 'right')
-
-
-    test = [pep for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ) if pep in bi]
-    assert(df_filtered_jx.shape[0] == len(test))
-
-    # Add the kmers to the filtered DF
-    if pipeline == 'OHSU':
-        df_filtered_jx_kmers = kmers_experiment.merge(df_filtered_jx, on = 'jx', how = 'right')
-        
-
-    if pipeline == 'ETH':
-        first_jx = kmers_experiment.merge(df_filtered_jx, left_on = 'junction_coordinate1', right_on = 'jx', how = 'inner') 
-        second_jx = kmers_experiment.merge(df_filtered_jx, left_on = 'junction_coordinate2', right_on = 'jx', how = 'inner') 
-        df_filtered_jx_kmers = pd.concat([first_jx, second_jx], axis = 0)
     
-    # Remove kmers in different reading frames than the peptide 
-    df_filtered_jx_kmers = kmer_in_bi_exon_peptide(df_filtered_jx_kmers)
-    return df_filtered_jx_kmers
+    if df_filtered.shape[0]:
+        df_filtered_summary = search_result_peptides_ids(df_filtered)
+
+
+        # Get Fasta file path 
+        # Get kmer files path
+        if pipeline == 'OHSU':
+            fasta_file = f'{fasta_base_OHSU}/J_{sample}_pool_kmer.fa'
+            file_kmer = f'J_{sample}_{experiment[1:]}.tsv' 
+            kmers_experiment = tar_reader(kmer_files_OHSU, file_kmer)
+        elif pipeline == 'ETH':
+            fasta_file = f'{fasta_base_ETH}/G_{sample}_pool_kmer_25012024.fa.gz'
+            file_kmer = os.path.join(fasta_base_ETH, f'G_{sample}_{experiment}.tsv.gz')
+            file_kmer = glob.glob(file_kmer)[0]
+            kmers_experiment = pd.read_csv(file_kmer, sep = '\t')
+            #Extract coordinates
+            coord_mx = explode_immunopepper_coord(kmers_experiment, coord_col = 'coord', sep=':')
+
+            kmers_experiment = pd.concat([kmers_experiment, 
+                                    coord_mx[['strand', 'junction_coordinate1', 'junction_coordinate2']]], axis = 1)
+        else:
+            print(f'ERROR {pipeline} not correctly defined')
+
+        # Load fasta file
+        fasta_file = glob.glob(fasta_file)[0]
+        # Extract ids and peptides from fasta
+        id_to_peptide_fasta = get_pep_ids(fasta_file)
+
+
+        # Get the junction coordinates from the fasta file
+        fasta_coordinates = get_pep_coord(fasta_file)
+
+
+        # Add the junction coordinates to the filtered DF
+        df_filtered_jx = fasta_coordinates.merge(df_filtered_summary, on = 'pepID', how = 'right')
+
+
+        test = [pep for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ) if pep in bi]
+        assert(df_filtered_jx.shape[0] == len(test))
+
+        # Add the kmers to the filtered DF
+        if pipeline == 'OHSU':
+            df_filtered_jx_kmers = kmers_experiment.merge(df_filtered_jx, on = 'jx', how = 'right')
+
+
+        if pipeline == 'ETH':
+            first_jx = kmers_experiment.merge(df_filtered_jx, left_on = 'junction_coordinate1', right_on = 'jx', how = 'inner') 
+            second_jx = kmers_experiment.merge(df_filtered_jx, left_on = 'junction_coordinate2', right_on = 'jx', how = 'inner') 
+            df_filtered_jx_kmers = pd.concat([first_jx, second_jx], axis = 0)
+
+        # Remove kmers in different reading frames than the peptide 
+        df_filtered_jx_kmers = kmer_in_bi_exon_peptide(df_filtered_jx_kmers)
+
+        ratio = len(set(df_filtered_jx_kmers['kmer']))/ len(set(kmers_experiment['kmer'])) 
+        val_rate = np.round(ratio * 100 , 2)
+    else:
+        df_filtered_jx_kmers = pd.DataFrame([], columns = ['kmer'])
+        val_rate = 0 
+    return df_filtered_jx_kmers, val_rate
 
 
 def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
@@ -232,7 +240,28 @@ def compare_OHSU_ETH(samples_store_pep, read_from_disk):
                     compare['pep_size_ohsu\eth'].append(len(pipelines_['OHSU'].difference(pipelines_['ETH'])))
                     compare['pep_size_eth\ohsu'].append(len(pipelines_['ETH'].difference(pipelines_['OHSU'])))
                     compare['pep_size_intersection'].append(len(pipelines_['ETH'].intersection(pipelines_['OHSU'])))
+        compare = pd.DataFrame(compare)
+        return compare
+   
+    else:
+        return None
+    
+def format_validation_rates(samples_store_rates, read_from_disk):
+    if read_from_disk:
+        compare = {'sample' : [], 
+                  'filter_' : [], 
+                  'pipeline': [], 
+                   'validation_rate':[]}
 
+        for sample, experiments_ in samples_store_rates.items():
+            for experiment, pipelines_ in experiments_.items():
+                if ('OHSU' in pipelines_.keys()) and ('ETH' in pipelines_.keys()):
+                    for pipeline, rate in pipelines_.items():
+                        compare['sample'].append(sample)
+                        compare['filter_'].append(experiment)
+                        compare['pipeline'].append( pipeline)
+                        compare['validation_rate'].append(rate)
+        compare = pd.DataFrame(compare)
         return compare
     else:
         return None
