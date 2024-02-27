@@ -179,16 +179,8 @@ def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
         # Add the junction coordinates to the filtered DF
         df_filtered_jx = fasta_coordinates.merge(df_filtered_summary, on = 'pepID', how = 'right')
         df_filtered_jx = df_filtered_jx.dropna(axis=0)
-        test = [pep for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ) if pep in bi]
-        issues = []
-        c=0 
-        for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ):
-            if pep not in bi:
-                issues.append(c)
-            c+=1
-        if df_filtered_jx.shape[0] !=len(test):
-            
-            assert(df_filtered_jx.shape[0] == len(test))
+        test = [pep for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ) if pep in bi]    
+        assert(df_filtered_jx.shape[0] == len(test))
 
         # Add the kmers to the filtered DF
         if pipeline == 'OHSU':
