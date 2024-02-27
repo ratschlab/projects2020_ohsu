@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ### General inputs
-FDR_method='crux' #'crux' # 'crux' 'crema'
+FDR_method='crema' #'crux' # 'crux' 'crema'
 proteomics_dir='/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerge_25012024'
 gitfolder=${PWD}
 rm ${gitfolder}/run_example.sh

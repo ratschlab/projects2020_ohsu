@@ -2,8 +2,6 @@ import pandas as pd
 import glob
 import os 
 import numpy as np 
-import matplotlib.pyplot as plt
-import seaborn as sns
 from collections import defaultdict
 from Bio import SeqIO
 import tarfile
@@ -43,10 +41,10 @@ def explode_immunopepper_coord(mx, coord_col = 'coord', sep=':'):
     return coord_mx
 
 
-def search_result_peptides_ids(df_search):
+def search_result_peptides_ids(df_search, col_seq):
     pep_IDs = []
     tryptic_pep = []
-    for idx, peptide in zip(df_search['protein id'], df_search['unmodified sequence'] ):
+    for idx, peptide in zip(df_search['protein id'], df_search[col_seq] ):
         if idx is np.nan:
             print('ERROR: Search not successful on all fractions of sample. Please RERUN')
         for name_ in idx.split(','):
@@ -61,8 +59,9 @@ def search_result_peptides_ids(df_search):
 
 
 def get_pep_ids(fa_path):
-    if '.gz' in fa_path:
-        fa_path = gzip.open(fasta_file, 'rt')
+    input_path = fa_path
+    if '.gz' in input_path:
+        fa_path = gzip.open(fa_path, 'rt')
         
     id_to_pep = {}
     for seq in SeqIO.parse(fa_path,'fasta'):
@@ -71,14 +70,15 @@ def get_pep_ids(fa_path):
             assert(id_to_pep[str(seq.seq)] == pepID)
         id_to_pep[pepID] = str(seq.seq)
     
-    if '.gz' in fa_path:
+    if '.gz' in input_path:
         fa_path.close()
     return id_to_pep
 
 
 def get_pep_coord(fa_path):
-    if '.gz' in fa_path:
-        fa_path = gzip.open(fasta_file, 'rt')
+    input_path = fa_path
+    if '.gz' in input_path:
+        fa_path = gzip.open(fa_path, 'rt')
         
     jxs = []
     pepIDs = []
@@ -99,7 +99,7 @@ def get_pep_coord(fa_path):
         pepIDs.append(int(header['pepID']))
         biexon_peptides.append(str(seq.seq))
     
-    if '.gz' in fa_path:
+    if '.gz' in input_path:
         fa_path.close()
 
     fasta_coordinates = pd.DataFrame({'jx': jxs, 'pepID': pepIDs, 'bi_exon_pep': biexon_peptides }).drop_duplicates()
@@ -113,6 +113,12 @@ def tar_reader(tar_arxiv, file_name):
         df_ohsu.columns = ['kmer', 'jx']
     return df_ohsu
 
+def ohsu_tsv_reader(path, file_name):
+    df_ohsu = pd.read_csv(os.path.join(path, file_name), sep="\t")
+    df_ohsu.reset_index(inplace = True)
+    df_ohsu.columns = ['kmer', 'jx']
+    return df_ohsu
+
 
 def kmer_in_bi_exon_peptide(df_kmer):
     '''Filters out kmers which are not in the bi-exon peptides. 
@@ -121,8 +127,9 @@ def kmer_in_bi_exon_peptide(df_kmer):
     indexes = []
     counter = 0
     for kmer, bi_exon_pep in zip(df_kmer['kmer'], df_kmer['bi_exon_pep'] ):
-        if kmer in bi_exon_pep:
-            indexes.append(counter)
+        if kmer is not np.nan: 
+            if kmer in bi_exon_pep:
+                indexes.append(counter)
         counter += 1
 
     df_kmer = df_kmer.iloc[indexes, :]
@@ -130,12 +137,12 @@ def kmer_in_bi_exon_peptide(df_kmer):
 
 
 def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU, 
-                             fasta_base_ETH, sample, experiment, pipeline):
+                             fasta_base_ETH, sample, experiment, pipeline, col_seq='unmodified sequence'):
     '''Takes validated tryptic peptides and outputs validated kmers'''
     # Get filtered peptides passing the FDR for the given experiment
     
-    if df_filtered.shape[0]:
-        df_filtered_summary = search_result_peptides_ids(df_filtered)
+    if (df_filtered is not None) and (df_filtered.shape[0]):
+        df_filtered_summary = search_result_peptides_ids(df_filtered, col_seq)
 
 
         # Get Fasta file path 
@@ -143,8 +150,10 @@ def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
         if pipeline == 'OHSU':
             fasta_file = f'{fasta_base_OHSU}/J_{sample}_pool_kmer.fa'
             file_kmer = f'J_{sample}_{experiment[1:]}.tsv' 
-            kmers_experiment = tar_reader(kmer_files_OHSU, file_kmer)
+            #kmers_experiment = tar_reader(kmer_files_OHSU, file_kmer)
+            kmers_experiment = ohsu_tsv_reader(kmer_files_OHSU, file_kmer)
         elif pipeline == 'ETH':
+            fasta_base_ETH = fasta_base_ETH.replace('\'','') 
             fasta_file = f'{fasta_base_ETH}/G_{sample}_pool_kmer_25012024.fa.gz'
             file_kmer = os.path.join(fasta_base_ETH, f'G_{sample}_{experiment}.tsv.gz')
             file_kmer = glob.glob(file_kmer)[0]
@@ -169,10 +178,17 @@ def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
 
         # Add the junction coordinates to the filtered DF
         df_filtered_jx = fasta_coordinates.merge(df_filtered_summary, on = 'pepID', how = 'right')
-
-
+        df_filtered_jx = df_filtered_jx.dropna(axis=0)
         test = [pep for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ) if pep in bi]
-        assert(df_filtered_jx.shape[0] == len(test))
+        issues = []
+        c=0 
+        for pep, bi in zip(df_filtered_jx['tryptic-pep-passFDR'], df_filtered_jx['bi_exon_pep'] ):
+            if pep not in bi:
+                issues.append(c)
+            c+=1
+        if df_filtered_jx.shape[0] !=len(test):
+            
+            assert(df_filtered_jx.shape[0] == len(test))
 
         # Add the kmers to the filtered DF
         if pipeline == 'OHSU':
@@ -241,6 +257,8 @@ def compare_OHSU_ETH(samples_store_pep, read_from_disk):
                     compare['pep_size_eth\ohsu'].append(len(pipelines_['ETH'].difference(pipelines_['OHSU'])))
                     compare['pep_size_intersection'].append(len(pipelines_['ETH'].intersection(pipelines_['OHSU'])))
         compare = pd.DataFrame(compare)
+        print('Data to save', compare.shape)
+
         return compare
    
     else:
@@ -262,6 +280,7 @@ def format_validation_rates(samples_store_rates, read_from_disk):
                         compare['pipeline'].append( pipeline)
                         compare['validation_rate'].append(rate)
         compare = pd.DataFrame(compare)
+        print('Data to save', compare.shape)
         return compare
     else:
         return None

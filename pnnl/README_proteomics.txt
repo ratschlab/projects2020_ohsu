@@ -15,6 +15,8 @@ script_suite.sh
 
 2) Index the irrelevant, index the relevants, search the neighbors of relevant
 in irrelevant, concatenate relevants and neighbors
+Note: For the "UNION" of OHSU and ETH pipelines, a reindexing of the peptides
+is done to avoid duplication of the intersection
 ./20230713-tide-index:
 runall-createIndex-eth-ohsu.sh
 script_index.sh
@@ -34,7 +36,13 @@ tide-search-rewriten.sh
  ./20231212-FDR-correct/POOL_2_conf_assign
  runall_conf_union_pool.sh
  script_confidence.sh
-4.3) Separate the hits per experiment
+4.3) Only for the "UNION" case: Separate peptides from OHSU and ETH. Reindex
+./20231212-FDR-correct/POOL_3_FDR_divide
+20240220_debug_joint_proteomics_split.py
+run_example.sh
+runall_divide.sh
+script_divide.sh
+4.4) Separate the hits per experiment
 ./20231212-FDR-correct/POOL_3_FDR_extract
 FDR_to_experiments.py
 helpers_split.py

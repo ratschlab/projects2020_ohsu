@@ -3,25 +3,24 @@ from Bio import SeqIO
 from collections import defaultdict
 import glob
 import gzip
-import matplotlib.pyplot as plt
 import numpy as np 
 import os 
 import pandas as pd
-import seaborn as sns
 import tarfile
 
 from helpers_barplot_intersection import plot_text, plot_intersection_bars, reader_assign_conf_pep
 from helpers_barplot_intersection_kmers import explode_immunopepper_coord, search_result_peptides_ids 
 from helpers_barplot_intersection_kmers import get_pep_ids, get_pep_coord, tar_reader
-from helpers_barplot_intersection_kmers import validated_filtered_kmers
+from helpers_barplot_intersection_kmers import validated_filtered_kmers, format_validation_rates
 from helpers_barplot_intersection_kmers import compare_OHSU_ETH, kmer_in_bi_exon_peptide
 
 
   
 
-def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_ov:list, 
-                               fasta_base_OHSU:str, fasta_base_ETH:str, kmer_files_OHSU:str, 
+def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_ov:list, \
+                               fasta_base_OHSU:str, fasta_base_ETH:str, kmer_files_OHSU:str, \
                                pipelines:list, MS_FDR:str, MS_strategy:str, FDR_limit:float, save_folder:str):
+
     
     if MS_FDR == '_crema':
         FDR_file = 'crema.peptides.txt'
@@ -47,6 +46,7 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
     samples_store_rates_kmers = {}
 
     for sample in all_samples:
+        print('processing', sample)
 
         sample_short = '-'.join(sample.split('-')[0:3])
         
@@ -67,9 +67,9 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
             path_TEST_ETH = os.path.join(proteomicsdir, 'ETH', sample_short, 
                                        f'assign_conf_per_experiment{MS_FDR}')
 
-
+            print(path_single)
             experiment_list = [ i.split('/')[-1] for i in glob.glob(path_single + '/*')] #check
-
+            print(f'Processing {len(experiment_list)} experiments')
             for experiment in experiment_list:
                 if pipeline == 'OHSU':
                     original_name = experiment
@@ -95,7 +95,7 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
 
                     df_filtered, val_rate_kmers = validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
                                                            fasta_base_ETH, sample, experiment, 
-                                                           pipeline)
+                                                           pipeline, col_seq)
 
                         
                     samples_store_kmers[sample][cut_name][pipeline] = set(df_filtered['kmer'])
@@ -108,10 +108,10 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
                     print('\n')
                     
     # Performs sets comparisons
-    compare_kmers = compare_OHSU_ETH(samples_store_kmers, read_from_disk)
-    compare_peptides = compare_OHSU_ETH(samples_store_pep, read_from_disk)
-    peptide_rates = format_validation_rates(samples_store_rates_peps, read_from_disk)
-    kmers_rates = format_validation_rates(samples_store_rates_kmers, read_from_disk)
+    compare_kmers = compare_OHSU_ETH(samples_store_kmers, read_from_disk=True)
+    compare_peptides = compare_OHSU_ETH(samples_store_pep, read_from_disk=True)
+    peptide_rates = format_validation_rates(samples_store_rates_peps, read_from_disk=True)
+    kmers_rates = format_validation_rates(samples_store_rates_kmers, read_from_disk=True)
     
     path_data_pep = os.path.join(save_folder, f'data_peptides{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_kmers = os.path.join(save_folder, f'data_kmers{MS_FDR}_{MS_strategy}.tsv.gz')
@@ -147,8 +147,8 @@ if __name__ == "__main__":
     parser.add_argument("--pipelines", help='name of the pipelines in the proteomics result tree', nargs='+', default=['ETH', 'OHSU'])
     
     parser.add_argument("--FDR-limit", type=float, help='FDR limit', default=0.05)
-    parser.add_argument("--MS-FDR", type=float, help='FDR method: Either peptide FDR with crema or psm FDR with crux', choices=['_crema', '_crux', ''])
-        parser.add_argument("--MS-strategy", type=float, help='FDR setup: Either single pipeline, or pool per pipeline, or joint pipeline and experiments', choices=['pool', 'joint', 'single'])
+    parser.add_argument("--MS-FDR", help='FDR method: Either peptide FDR with crema or psm FDR with crux', choices=['_crema', '_crux', ''])
+    parser.add_argument("--MS-strategy", help='FDR setup: Either single pipeline, or pool per pipeline, or joint pipeline and experiments', choices=['pool', 'joint', 'single'])
 
     parser.add_argument("--save-folder", help='base folder to save results')
     args = parser.parse_args()
@@ -161,4 +161,4 @@ if __name__ == "__main__":
                                args.pipelines, 
                                args.MS_FDR, args.MS_strategy, args.FDR_limit, 
 #                               args.filtering_path_suffix, 
-                               args.save_folder):
+                               args.save_folder)
