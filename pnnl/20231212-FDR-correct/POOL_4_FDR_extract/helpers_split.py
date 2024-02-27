@@ -49,7 +49,7 @@ def search_result_rows(df_search):
         for name_ in idx.split(','):
             if 'pepID' not in name_:
                 continue
-            pep_ix = int(name_.split('-')[1].replace('(1)', ''))
+            pep_ix = int(name_.split('-')[1].split('(')[0])
             id_to_row[pep_ix].append(i)
     return id_to_row
 
