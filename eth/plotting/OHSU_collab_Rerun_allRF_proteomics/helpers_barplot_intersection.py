@@ -3,6 +3,7 @@ import glob
 import os 
 import numpy as np 
 from collections import defaultdict
+import matplotlib.pyplot as plt
 
 
 
@@ -68,71 +69,59 @@ def plot_text_all(X, Y, T):
         #plt.text(x - 0.5 , y + (y/10), p)
         
         
-def plot_intersection_bars(back_ticks, front_ticks, ticks_fontsize, axislabels_fontsize, 
-                          legend_fontsize, axes_fontsize, run_type, 
-                           serie_index, serie_intersection, serie_eth, serie_ohsu,
-                           y_label, save, plot_dir, base_plot, name_plot):
+def plot_intersection_bars(param):
 
     text_font = {'size':'12', 'weight':'normal'}
-
-    xupper_axis_label = 'GTEX (reads, samples)'
-    xlower_axis_label = f'{run_type.upper()} (min, reads, samples)'
-
-
-    colorgrid = 'grey'
     alpha_grid = 0.3
-    marker_size = 10
-    mew = 4
-    color1 = 'gold'
-    color2 = 'crimson'
-    color3 = 'mediumblue'
-    color4 = 'tomato'
-    colorgrid = 'grey'
     width = 0.4
 
     fig, ax1 = plt.subplots(figsize=(15, 6))
     ax2 =  ax1.secondary_xaxis('top')   
-    plt.grid(b=True, axis = 'both', which='major', color=colorgrid, linestyle='-', alpha=alpha_grid)
-    plt.grid(b=False, axis = 'both', which='minor', color=colorgrid, linestyle='--', alpha=alpha_grid)
+    plt.grid(b=True, axis = 'both', which='major', color=param.colorgrid, linestyle='-', alpha=alpha_grid)
+    plt.grid(b=False, axis = 'both', which='minor', color=param.colorgrid, linestyle='--', alpha=alpha_grid)
 
+    if param.serie_intersection is not None:
+        plt.bar(param.serie_index, param.serie_intersection, width=width, 
+                color=param.color1, label=param.intersection_label)
+    plt.plot(param.serie_index, param.serie_eth, alpha=1, color=param.color3,
+             linestyle = 'None', markerfacecolor='None', marker=param.marker_type,
+             markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
+             label = param.eth_label) 
+    plt.plot(param.serie_index, param.serie_ohsu, alpha=1, color=param.color2,
+             linestyle = 'None', markerfacecolor='None', marker=param.marker_type, 
+             markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
+             label = param.ohsu_label)
 
-    plt.bar(serie_index, serie_intersection, width=width, 
-            color=color1, label='Intersection size')
-    plt.plot(serie_index, serie_eth, alpha=1, color=color3,
-             linestyle = 'None', markerfacecolor='None', marker="_", markersize=marker_size, markeredgewidth=mew,
-             label = 'Total set size Graph Pipeline')
-    plt.plot(serie_index, serie_ohsu, alpha=1, color=color2,
-             linestyle = 'None', markerfacecolor='None', marker="_", markersize=marker_size, markeredgewidth=mew,
-             label = 'Total set size Junction Pipeline')
-
-    plot_text(serie_ohsu, serie_ohsu, 'top', color=color2, font=text_font)
-    plot_text(serie_eth, serie_eth, 'top', color=color3, font=text_font)
-    plot_text(serie_intersection, serie_intersection, color=color4, font=text_font)
+    plot_text(param.serie_ohsu, param.serie_ohsu, 'top', color=param.color2, font=text_font)
+    plot_text(param.serie_eth, param.serie_eth, 'top', color=param.color3, font=text_font)
+    if param.serie_intersection is not None:
+        plot_text(param.serie_intersection, param.serie_intersection, color=param.color4, font=text_font)
 
     #plt.yscale('log')
-    max_scale = np.max([serie_ohsu.values, serie_eth.values])
+    max_scale = np.max([param.serie_ohsu.values, param.serie_eth.values])
 
-    ax1.set_xticks(serie_index, 
-               labels = front_ticks,
+    ax1.set_xticks(param.serie_index, 
+               labels = param.front_ticks,
                rotation = 90, 
                ha = 'center', 
-               fontsize=ticks_fontsize)
+               fontsize=param.ticks_fontsize)
 
-    ax2.set_xticks(serie_index, 
-               labels = back_ticks,
+    ax2.set_xticks(param.serie_index, 
+               labels = param.back_ticks,
                rotation = 90, 
                ha = 'center', 
-               fontsize=ticks_fontsize)
+               fontsize=param.ticks_fontsize)
 
 
-    plt.legend(fontsize=legend_fontsize)
-    plt.ylabel(y_label, fontsize=axes_fontsize)
-    ax2.set_xlabel(xupper_axis_label, fontsize=axes_fontsize)
-    ax1.set_xlabel(xlower_axis_label, fontsize=axes_fontsize)
+    plt.legend(fontsize=param.legend_fontsize)
+    plt.ylabel(param.y_label, fontsize=param.axes_fontsize)
+    ax2.set_xlabel(param.xupper_axis_label, fontsize=param.axes_fontsize)
+    ax1.set_xlabel(param.xlower_axis_label, fontsize=param.axes_fontsize)
+    plt.title(param.title)
 
-    save_path = os.path.join(plot_dir, f'{base_plot}_{name_plot}.pdf')
+    save_path = os.path.join(param.plot_dir, f'{param.base_plot}_{param.name_plot}.pdf')
     print("saving path is to {}".format(save_path))
-    if save:
+    if param.save:
         print("Saving!")
         plt.savefig(save_path, bbox_inches='tight')
 
