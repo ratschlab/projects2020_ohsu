@@ -5,32 +5,89 @@ import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
 
-
-
-
-def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
-    print(f'Reading {path}')
-    if os.path.isfile(path):
-        df = pd.read_csv(path, sep = '\t')
-        tot_peptides = len(df[col_seq].unique())
-        print(f'With Shape: {df.shape[0]}')
-        print(f'With unique peptides: {tot_peptides}')
-        assert('sequence' in df.columns)
-        df_filtered = df.loc[df[col_qval] < FDR_threshold]
-        print(f'Number of validated psm: {df_filtered.shape}')
-        peptides = set(df_filtered[col_seq])
-        val = len(peptides)
-        if tot_peptides:
-            val_rate = np.round(val / tot_peptides * 100 , 2)
-        else:
-            val_rate = 0.0
-        print(f'Number of validated unique peptides: {val}')
-        print(f'Validation Rate: {val_rate } percent')
-        return val, val_rate, peptides, df_filtered
-    else:
-        return 0, 0.0, set(), None
+# def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
+#     print(f'Reading {path}')
+#     if os.path.isfile(path):
+#         df = pd.read_csv(path, sep = '\t')
+#         tot_peptides = len(df[col_seq].unique())
+#         print(f'With Shape: {df.shape[0]}')
+#         print(f'With unique peptides: {tot_peptides}')
+#         assert('sequence' in df.columns)
+#         df_filtered = df.loc[df[col_qval] < FDR_threshold]
+#         print(f'Number of validated psm: {df_filtered.shape}')
+#         peptides = set(df_filtered[col_seq])
+#         val = len(peptides)
+#         if tot_peptides:
+#             val_rate = np.round(val / tot_peptides * 100 , 2)
+#         else:
+#             val_rate = 0.0
+#         print(f'Number of validated unique peptides: {val}')
+#         print(f'Validation Rate: {val_rate } percent')
+#         return val, val_rate, peptides, df_filtered
+#     else:
+#         return 0, 0.0, set(), None
     
     
+class plotting_parameters():
+
+    def __init__(self, ticks_fontsize, axislabels_fontsize, legend_fontsize, axes_fontsize):
+        self.ticks_fontsize = ticks_fontsize
+        self.axislabels_fontsize = axislabels_fontsize
+        self.legend_fontsize = legend_fontsize
+        self.axes_fontsize = axes_fontsize
+        
+    def add_saving_instructions(self, save, run_type_plot_dir, sample_plot_dir):
+        self.save = save
+        self.run_type_plot_dir = run_type_plot_dir #TODO simplify
+        self.sample_plot_dir = sample_plot_dir  #TODO simplify
+        
+    def add_ticks(self, back_ticks, front_ticks):
+        self.back_ticks = back_ticks
+        self.front_ticks = front_ticks
+        
+    def add_y_label(self, y_label):
+        self.y_label = y_label
+        
+    def add_x_label(self, xupper_axis_label, xlower_axis_label):
+        self.xupper_axis_label = xupper_axis_label
+        self.xlower_axis_label = xlower_axis_label
+        
+    def add_saving_path(self, plot_dir, base_plot, name_plot):
+        self.plot_dir = plot_dir
+        self.base_plot = base_plot
+        self.name_plot = name_plot
+    
+    def add_plotting_data(self, data_both, data_eth, data_ohsu, 
+                          serie_index, serie_intersection, serie_eth, serie_ohsu):
+        self.data_both = data_both
+        self.data_eth = data_eth
+        self.data_ohsu = data_ohsu
+        self.serie_index = serie_index
+        self.serie_intersection = serie_intersection
+        self.serie_eth = serie_eth
+        self.serie_ohsu = serie_ohsu
+
+    def add_labels(self, intersection_label, eth_label, ohsu_label):
+        self.intersection_label = intersection_label
+        self.eth_label = eth_label
+        self.ohsu_label = ohsu_label
+    
+    def add_color_options(self, color1, color2, color3, color4, colorgrid):
+        self.color1 = color1
+        self.color2 = color2
+        self.color3 = color3
+        self.color4 = color4
+        self.colorgrid = colorgrid
+    
+    def edit_marker(self, marker_type, marker_size, markeredgewidth):
+        self.marker_type = marker_type
+        self.marker_size = marker_size
+        self.markeredgewidth =  markeredgewidth
+        
+    def add_title(self, title):
+        self.title = title
+        
+
 def plot_text(Y, T, position='top', color='black', font=None):
     if max(Y) > 0:
         font['color'] = color
@@ -70,6 +127,15 @@ def plot_text_all(X, Y, T):
         
         
 def plot_intersection_bars(param):
+    # Get series 
+    if param.serie_intersection is not None:
+         intersection = param.data_both[param.serie_intersection]
+    if param.serie_index is None:
+            index = np.arange(len(param.back_ticks))
+    else:
+        index = param.data_both[param.serie_index]
+    eth = param.data_eth[param.serie_eth]
+    ohsu = param.data_ohsu[param.serie_ohsu]
 
     text_font = {'size':'12', 'weight':'normal'}
     alpha_grid = 0.3
@@ -81,32 +147,33 @@ def plot_intersection_bars(param):
     plt.grid(b=False, axis = 'both', which='minor', color=param.colorgrid, linestyle='--', alpha=alpha_grid)
 
     if param.serie_intersection is not None:
-        plt.bar(param.serie_index, param.serie_intersection, width=width, 
+        plt.bar(index, intersection, width=width, 
                 color=param.color1, label=param.intersection_label)
-    plt.plot(param.serie_index, param.serie_eth, alpha=1, color=param.color3,
+    plt.plot(index, eth, alpha=1, color=param.color3,
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type,
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.eth_label) 
-    plt.plot(param.serie_index, param.serie_ohsu, alpha=1, color=param.color2,
+    plt.plot(index, ohsu, alpha=1, color=param.color2,
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type, 
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.ohsu_label)
+    #plt.fill_between(m.Time, m.Mean - m.Std, m.Mean + m.Std, alpha=0.35)
 
-    plot_text(param.serie_ohsu, param.serie_ohsu, 'top', color=param.color2, font=text_font)
-    plot_text(param.serie_eth, param.serie_eth, 'top', color=param.color3, font=text_font)
+    plot_text(ohsu, ohsu, 'top', color=param.color2, font=text_font)
+    plot_text(eth, eth, 'top', color=param.color3, font=text_font)
     if param.serie_intersection is not None:
-        plot_text(param.serie_intersection, param.serie_intersection, color=param.color4, font=text_font)
+        plot_text(intersection, intersection, color=param.color4, font=text_font)
 
     #plt.yscale('log')
-    max_scale = np.max([param.serie_ohsu.values, param.serie_eth.values])
+    max_scale = np.max([ohsu.values, eth.values])
 
-    ax1.set_xticks(param.serie_index, 
+    ax1.set_xticks(index, 
                labels = param.front_ticks,
                rotation = 90, 
                ha = 'center', 
                fontsize=param.ticks_fontsize)
 
-    ax2.set_xticks(param.serie_index, 
+    ax2.set_xticks(index, 
                labels = param.back_ticks,
                rotation = 90, 
                ha = 'center', 
