@@ -157,8 +157,19 @@ def plot_intersection_bars(param):
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type, 
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.ohsu_label)
-    #plt.fill_between(m.Time, m.Mean - m.Std, m.Mean + m.Std, alpha=0.35)
+    
 
+    lower_bound = param.data_eth['mean_' + param.serie_eth] - param.data_eth['std_' + param.serie_eth]
+    upper_bound = param.data_eth['mean_' + param.serie_eth] + param.data_eth['std_' + param.serie_eth]
+    plt.fill_between(index, 
+                     lower_bound.apply(lambda x: max(x, 0)), upper_bound, 
+                     alpha=0.35, color=param.color3) 
+    lower_bound = param.data_ohsu['mean_' + param.serie_ohsu] - param.data_ohsu['std_' + param.serie_ohsu]
+    upper_bound = param.data_ohsu['mean_' + param.serie_ohsu] + param.data_ohsu['std_' + param.serie_ohsu]
+    plt.fill_between(index, 
+                     lower_bound.apply(lambda x: max(x, 0)), upper_bound,
+                     alpha=0.35, color=param.color2)
+    
     plot_text(ohsu, ohsu, 'top', color=param.color2, font=text_font)
     plot_text(eth, eth, 'top', color=param.color3, font=text_font)
     if param.serie_intersection is not None:
