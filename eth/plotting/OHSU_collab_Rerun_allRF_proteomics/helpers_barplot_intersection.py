@@ -98,26 +98,27 @@ def plot_text(Y, T, position='top', color='black', font=None):
         change_val = [i for i in np.arange(len(Y) - 1) if Y[i] != Y[i - 1]]    
         weighted = [change_val[i] + (change_val[i+1] - change_val[i]) / 2 for i, x in enumerate(change_val[:-1])]
         X = [np.floor(change_val[i] + (change_val[i+1] - change_val[i]) / 2) for i, x in enumerate(change_val[:-1])]
-        Y = Y[np.array(change_val[:-1])]
-        T = T[np.array(change_val[:-1])]
-        p_prev = 0 
-        percent_diff = 20
-        min_x = min(X)
+        if len(change_val) > 1:
+            Y = Y[np.array(change_val[:-1])]
+            T = T[np.array(change_val[:-1])]
+            p_prev = 0 
+            percent_diff = 20
+            min_x = min(X)
 
-        previous_plot = 0 
-        for x, y, p in zip(X, Y, T):
-            if position == 'bottom':
-                delta = - (y/5.5)
-            elif position == 'top': 
-                delta = (y/12)
-            if (p > p_prev + (p_prev/percent_diff)) or (p < p_prev - (p_prev/percent_diff)):
-                previous_plot += 1
-            if previous_plot == 2 or x == min_x: # delay the plotting
-                if y != 0 : # Because log scale
-                    plt.text(x - 0.5 , y + delta , p, ha='left', **font)
-                    previous_plot = 0
+            previous_plot = 0 
+            for x, y, p in zip(X, Y, T):
+                if position == 'bottom':
+                    delta = - (y/5.5)
+                elif position == 'top': 
+                    delta = (y/12)
+                if (p > p_prev + (p_prev/percent_diff)) or (p < p_prev - (p_prev/percent_diff)):
+                    previous_plot += 1
+                if previous_plot == 2 or x == min_x: # delay the plotting
+                    if y != 0 : # Because log scale
+                        plt.text(x - 0.5 , y + delta , p, ha='left', **font)
+                        previous_plot = 0
 
-            p_prev = p 
+                p_prev = p 
 
         
 def plot_text_all(X, Y, T):
@@ -159,13 +160,13 @@ def plot_intersection_bars(param):
              label = param.ohsu_label)
     
 
-    lower_bound = param.data_eth['mean_' + param.serie_eth] - param.data_eth['std_' + param.serie_eth]
-    upper_bound = param.data_eth['mean_' + param.serie_eth] + param.data_eth['std_' + param.serie_eth]
+    lower_bound = param.data_eth[param.serie_eth] - param.data_eth[param.serie_eth.replace('mean', 'std')]
+    upper_bound = param.data_eth[param.serie_eth] + param.data_eth[param.serie_eth.replace('mean', 'std')]
     plt.fill_between(index, 
                      lower_bound.apply(lambda x: max(x, 0)), upper_bound, 
                      alpha=0.35, color=param.color3) 
-    lower_bound = param.data_ohsu['mean_' + param.serie_ohsu] - param.data_ohsu['std_' + param.serie_ohsu]
-    upper_bound = param.data_ohsu['mean_' + param.serie_ohsu] + param.data_ohsu['std_' + param.serie_ohsu]
+    lower_bound = param.data_ohsu[param.serie_ohsu] - param.data_ohsu[param.serie_ohsu.replace('mean', 'std')]
+    upper_bound = param.data_ohsu[param.serie_ohsu] + param.data_ohsu[param.serie_ohsu.replace('mean', 'std')]
     plt.fill_between(index, 
                      lower_bound.apply(lambda x: max(x, 0)), upper_bound,
                      alpha=0.35, color=param.color2)
