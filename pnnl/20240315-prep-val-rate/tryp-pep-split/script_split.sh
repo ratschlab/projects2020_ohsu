@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#SBATCH --job-name=FDRsplit
-#SBATCH --output=FDRsplit.out
+#SBATCH --job-name=TrypPepsplit
+#SBATCH --output=TrypPepsplit.out
 #SBATCH --cpus-per-task=1
 #SBATCH --nodes=1
 #SBATCH --time=04:00:00
@@ -9,15 +9,10 @@
 
 script_home=$1
 list_experiments=$2
-search_res=$3
+base_pipeline_folder=$3
 out_folder=$4
-sample_pos=$5
+samples=$5
 make_sub_folder=$6
 
-if [ -z "$make_sub_folder" ]; then
-	python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos}
-	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos}" >> ${script_home}/run_example.sh
-else
-	python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos} --create-sample-subfolder ${make_sub_folder}
-	echo "python ${script_home}/FDR_to_experiments.py --list-experiments "${list_experiments}" --search-out-folder "${search_res}" --save-folder "${out_folder}" --sample-search-out-folder ${sample_pos} --create-sample-subfolder ${make_sub_folder}" >> ${script_home}/run_example.sh
-fi
+python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples "${samples}" --create-sample-subfolder ${make_sub_folder}
+echo "python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples "${samples}" --create-sample-subfolder ${make_sub_folder}"  >> ${script_home}/run_example.sh

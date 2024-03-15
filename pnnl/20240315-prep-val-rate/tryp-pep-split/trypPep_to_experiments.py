@@ -16,8 +16,8 @@ def fasta_to_experiments(list_experiments, base_pipeline_folder, save_folder, cr
     n_samples_process = 10
     for sample in samples:
         
-	fa_path = os.path.join(base_pipeline_folder, sample, 'trypsine_digest/peptide-extracted-filter-unique.fasta')
-	print(sample)
+        fa_path = os.path.join(base_pipeline_folder, sample, 'trypsine_digest/peptide-extracted-filter-unique.fasta')
+        print(sample)
         n_samples_process -= 1
         print(n_samples_process)
 
@@ -49,7 +49,7 @@ def fasta_to_experiments(list_experiments, base_pipeline_folder, save_folder, cr
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Takes a fasta and splits it between experimental conditions')
     parser.add_argument("--list-experiments", help='file containing the paths to the experiment files per sample')
-    parser.add_argument("--base_pipeline_folder", help='path containing the result for the pipeline. Should contain {sample}/trypsine_digest/peptide-extracted-filter-unique.fasta')
+    parser.add_argument("--base-pipeline-folder", help='path containing the result for the pipeline. Should contain {sample}/trypsine_digest/peptide-extracted-filter-unique.fasta')
     parser.add_argument("--samples", nargs='+',
                         help='list of samples to process')
     parser.add_argument("--save-folder",help='base folder to save results')
