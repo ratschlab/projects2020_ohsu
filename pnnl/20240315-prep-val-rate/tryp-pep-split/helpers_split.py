@@ -1,3 +1,4 @@
+from Bio import SeqIO
 import os 
 from pathlib import Path
 import pandas as pd

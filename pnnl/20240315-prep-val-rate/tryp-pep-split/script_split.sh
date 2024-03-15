@@ -14,5 +14,5 @@ out_folder=$4
 samples=$5
 make_sub_folder=$6
 
-python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples "${samples}" --create-sample-subfolder ${make_sub_folder}
-echo "python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples "${samples}" --create-sample-subfolder ${make_sub_folder}"  >> ${script_home}/run_example.sh
+python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples ${samples} --create-sample-subfolder ${make_sub_folder}
+echo "python ${script_home}/trypPep_to_experiments.py --list-experiments "${list_experiments}" --base-pipeline-folder "${base_pipeline_folder}" --save-folder "${out_folder}" --samples ${samples} --create-sample-subfolder ${make_sub_folder}"  >> ${script_home}/run_example.sh

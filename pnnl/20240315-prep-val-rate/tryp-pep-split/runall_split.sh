@@ -6,7 +6,7 @@ proteomics_dir='/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMer
 gitfolder=${PWD}
 rm ${gitfolder}/run_example.sh
 echo "example run in ${gitfolder}/run_example.sh"
-samples='TCGA-24-1431  TCGA-24-2298  TCGA-25-1313  TCGA-25-1319  TCGA-61-2008  TCGA-A2-A0D2  TCGA-A2-A0SX  TCGA-AO-A0JM  TCGA-BH-A18V  TCGA-C8-A12P'
+samples=$(echo 'TCGA-24-1431'  'TCGA-24-2298'  'TCGA-25-1313'  'TCGA-25-1319'  'TCGA-61-2008'  'TCGA-A2-A0D2'  'TCGA-A2-A0SX'  'TCGA-AO-A0JM'  'TCGA-BH-A18V'  'TCGA-C8-A12P')
 
 ### OHSU 
 experiment_list='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/current_OHSU_experiments_per_peptides_list.txt' #will soon be /cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/current/OHSU_experiments_per_peptides_list.txt
