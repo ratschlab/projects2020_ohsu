@@ -7,12 +7,18 @@ import timeit
 import numpy as np
 
 
-def reader_FDR_results(search_out_folder, sample_search_out_folder):
-    search_res = dict()
-    for path in glob.glob(search_out_folder):
-        sample = path.split('/')[sample_search_out_folder]
-        search_res[sample] = path 
-    return search_res
+def get_pep_ids_df(fa_path):
+    Ids = set()
+    pep_to_id = {}
+    for seq in SeqIO.parse(fa_path,'fasta'):
+        Ids.add(seq.seq)
+        assert(seq.seq not in pep_to_id)
+        pep_to_id[str(seq.seq)] = seq.id
+    df =  pd.DataFrame(pep_to_id.keys(), pep_to_id.values()).reset_index()
+    df = df.rename({'index':'protein id', 0:'sequence'}, axis = 1)
+
+    return df
+
 
 def reader_experiments(list_experiments):
     '''Read files with path lists'''
