@@ -70,7 +70,7 @@ def replace_protein_id(search_res_pipeline, pipeline_index_mapping):
         ids_to_replace = search_res_pipeline.iloc[ETH_pepID_as_rows[id_reindexed]]['protein id']
 
         # Generate the strings with the replaced IDs
-        ids_back_to_original = [pepID.replace(str(id_reindexed), str(original_index)) 
+        ids_back_to_original = [pepID.replace(str(id_reindexed), str(original_index)).replace('(1)', '') 
                                 for pepID in ids_to_replace]
         # store
         indexes_lookup.extend(list(ids_to_replace.index))
@@ -86,6 +86,7 @@ def replace_protein_id(search_res_pipeline, pipeline_index_mapping):
     print('Size after merge', search_res_pipeline.shape)
     search_res_pipeline = search_res_pipeline.rename({'protein id': 'joint id'}, axis = 1)
     search_res_pipeline = search_res_pipeline.rename({'protein id new': 'protein id'}, axis = 1)
+    search_res_pipeline['joint id'] = [pepID.replace('(1)', '') for pepID in search_res_pipeline['joint id']]
     return search_res_pipeline
 
 

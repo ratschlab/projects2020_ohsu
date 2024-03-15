@@ -5,27 +5,36 @@ import numpy as np
 from collections import defaultdict
 import matplotlib.pyplot as plt
 
-# def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
-#     print(f'Reading {path}')
-#     if os.path.isfile(path):
-#         df = pd.read_csv(path, sep = '\t')
-#         tot_peptides = len(df[col_seq].unique())
-#         print(f'With Shape: {df.shape[0]}')
-#         print(f'With unique peptides: {tot_peptides}')
-#         assert('sequence' in df.columns)
-#         df_filtered = df.loc[df[col_qval] < FDR_threshold]
-#         print(f'Number of validated psm: {df_filtered.shape}')
-#         peptides = set(df_filtered[col_seq])
-#         val = len(peptides)
-#         if tot_peptides:
-#             val_rate = np.round(val / tot_peptides * 100 , 2)
-#         else:
-#             val_rate = 0.0
-#         print(f'Number of validated unique peptides: {val}')
-#         print(f'Validation Rate: {val_rate } percent')
-#         return val, val_rate, peptides, df_filtered
-#     else:
-#         return 0, 0.0, set(), None
+def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval, input_trypPep):
+    print(f'Reading {path}')
+    if os.path.isfile(path) and os.path.isfile(input_trypPep):
+        # Read
+        df = pd.read_csv(path, sep = '\t')
+        df_all_pep = pd.read_csv(input_trypPep, sep = '\t')
+        
+        # Total
+        tot_peptides = len(df_all_pep['sequence'].unique())
+        
+        print(f'Shape of FDR file: {df.shape[0]}')
+        print(f'Total input tryptic junction peptides: {tot_peptides}')
+        assert('sequence' in df.columns)
+        
+        # Validated peptides
+        df_filtered = df.loc[df[col_qval] < FDR_threshold]
+        peptides = set(df_filtered[col_seq])
+        val = len(peptides)
+
+        # Validation rate
+        if tot_peptides:
+            val_rate = np.round(val / tot_peptides * 100 , 2)
+        else:
+            val_rate = 0.0
+        
+        print(f'Number of validated unique peptides: {val}')
+        print(f'Validation Rate: {val_rate } percent')
+        return val, val_rate, peptides, df_filtered
+    else:
+        return 0, 0.0, set(), None
     
     
 class plotting_parameters():

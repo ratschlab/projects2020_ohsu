@@ -7,7 +7,7 @@ import numpy as np
 import os 
 import pandas as pd
 import tarfile
-
+from pathlib import Path
 from helpers_barplot_intersection import plot_text, plot_intersection_bars, reader_assign_conf_pep
 from helpers_barplot_intersection_kmers import explode_immunopepper_coord, search_result_peptides_ids 
 from helpers_barplot_intersection_kmers import get_pep_ids, get_pep_coord, tar_reader
@@ -66,6 +66,10 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
                                        f'assign_conf_per_experiment{MS_FDR}')
             path_TEST_ETH = os.path.join(proteomicsdir, 'ETH', sample_short, 
                                        f'assign_conf_per_experiment{MS_FDR}')
+            
+            base_input_trypPep = os.path.join(proteomicsdir, pipeline, sample_short, 
+                                              'trypsine_digest_per_experiment')
+
 
             print(path_single)
             experiment_list = [ i.split('/')[-1] for i in glob.glob(path_single + '/*')] #check
@@ -90,8 +94,11 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
                     # search all experiments, 1 union of pipelines
                     if MS_strategy == 'joint':
                         df = os.path.join(path_pool_union, f'tsearch-{original_name}.txt')
+                    # Input peptides searched
+                    input_trypPep = os.path.join(base_input_trypPep, f'tsearch-{original_name}.txt')
 
-                    val, val_rate_tryptic_pep, peptides, df_filtered = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue)
+
+                    val, val_rate_tryptic_pep, peptides, df_filtered = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue, input_trypPep)
 
                     df_filtered, val_rate_kmers = validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
                                                            fasta_base_ETH, sample, experiment, 
@@ -113,6 +120,8 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
     peptide_rates = format_validation_rates(samples_store_rates_peps, read_from_disk=True)
     kmers_rates = format_validation_rates(samples_store_rates_kmers, read_from_disk=True)
     
+    print(f'creating {save_folder}')
+    Path(save_folder).mkdir(parents=True, exist_ok=True) 
     path_data_pep = os.path.join(save_folder, f'data_peptides{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_kmers = os.path.join(save_folder, f'data_kmers{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_peptide_rates = os.path.join(save_folder, f'data_peptides-rates{MS_FDR}_{MS_strategy}.tsv.gz')

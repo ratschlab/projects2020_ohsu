@@ -203,20 +203,20 @@ def validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
     return df_filtered_jx_kmers, val_rate
 
 
-def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
-    print(f'Reading {path}')
-    if os.path.isfile(path):
-        df = pd.read_csv(path, sep = '\t')
-        tot_peptides = len(df[col_seq].unique())
-        print(f'With Shape: {df.shape[0]}')
-        print(f'With unique peptides: {tot_peptides}')
-        assert('sequence' in df.columns)
-        df_filtered = df.loc[df[col_qval] < FDR_threshold]
-        print(f'Number of validated psm: {df_filtered.shape}')
+# def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval):
+#     print(f'Reading {path}')
+#     if os.path.isfile(path):
+#         df = pd.read_csv(path, sep = '\t')
+#         tot_peptides = len(df[col_seq].unique())
+#         print(f'With Shape: {df.shape[0]}')
+#         print(f'With unique peptides: {tot_peptides}')
+#         assert('sequence' in df.columns)
+#         df_filtered = df.loc[df[col_qval] < FDR_threshold]
+#         print(f'Number of validated psm: {df_filtered.shape}')
         
-        return df_filtered
-    else:
-        return None
+#         return df_filtered
+#     else:
+#         return None
 
     
 def compare_OHSU_ETH(samples_store_pep, read_from_disk):
