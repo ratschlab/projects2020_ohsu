@@ -44,6 +44,10 @@ class plotting_parameters():
         self.axislabels_fontsize = axislabels_fontsize
         self.legend_fontsize = legend_fontsize
         self.axes_fontsize = axes_fontsize
+        self.log_scale = False
+    
+    def edit_scale(self, is_log_scale):
+        self.log_scale = is_log_scale
         
     def add_saving_instructions(self, save, run_type_plot_dir, sample_plot_dir):
         self.save = save
@@ -185,7 +189,9 @@ def plot_intersection_bars(param):
     if param.serie_intersection is not None:
         plot_text(intersection, intersection, color=param.color4, font=text_font)
 
-    #plt.yscale('log')
+    if param.log_scale:
+        plt.yscale('log')
+    
     max_scale = np.max([ohsu.values, eth.values])
 
     ax1.set_xticks(index, 
