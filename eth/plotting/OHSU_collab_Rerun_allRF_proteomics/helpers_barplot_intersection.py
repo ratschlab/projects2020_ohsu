@@ -151,7 +151,7 @@ def plot_intersection_bars(param):
     eth = param.data_eth[param.serie_eth]
     ohsu = param.data_ohsu[param.serie_ohsu]
 
-    text_font = {'size':'12', 'weight':'normal'}
+    text_font = {'size':'12', 'weight':'bold'}
     alpha_grid = 0.3
     width = 0.4
 
