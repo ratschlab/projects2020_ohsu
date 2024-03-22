@@ -67,6 +67,29 @@ def sort_filters(df, order_background, order_foreground):
     df['filter_foreground'] = prepare_frontticks(df['filter_foreground_target'], df['filter_foreground_reads'], df['filter_foreground_samples'])
 
     return df
+
+
+def calculate_mean_std(df, group_cols, target_cols, run_type_plot_dir, sample, decimals=1):
+    # Restrict table to cohort
+    all_samples = [s for s in run_type_plot_dir 
+                   if run_type_plot_dir[sample] == run_type_plot_dir[s]]
+    df = df.set_index('sample').loc[all_samples].reset_index()
+    
+    
+    # Compute means and std
+    df_means = df.groupby(group_cols)[target_cols].mean().reset_index().rename({col : 'mean_' + col 
+                                                                     for col in target_cols}, axis = 1)
+    df_std = df.groupby(group_cols)[target_cols].std().reset_index().rename({col : 'std_' + col 
+                                                                     for col in target_cols}, axis = 1)
+
+    df = df.merge(df_means, on = group_cols).merge(df_std, on = group_cols)
+    
+    for col in df.columns:
+        if ('mean_' in col):
+            df[col] = [np.round(i, decimals) for i in df[col]]
+            if decimals == 0:
+                df[col] = [int(i) for i in df[col]]
+    return df
     
     
 class plotting_parameters():
