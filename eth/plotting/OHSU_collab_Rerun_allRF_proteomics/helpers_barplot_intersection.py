@@ -4,6 +4,7 @@ import os
 import numpy as np 
 from collections import defaultdict
 import matplotlib.pyplot as plt
+import math
 
 def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval, input_trypPep):
     print(f'Reading {path}')
@@ -35,6 +36,37 @@ def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval, input_trypPep
         return val, val_rate, peptides, df_filtered
     else:
         return 0, 0.0, set(), None
+    
+    
+def sort_filters(df, order_background, order_foreground):
+    def prepare_backticks(a, b):
+        return  [f'({i}, {j})' for i, j in zip(a.values, b.values)]
+    def prepare_frontticks(a, b, c):
+        return  [f'({i}, {j}, {k})' for i, j, k in zip(a.values, b.values, c.values)]
+
+    ## Separate filter values
+    df['foreground_pattern']  = [i[0:3] for i in df['filter_'].values]
+    df['background_pattern']  = [i[3:5] for i in df['filter_'].values]
+
+
+    for i, level in enumerate(order_background):
+        df.loc[df['background_pattern'] == level, 'leniency_background'] = i
+    for i, level in enumerate(order_foreground):
+        df.loc[df['foreground_pattern'] == level, 'leniency_foreground'] = i
+    
+    df = df.sort_values(['leniency_foreground', 'leniency_background'])
+    df['index'] = np.arange(len(df))
+    
+    df['filter_foreground_target']  = [i[0] for i in df['filter_'].values]
+    df['filter_foreground_reads'] =  [i[1] for i in df['filter_'].values]
+    df['filter_foreground_samples'] = [i[2] for i in df['filter_'].values]
+    df['filter_background_reads'] = [i[3] for i in df['filter_'].values]
+    df['filter_background_samples'] = [i[4] for i in df['filter_'].values]
+    
+    df['filter_background'] = prepare_backticks(df['filter_background_reads'], df['filter_background_samples'])
+    df['filter_foreground'] = prepare_frontticks(df['filter_foreground_target'], df['filter_foreground_reads'], df['filter_foreground_samples'])
+
+    return df
     
     
 class plotting_parameters():
@@ -140,14 +172,45 @@ def plot_text_all(X, Y, T):
         #plt.text(x - 0.5 , y + (y/10), p)
         
         
+def plot_text_dev(Y, T, position='top', color='black', font=None):
+    def x_centering(y):
+        if isinstance(y, float) or isinstance(y, np.float64):
+            delta_x = - 0.5
+        elif isinstance(y, int) or isinstance(y, np.int64):
+            digits = int(math.log10(y)) + 1 if y else 1
+            delta_x = - (0.25 + (digits / 8)) if digits > 1 else - 0.25 
+        else:
+            assert(False)
+        return delta_x
+    
+    def y_shift(Y, position):
+        if position == 'bottom':
+            delta_y = - (Y[x] /5.5)
+        elif position == 'top': 
+            delta_y = Y[x] / 12
+        return delta_y
+    
+    start = 0 
+    step = 3
+    #if max(Y) > 0:
+    font['color'] = color
+    Y = np.array(Y)
+    T = np.array(T)
+    for x in np.arange(start, len(Y), step):
+        delta_x = x_centering(Y[x])
+        # TESTING print(x, Y[x], delta_x)
+        delta_y = y_shift(Y, position)
+        plt.text(x + delta_x , Y[x] + delta_y , T[x], ha='left', **font)
+        #print('next') 
+        
+        
 def plot_intersection_bars(param):
     # Get series 
     if param.serie_intersection is not None:
          intersection = param.data_both[param.serie_intersection]
-    if param.serie_index is None:
-            index = np.arange(len(param.back_ticks))
-    else:
-        index = param.data_both[param.serie_index]
+
+    index = np.arange(len(param.back_ticks))
+
     eth = param.data_eth[param.serie_eth]
     ohsu = param.data_ohsu[param.serie_ohsu]
 
@@ -171,6 +234,7 @@ def plot_intersection_bars(param):
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type, 
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.ohsu_label)
+
     
 
     lower_bound = param.data_eth[param.serie_eth] - param.data_eth[param.serie_eth.replace('mean', 'std')]
@@ -184,16 +248,23 @@ def plot_intersection_bars(param):
                      lower_bound.apply(lambda x: max(x, 0)), upper_bound,
                      alpha=0.35, color=param.color2)
     
-    plot_text(ohsu, ohsu, 'top', color=param.color2, font=text_font)
-    plot_text(eth, eth, 'top', color=param.color3, font=text_font)
-    if param.serie_intersection is not None:
-        plot_text(intersection, intersection, color=param.color4, font=text_font)
+    plot_text_dev(ohsu, ohsu, 'top', color=param.color2, font=text_font)
+    plot_text_dev(eth, eth, 'top', color=param.color3, font=text_font)
+    if (param.serie_intersection) is not None and (param.log_scale): # Skip the intersection size if not log scale
+        plot_text_dev(intersection, intersection, color=param.color4, font=text_font)
+
 
     if param.log_scale:
-        plt.yscale('log')
-    
+        plt.yscale('symlog')
+        
     max_scale = np.max([ohsu.values, eth.values])
+    min_scale = np.min([ohsu.values, eth.values])
+    
+    # TESTING
+#     plt.plot(np.arange(0,len(index), 3), [np.mean([max_scale, min_scale]) ] * len(np.arange(0,len(index), 3)), linestyle='None', marker='|', markersize=15, color='maroon', markeredgewidth=3)
+    
 
+        
     ax1.set_xticks(index, 
                labels = param.front_ticks,
                rotation = 90, 
