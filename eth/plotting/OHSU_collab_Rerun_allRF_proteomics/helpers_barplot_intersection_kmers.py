@@ -95,7 +95,12 @@ def get_pep_coord(fa_path):
             else:
                 header[fs[0]] = fs[1]
 
-        jxs.append(header['jx_coord'].replace('|', ';'))
+        single_junction = header['jx_coord'].replace('|', ';')
+        if '_' in single_junction: # ETH case
+            n1, n2 = [int(i) for i in single_junction.split('_')]
+            if n1 > n2: 
+                single_junction = f'{n2}_{n1}'
+        jxs.append(single_junction)
         pepIDs.append(int(header['pepID']))
         biexon_peptides.append(str(seq.seq))
     
@@ -104,6 +109,7 @@ def get_pep_coord(fa_path):
 
     fasta_coordinates = pd.DataFrame({'jx': jxs, 'pepID': pepIDs, 'bi_exon_pep': biexon_peptides }).drop_duplicates()
     return fasta_coordinates
+
 
 
 def tar_reader(tar_arxiv, file_name):

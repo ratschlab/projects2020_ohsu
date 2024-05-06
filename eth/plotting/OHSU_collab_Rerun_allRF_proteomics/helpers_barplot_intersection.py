@@ -12,6 +12,7 @@ def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval, input_trypPep
         # Read
         df = pd.read_csv(path, sep = '\t')
         df_all_pep = pd.read_csv(input_trypPep, sep = '\t')
+        tryptic_peptides = set(df_all_pep['sequence'].unique())
         
         # Total
         tot_peptides = len(df_all_pep['sequence'].unique())
@@ -33,9 +34,9 @@ def reader_assign_conf_pep(path, FDR_threshold, col_seq, col_qval, input_trypPep
         
         print(f'Number of validated unique peptides: {val}')
         print(f'Validation Rate: {val_rate } percent')
-        return val, val_rate, peptides, df_filtered
+        return val, val_rate, peptides, df_filtered, tryptic_peptides
     else:
-        return 0, 0.0, set(), None
+        return 0, 0.0, set(), None, set()
     
     
 def sort_filters(df, order_background, order_foreground):
@@ -226,6 +227,21 @@ def plot_text_dev(Y, T, position='top', color='black', font=None):
         plt.text(x + delta_x , Y[x] + delta_y , T[x], ha='left', **font)
         #print('next') 
         
+def print_statistics(serie, label):
+    stat_text(serie, label)
+    
+    
+def print_ratio(serie_JP, serie_GP, label='ratio JP/GP'):
+    serie = np.divide(list(serie_JP), list(serie_GP))
+    stat_text(serie, label)
+    
+def stat_text(serie, label):
+      print(f'Stats {label}', 
+          f'/ min: {np.min(serie)}', 
+          f'/ max: {np.round(np.max(serie), 2)}', 
+          f'/ mean: {np.round(np.mean(serie), 2)}', 
+          f'/ median: {np.median(serie)}', 
+          f'/ non_zero: {sum(serie > 0 )}/{len(serie)}')
         
 def plot_intersection_bars(param):
     # Get series 
@@ -245,18 +261,24 @@ def plot_intersection_bars(param):
     ax2 =  ax1.secondary_xaxis('top')   
     plt.grid(b=True, axis = 'both', which='major', color=param.colorgrid, linestyle='-', alpha=alpha_grid)
     plt.grid(b=False, axis = 'both', which='minor', color=param.colorgrid, linestyle='--', alpha=alpha_grid)
-
+    
+    print(param.y_label)
     if param.serie_intersection is not None:
         plt.bar(index, intersection, width=width, 
                 color=param.color1, label=param.intersection_label)
+        print_statistics(intersection, param.intersection_label)
     plt.plot(index, eth, alpha=1, color=param.color3,
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type,
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.eth_label) 
+    print_statistics(eth, param.eth_label)
     plt.plot(index, ohsu, alpha=1, color=param.color2,
              linestyle = 'None', markerfacecolor='None', marker=param.marker_type, 
              markersize=param.marker_size, markeredgewidth=param.markeredgewidth,
              label = param.ohsu_label)
+    print_statistics(ohsu, param.ohsu_label)
+    
+    print_ratio(ohsu, eth)
 
     
 
@@ -308,7 +330,7 @@ def plot_intersection_bars(param):
     plt.title(param.title)
 
     save_path = os.path.join(param.plot_dir, f'{param.base_plot}_{param.name_plot}.pdf')
-    print("saving path is to {}".format(save_path))
+    print("\n saving path is to {}".format(save_path))
     if param.save:
         print("Saving!")
         plt.savefig(save_path, bbox_inches='tight')

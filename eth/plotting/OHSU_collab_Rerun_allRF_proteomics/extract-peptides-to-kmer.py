@@ -44,6 +44,7 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
     samples_store_pep = {}
     samples_store_rates_peps = {}
     samples_store_rates_kmers = {}
+    samples_store_tryptic_pep = {}
 
     for sample in all_samples:
         print('processing', sample)
@@ -54,6 +55,7 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
         samples_store_pep[sample] = defaultdict(dict)
         samples_store_rates_peps[sample] = defaultdict(dict)
         samples_store_rates_kmers[sample] = defaultdict(dict)
+        samples_store_tryptic_pep[sample] = defaultdict(dict)
         
         for pipeline in pipelines:
             path_single = os.path.join(proteomicsdir, pipeline, sample_short, 
@@ -98,17 +100,18 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
                     input_trypPep = os.path.join(base_input_trypPep, f'tsearch-{original_name}.txt')
 
 
-                    val, val_rate_tryptic_pep, peptides, df_filtered = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue, input_trypPep)
+                    val, val_rate_tryptic_pep, peptides, df_filtered, tryptic_peptides = reader_assign_conf_pep(df, FDR_limit, col_seq, col_qvalue, input_trypPep)
 
                     df_filtered, val_rate_kmers = validated_filtered_kmers(df_filtered, fasta_base_OHSU, kmer_files_OHSU,
                                                            fasta_base_ETH, sample, experiment, 
                                                            pipeline, col_seq)
 
-                        
                     samples_store_kmers[sample][cut_name][pipeline] = set(df_filtered['kmer'])
                     samples_store_pep[sample][cut_name][pipeline] = peptides
                     samples_store_rates_peps[sample][cut_name][pipeline] = val_rate_tryptic_pep
                     samples_store_rates_kmers[sample][cut_name][pipeline] = val_rate_kmers
+                    samples_store_tryptic_pep[sample][cut_name][pipeline] = tryptic_peptides 
+
                     
                     print(f'{len( samples_store_kmers[sample][cut_name][pipeline])} validated kmers')
 
@@ -119,6 +122,8 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
     compare_peptides = compare_OHSU_ETH(samples_store_pep, read_from_disk=True)
     peptide_rates = format_validation_rates(samples_store_rates_peps, read_from_disk=True)
     kmers_rates = format_validation_rates(samples_store_rates_kmers, read_from_disk=True)
+    compare_tryptic_peptides = compare_OHSU_ETH(samples_store_tryptic_pep, read_from_disk=True)
+
     
     print(f'creating {save_folder}')
     Path(save_folder).mkdir(parents=True, exist_ok=True) 
@@ -126,7 +131,13 @@ def process_proteomics_results(proteomicsdir:str, samples_breast:list, samples_o
     path_data_kmers = os.path.join(save_folder, f'data_kmers{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_peptide_rates = os.path.join(save_folder, f'data_peptides-rates{MS_FDR}_{MS_strategy}.tsv.gz')
     path_data_kmers_rates = os.path.join(save_folder, f'data_kmers-rates{MS_FDR}_{MS_strategy}.tsv.gz')
+    path_data_tryptic = os.path.join(save_folder, f'data_peptides-tryptic.tsv.gz')
 
+
+    
+    compare_tryptic_peptides.to_csv(path_data_tryptic, sep = '\t', index = None)
+    print(f'Saved data to {path_data_pep}')
+    
     compare_peptides.to_csv(path_data_pep, sep = '\t', index = None)
     print(f'Saved data to {path_data_pep}')
     
