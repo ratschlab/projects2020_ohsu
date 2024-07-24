@@ -3,15 +3,16 @@ set -e
 
 
 ### Lsf and Run Parameters: Can be changed as wished to submit the job to the cluster. Basic running stage 
-mem=20000
-time_=04
+mem=40000
+time_=120  #120 - 5 days maximum
+
 #local_="print_only_the_command" #run_cluster # Use print_only_the_command to only print the command and preview what will happen, and use run_cluster to submit to the lsf system via bsub
 local_="run_cluster"
 #local_="print_only_the_command"
-parallel=2
-suffix="run_test1_commit_TOY2" #Choose your run name (output folder name)
+parallel=4
+suffix="DATA_TEST_28.06.2022_Task5_Run#18" #Choose your run name (output folder name)
 echo "WARNING check activation myimmuno3"
-base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/learning_filter
+base_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/learning_filter/TCGA_Breast
 mkdir -p ${base_cancer}
 log_dir=${base_cancer}/lsf
 mkdir -p ${log_dir}
@@ -28,8 +29,8 @@ whitelist_cancer=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/TCG
 # libsize
 libsize_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_libsizes_conf2_annotFrame_cap1000_runs_pya0.17.1_KEEP/TCGA_Breast_1102/cohort_mutNone/TCGA_Breast_1102_coding_libsize75.tsv
 # Here we applied a "trick". Instead of using the real paths of the files we did use a simililink to access the files that we care about in the same place. 
-input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_BRCA_toy_data2#_19077
-input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/annot_BRCA_toy_data2 #_19077	
+input_Junc_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_BRCA_toy_data #change _19077 to _toy_data
+input_annot_cancer=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/annot_BRCA_toy_data #change _19077 to _toy_data	
 
 ## Normal Cohorts
 sample_back='GTEXcore'
@@ -37,8 +38,8 @@ sample_back='GTEXcore'
 # libsize
 libsize_normal=/cluster/work/grlab/projects/TCGA/PanCanAtlas/immunopepper_paper/peptides_ccell_rerun_gtex_151220/GTEX2019_commit_librarysize_pya.0.17.1_conf2_annot_ref_chrall_cap1000/cohort_mutNone/GTEX_hg38_coding_libsize75.tsv
 # Here we applied the same "trick" as above. We have relinked the files of interest with simililinks
-input_Segm_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Segm_GTEX2019_toy_data #_19077
-input_Junc_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_GTEX2019_toy_data #_19077
+input_Segm_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Segm_GTEX2019_toy_data #change _19077 to _toy_data
+input_Junc_normal=/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/v2_v2.5f0752a_conf2_annotFrame_cap0_runs_pya0.17.1/TCGA_Breast_1102/cohort_mutNone_relink/Junc_GTEX2019_toy_data #  change _19077 to _toy_data
 # whitelist
 whitelist_normal=/cluster/work/grlab/projects/projects2020_OHSU/sample_lists/GTEX/GTEx_sample_IDs_10-2021_lib_graph_juliannelist_noBrain_noTestis
 # Name tag
@@ -54,26 +55,26 @@ kmer='9'
 ## Spark Specific parameters: Can be tuned to make it quicker. But discuss first. Expert runninng stage 
 parallelism='1000'
 out_partitions=1
-scratch_mem=2700  #270000  #270000 #155000 # 270000 #155000
+scratch_mem=155000  #270000  #270000 #155000 # 270000 #155000
 tot_batches=1
 
 ### Filtering specific parameters 
 # In the real code the parameters are specified in a loop. Here we will skip the loop for learning purposes. The loop was a convenient way to run many parameters in combination 
 # The filtering uses a few parameters that one can set. Basic running stage. 
 # First it is important to understand what they mean
-expr_nsamples_limit_normal=3,10 #'Any,2' '10,2, '0,0'
+expr_nsamples_limit_normal=10,2  #'Any,2' '10,2, '0,0'
 # These are the two numbers passed to --cohort-expr-support-norm, --n-samples-lim-normal. I just specify the two numbers here because in the any case, one of the two arguments is ommited (skipped). 
 # Above we have the "tolerance" to include a kmer in the normal background set. The first number is the number of reads (expression) and the second is the number of samples. They are specified together, however they are applied sequencially.
 # Take 3, 10: This means that you are going to filter with (a) The kmer needs 3 reads in any of the normal samples. (b) The kmer needs 10 samples with any number of reads. We can re-write (a) as 3 reads in >=1 samples (b) >0 reads in >=10 samples. 
 # Take Any, 2:  This means that you are going to filter with (a) -> basically nothing happens there. (b) The kmer needs 2 samples with any number of reads. 
 # Now the special case 0, 0:  This means that you are going to filter with (a) The kmer needs >0 reads in any of the normal samples. (b) The kmer needs more than 0 samples with any number of reads. What this means is that (a) and (b) become the same and anything is included in the background set. This will be a very big background. 
-sample_expr_lim_cancer=2 #0 
+sample_expr_lim_cancer=0 #2  #0 
 # Number passed to --sample-expr-support-cancer 
 # Above we have the number of samples required in the cancer target sample. This means that a kmer is included in the foreground set if its (normalized) expression is >=2 reads. 
-cohort_expr_lim_cancer=0  #'1' '5'
+cohort_expr_lim_cancer=5  #'0'  #'1' '5'
 # Number passed to --cohort-expr-support-cancer
 # Above is the expression value required in at least n samples of the cancer cohort. This is a recurrence parameter
-expr_n_limit_cancer=1 #'2' '10' 'none'
+expr_n_limit_cancer=10  #'1'  #'2' '10' 'none'
 # Number passed to --n-samples-lim-cancer
 # Above we are specifying the n samples in the cancer cohort. 
 #For example --cohort-expr-support-cancer=0 and --expr_n_limit_cancer 2 means that a kmer is included in the foreground set if it is expressed with >0 reads (strict inequality because zero) in >=2 cancer cohort samples 
@@ -96,7 +97,7 @@ while read sample; do
 	for mutation_canc in ref; do #We will limit ourselves to the cancer case in this project 
 		## Organize folders
 		sample_short=$(echo $sample | sed 's,\.all,,g')
-		output_norm=$(dirname ${base_cancer})/filtered_backgrounds/${suffix}_${sample_back}
+		output_norm=$(dirname ${base_cancer})/filtered_backgrounds #${suffix}_${sample_back}
 		output_canc=${base_cancer}/filter_${sample}/${suffix}_a_interm_cancer
 		output_dir=${base_cancer}/filter_${sample}/${suffix}_${sample_back}
 		output_count=${base_cancer}/filter_${sample}/${suffix}_counts

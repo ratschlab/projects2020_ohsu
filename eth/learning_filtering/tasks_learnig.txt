@@ -1,7 +1,7 @@
 This document sets the guidelines to learn unsing the filtering mode of immunopepper. 
 We will use a simplified script for this purpose: send_all_samples_learning.sh
 "Run" a script means "sh send_all_samples_learning.sh"
-"Set" a variable means change the value of "variable=" I will refer to the content of the variable with $variable. 
+"Set" a variable means change the value of "variable=" I will refer to the content of the variable with ${variable}. 
 
 Tasks 1-5 are expected to take 2 weeks 
 Task 6 will take 1 week or more 
