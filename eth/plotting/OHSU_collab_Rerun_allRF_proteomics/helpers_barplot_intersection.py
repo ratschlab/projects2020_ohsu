@@ -232,7 +232,7 @@ def print_statistics(serie, label):
     
     
 def print_ratio(serie_JP, serie_GP, label='ratio JP/GP'):
-    serie = np.divide(list(serie_JP), list(serie_GP))
+    serie = np.round(np.divide(list(serie_JP), list(serie_GP)), 2)
     stat_text(serie, label)
     
 def stat_text(serie, label):
@@ -279,6 +279,8 @@ def plot_intersection_bars(param):
     print_statistics(ohsu, param.ohsu_label)
     
     print_ratio(ohsu, eth)
+    print_ratio(intersection, ohsu, 'stats inter/OHSU')
+    print_ratio(intersection, eth, 'stats inter/ETH')
 
     
 

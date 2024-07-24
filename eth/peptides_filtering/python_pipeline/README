@@ -1,0 +1,4 @@
+For the removal of all junctions passing filtering threshold in GTEX found in the STAR file 
+/cluster/work/grlab/projects/GTEx/rna_gencode32_realign/results/junctions_spladder.all_coords.sorted.uniq.tsv.gz
+Equivalent to 
+/cluster/work/grlab/projects/GTEx/rna_gencode32_realign/results/junctions_spladder_projected/junctions_spladder.projected.chr*.hdf5
