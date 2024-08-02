@@ -24,9 +24,12 @@ def preprocess_ohsu(df):
     return df
 
 
-def ohsu_to_eth_coord(df, col = 'kmer', new_col = 'jx_shifted', sep = ';'):
+def ohsu_to_eth_coord(df, col = 'jx', new_col = 'jx_shifted', sep = ';'): # LP Corrected
+    # LP change col to junction_coordinate
+
     tmp_jx = df[col].str.split(sep,  expand = True)
     df[new_col] = tmp_jx[0] + sep + (tmp_jx[1].astype(int) - 1).astype(str) + sep + tmp_jx[2] + sep + tmp_jx[3]
+
     return df
 
 def get_junction_coordinates(df, coordinates_col, sep=':'):
@@ -52,8 +55,41 @@ def get_junction_coordinates(df, coordinates_col, sep=':'):
                 df.loc[idx, 'junction_coordinate'] = ':'.join([str(x) for x in [kmer_coordinates[3],
                                                                                 kmer_coordinates[0],
                                                                                 kmer_coordinates[2],
-                                                                                kmer_coordinates[5] #should be 5, 0!!
+                                                                                kmer_coordinates[5] #should be 5, 2!!
                                                                                ]])
+    return df
+
+
+def get_junction_coordinates_updated(df, coordinates_col, sep=':'): # From LP
+    strand_ = []
+    updated_coord_ = []
+    
+    for j, coord in enumerate(df[coordinates_col]):
+        kmer_coordinates = [int(x) for x in coord.split(sep) if x !='None']
+        
+        if kmer_coordinates[1] < kmer_coordinates[2]: # order strand +
+            strand_.append('+')
+            if len(kmer_coordinates) == 4:  # 2 exons
+                updated_coord_.append(':'.join([str(x) for x in kmer_coordinates[1:3]]))
+            elif len(kmer_coordinates) == 6:
+                updated_coord_.append( ':'.join([str(x) for x in kmer_coordinates[1:5]]))
+
+        else: # order strand +
+            strand_.append('-')
+            if len(kmer_coordinates) == 4:  # 2 exons
+                updated_coord_.append(':'.join([str(x) for x in [kmer_coordinates[3],
+                                                                 kmer_coordinates[0]]]))
+            elif len(kmer_coordinates) == 6:
+                updated_coord_.append(':'.join([str(x) for x in [kmer_coordinates[3],
+                                                                 kmer_coordinates[0],
+                                                                 kmer_coordinates[5],
+                                                                 kmer_coordinates[2] 
+                                                                                  ]]))
+        
+    df['strand'] = strand_
+    df['junction_coordinate'] = updated_coord_
+        
+ 
     return df
 
 
@@ -223,3 +259,20 @@ def sort_filters(df, order_background, order_foreground):#LP
     df['filter_foreground'] = prepare_frontticks(df['filter_foreground_target'], df['filter_foreground_reads'], df['filter_foreground_samples'])
 
     return df
+
+def helper_sort(coord_pair):
+    if len(coord_pair):
+        coord_pair = np.sort(coord_pair, axis=1)
+        coord_pair = [f'{i[0]}:{i[1]}' for i in coord_pair]
+    else:
+        coord_pair = []
+    return coord_pair
+
+def separate_ETH_3exons(eth): #From LP
+    eth_first_coord_pair_2exons = np.array([[int(i.split(':')[0]), int(i.split(':')[1])] for i in eth if len(i.split(':')) == 2])
+    eth_first_coord_pair_3exons = np.array([[int(i.split(':')[0]), int(i.split(':')[1])] for i in eth if len(i.split(':')) == 4])
+    
+    eth_second_coord_pair_3exons = np.array([[int(i.split(':')[2]), int(i.split(':')[3])] for i in eth if len(i.split(':')) == 4])
+    
+    eth = helper_sort(eth_first_coord_pair_2exons) + helper_sort(eth_first_coord_pair_3exons) + helper_sort(eth_second_coord_pair_3exons)
+    return eth

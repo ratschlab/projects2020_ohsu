@@ -8,7 +8,7 @@ SAVE_DIR = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/2
 # Non-filtered BRCA ETH
 ETH_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/filtering_intermediate/complete_cancer_candidates_order_r_complete.tsv.gz'
 # Non-filtered BRCA OHSU
-OHSU_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_June2023_filter-debug_complete-annotated-shortlist.tsv.gz'
+OHSU_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/archive/OHSU_June2023_filter-debug_complete-annotated-shortlist.tsv.gz' #LP changed path with archive
 # List of genes
 BATCH_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/batch_to_gene.txt'
 # Directory from filtered BRCA ETH
