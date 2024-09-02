@@ -7,19 +7,40 @@ SAVE_DIR = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/2
 ## PATH to table(s) 
 # Non-filtered BRCA ETH
 ETH_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/filtering_intermediate/complete_cancer_candidates_order_r_complete.tsv.gz'
+
+OVARIAN_ETH='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Ovarian_374/filtering_intermediate/complete_cancer_candidates_order_r_complete.tsv.gz'
+
+
 # Non-filtered BRCA OHSU
 OHSU_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/archive/OHSU_June2023_filter-debug_complete-annotated-shortlist.tsv.gz' #LP changed path with archive
+
+OVARIAN_OHSU="/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/archive/OHSU_June2023_filter-debug_complete-annotated-shortlist.tsv.gz"
+
 # List of genes
 BATCH_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102/batch_to_gene.txt'
+#Breast/Ovarian
+BATCH_PATH = BATCH_PATH_BRCA
 # Directory from filtered BRCA ETH
 FILTERING_PATH_BRCA = '/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/TCGA_Breast_1102'
-OHSU_BRCA_NEW=True
+OHSU_BRCA_NEW=False #LP not needed for the rerun
 # Filtered BRCA OHSU (not all filtering parameters)
-TAR_OHSU_BRCA= '/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/OHSU_June2023_filter-debug_all_output.tar.gz'
+TAR_OHSU_BRCA= '/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/archive/OHSU_June2023_filter-debug_all_output.tar.gz'
+TAR_OHSU_OV = TAR_OHSU_BRCA
 # Filtered BRCA OHSU (all filtering parameters)
-TAR_OSHU_BRCA_NEW='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/June28_renamed_kmerfiles_OHSU.tar.gz'
+TAR_OSHU_BRCA_NEW='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/archive/June28_renamed_kmerfiles_OHSU.tar.gz'
+TAR_OSHU_OV_NEW = TAR_OSHU_BRCA_NEW
 # One of filtering expirement
 FILTERING_ID= 'filters_19May_order_5ge_wAnnot_GPstar'
+
+##Generation ETH in dataframe format
+
+
+
+
+##Generation OHSU in dataframe format
+
+
+
 
 # Create directory structure
 # SAVE_DIR
