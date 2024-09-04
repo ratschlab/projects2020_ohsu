@@ -260,7 +260,16 @@ def plot_intersection_bars(param):
     fig, ax1 = plt.subplots(figsize=(15, 6))
     ax2 =  ax1.secondary_xaxis('top')   
     plt.grid(b=True, axis = 'both', which='major', color=param.colorgrid, linestyle='-', alpha=alpha_grid)
-    plt.grid(b=False, axis = 'both', which='minor', color=param.colorgrid, linestyle='--', alpha=alpha_grid)
+    #plt.grid(b=False, axis = 'both', which='minor', color=param.colorgrid, linestyle='--', alpha=alpha_grid)
+    ax1.minorticks_on()
+#     ax2.minorticks_on()
+    #ax1.tick_params(axis='y', which='minor', bottom=False)
+    ax1.tick_params(axis='y', which='minor', bottom=False, left=True, right=False, top=False)
+    ax2.tick_params(axis='y', which='minor', bottom=False, left=True, right=False, top=False)
+    from matplotlib import ticker as mticker
+
+#     
+
     
     print(param.y_label)
     if param.serie_intersection is not None:
@@ -279,8 +288,9 @@ def plot_intersection_bars(param):
     print_statistics(ohsu, param.ohsu_label)
     
     print_ratio(ohsu, eth)
-    print_ratio(intersection, ohsu, 'stats inter/OHSU')
-    print_ratio(intersection, eth, 'stats inter/ETH')
+    if param.serie_intersection is not None:
+        print_ratio(intersection, ohsu, 'stats inter/OHSU')
+        print_ratio(intersection, eth, 'stats inter/ETH')
 
     
 
@@ -300,10 +310,11 @@ def plot_intersection_bars(param):
     if (param.serie_intersection) is not None and (param.log_scale): # Skip the intersection size if not log scale
         plot_text_dev(intersection, intersection, color=param.color4, font=text_font)
 
-
+    log_tag = ''
     if param.log_scale:
         plt.yscale('symlog')
-        
+        log_tag = ' (log10)'
+        ax1.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs=(.2, .4, .6, .8)))
     max_scale = np.max([ohsu.values, eth.values])
     min_scale = np.min([ohsu.values, eth.values])
     
@@ -325,8 +336,9 @@ def plot_intersection_bars(param):
                fontsize=param.ticks_fontsize)
 
 
+
     plt.legend(fontsize=param.legend_fontsize)
-    plt.ylabel(param.y_label, fontsize=param.axes_fontsize)
+    plt.ylabel(param.y_label + log_tag, fontsize=param.axes_fontsize)
     ax2.set_xlabel(param.xupper_axis_label, fontsize=param.axes_fontsize)
     ax1.set_xlabel(param.xlower_axis_label, fontsize=param.axes_fontsize)
     plt.title(param.title)

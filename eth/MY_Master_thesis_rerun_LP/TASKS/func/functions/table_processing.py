@@ -2,6 +2,7 @@ import pandas as pd
 import tqdm
 from config import *
 import numpy as np
+import re
 
 
 def change_column_names(ohsu_df):
@@ -162,7 +163,7 @@ def filter_df_common_kmers(df1, df2, show_log = True, col = 'kmer'):
 def filter_df_common_coord(df1, df2):
     return filter_df_common_kmers(df1, df2, False, 'junction_coordinate')
 
-def get_filter(filter):
+def get_filter(filter, OHSU_BRCA_NEW):
     f =[]
     for ff in filter:
         if not OHSU_BRCA_NEW:
