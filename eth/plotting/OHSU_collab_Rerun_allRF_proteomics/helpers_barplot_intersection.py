@@ -230,7 +230,22 @@ def plot_text_dev(Y, T, position='top', color='black', font=None):
 def print_statistics(serie, label):
     stat_text(serie, label)
     
+
+def print_percent_diff(serie_JP, serie_GP, label='Percent Difference'):
+    percent_diff = np.round( np.abs(np.array(serie_JP) - np.array(serie_GP))/ 
+                            ((np.array(serie_JP) + np.array(serie_GP))/2) * 100 )
+    print(label, percent_diff)
+    stat_text(percent_diff, label)
     
+
+def print_divergence_sets(serie_JP, serie_GP, intersection, label='Divergence Sets'):
+    divergence = np.round( 100 - (np.array(intersection)/ 
+                            ((np.array(serie_JP) + np.array(serie_GP))) * 100 ))
+    print(label, divergence)
+    stat_text(divergence, label)
+    
+    
+                       
 def print_ratio(serie_JP, serie_GP, label='ratio JP/GP'):
     serie = np.round(np.divide(list(serie_JP), list(serie_GP)), 2)
     stat_text(serie, label)
@@ -288,9 +303,11 @@ def plot_intersection_bars(param):
     print_statistics(ohsu, param.ohsu_label)
     
     print_ratio(ohsu, eth)
+    print_percent_diff(ohsu, eth)
     if param.serie_intersection is not None:
         print_ratio(intersection, ohsu, 'stats inter/OHSU')
         print_ratio(intersection, eth, 'stats inter/ETH')
+        print_divergence_sets(ohsu, eth, intersection)
 
     
 
