@@ -127,12 +127,13 @@ class plotting_parameters():
         self.name_plot = name_plot
     
     def add_plotting_data(self, data_both, data_eth, data_ohsu, 
-                          serie_index, serie_intersection, serie_eth, serie_ohsu):
+                          serie_index, serie_intersection, serie_union, serie_eth, serie_ohsu):
         self.data_both = data_both
         self.data_eth = data_eth
         self.data_ohsu = data_ohsu
         self.serie_index = serie_index
         self.serie_intersection = serie_intersection
+        self.serie_union = serie_union
         self.serie_eth = serie_eth
         self.serie_ohsu = serie_ohsu
 
@@ -233,14 +234,13 @@ def print_statistics(serie, label):
 
 def print_percent_diff(serie_JP, serie_GP, label='Percent Difference'):
     percent_diff = np.round( np.abs(np.array(serie_JP) - np.array(serie_GP))/ 
-                            ((np.array(serie_JP) + np.array(serie_GP))/2) * 100 )
+                            (np.array(serie_JP) + np.array(serie_GP)/2) * 100 )
     print(label, percent_diff)
     stat_text(percent_diff, label)
     
 
-def print_divergence_sets(serie_JP, serie_GP, intersection, label='Divergence Sets'):
-    divergence = np.round( 100 - (np.array(intersection)/ 
-                            ((np.array(serie_JP) + np.array(serie_GP))) * 100 ))
+def print_divergence_sets(serie_JP, serie_GP, intersection, union, label='Divergence Sets'):
+    divergence = np.round( 100 - (np.array(intersection)/np.array(union))* 100 )
     print(label, divergence)
     stat_text(divergence, label)
     
@@ -262,6 +262,7 @@ def plot_intersection_bars(param):
     # Get series 
     if param.serie_intersection is not None:
          intersection = param.data_both[param.serie_intersection]
+         union = param.data_both[param.serie_union]
 
     index = np.arange(len(param.back_ticks))
 
@@ -307,7 +308,7 @@ def plot_intersection_bars(param):
     if param.serie_intersection is not None:
         print_ratio(intersection, ohsu, 'stats inter/OHSU')
         print_ratio(intersection, eth, 'stats inter/ETH')
-        print_divergence_sets(ohsu, eth, intersection)
+        print_divergence_sets(ohsu, eth, intersection, union)
 
     
 
