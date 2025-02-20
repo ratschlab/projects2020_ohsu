@@ -251,11 +251,15 @@ def print_ratio(serie_JP, serie_GP, label='ratio JP/GP'):
     stat_text(serie, label)
     
 def stat_text(serie, label):
+      serie_no_zeros = serie[serie > 0]
       print(f'Stats {label}', 
-          f'/ min: {np.min(serie)}', 
-          f'/ max: {np.round(np.max(serie), 2)}', 
-          f'/ mean: {np.round(np.mean(serie), 2)}', 
-          f'/ median: {np.median(serie)}', 
+          f'/ min: {np.nanmin(serie)}',
+          f'/ min_no_zero: {np.nanmin(serie_no_zeros)}',  
+          f'/ max: {np.round(np.nanmax(serie), 2)}', 
+          f'/ mean: {np.round(np.nanmean(serie), 2)}', 
+          f'/ mean_no_zeros: {np.round(np.nanmean(serie_no_zeros), 2)}', 
+          f'/ median: {np.nanmedian(serie)}', 
+          f'/ median_no_zeros: {np.nanmedian(serie_no_zeros)}', 
           f'/ non_zero: {sum(serie > 0 )}/{len(serie)}')
         
 def plot_intersection_bars(param):
