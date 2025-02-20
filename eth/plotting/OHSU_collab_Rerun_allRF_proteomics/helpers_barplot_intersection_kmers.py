@@ -240,6 +240,7 @@ def compare_OHSU_ETH(samples_store_pep, read_from_disk):
                   'filter_' : [], 
                   'pep_size_ohsu' : [], 
                   'pep_size_eth' : [], 
+                  'pep_size_union' : [],
                   'pep_size_intersection' : [], 
                   'pep_size_ohsu\eth' : [], 
                   'pep_size_eth\ohsu' : []}
@@ -254,6 +255,7 @@ def compare_OHSU_ETH(samples_store_pep, read_from_disk):
                     compare['pep_size_ohsu\eth'].append(len(pipelines_['OHSU'].difference(pipelines_['ETH'])))
                     compare['pep_size_eth\ohsu'].append(len(pipelines_['ETH'].difference(pipelines_['OHSU'])))
                     compare['pep_size_intersection'].append(len(pipelines_['ETH'].intersection(pipelines_['OHSU'])))
+                    compare['pep_size_union'].append(len(pipelines_['ETH'].union(pipelines_['OHSU'])))
         compare = pd.DataFrame(compare)
         print('Data to save', compare.shape)
 

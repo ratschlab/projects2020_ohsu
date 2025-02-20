@@ -13,7 +13,7 @@ proteomicsdir='/cluster/work/grlab/projects/projects2020_OHSU/proteomics_fixMerg
 fasta_base_OHSU='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/current'
 fasta_base_ETH="'/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/*/filtering_samples/filters_19May_order_5ge_wAnnot_GPstar'"
 kmer_files_OHSU='/cluster/work/grlab/projects/projects2020_OHSU/share_OHUS_PNLL/current/kmer_files'
-save_folder='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/data_plots'
+save_folder='/cluster/work/grlab/projects/projects2020_OHSU/peptides_generation/CANCER_eth/commit_c4dd02c_conf2_Frame_cap0_runs/data_plots_add_union'
 FDR_limit=0.05
 
 MS_FDR=$1
