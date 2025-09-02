@@ -13,24 +13,28 @@ Codes in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline](https://g
 Steps explained in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline/README.txt](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline/README.txt)<br />
 Note: This is heavily inspired from [projects2020\_ohsu/eth/peptides\_filtering/spark\_pipeline](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/spark_pipeline), but this pipeline has not been used to generate the final results
 
-## FASTA GENERATION #*pool*.fa
+## FASTA GENERATION 
+Files containing the pattern *pool*.fa <br />
 
 Codes in
 [projects2020\_ohsu/eth/peptide\_search\_format/notebooks/20230523\_speedup\_kmer\_to\_metadata\_matching.ipynb](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptide_search_format/notebooks/20230523_speedup_kmer_to_metadata_matching.ipynb)<br />
 [projects2020\_ohsu/eth/peptide\_search\_format/notebooks/p20230320\_format\_kmers\_to\_peptides\_FASTA-may2023.ipynb](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptide_search_format/notebooks/p20230320_format_kmers_to_peptides_FASTA-may2023.ipynb)
 
-## EXPERIMENT PER PEPTIDES #*experiments\_per\_peptide*
+## EXPERIMENT PER PEPTIDES 
+Files containing the pattern *experiments\_per\_peptide* <br />
 
 [projects2020\_ohsu/eth/peptide\_search\_format/notebooks/p20230503\_parse\_fasta\_to\_experiments\_per\_peptide.ipynb](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptide_search_format/notebooks/p20230503_parse_fasta_to_experiments_per_peptide.ipynb)<br />
 [projects2020\_ohsu/eth/peptide\_search\_format/notebooks/helpers\_map.py](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptide_search_format/notebooks/helpers_map.py)
 (The old development version is in
 [projects2020\_ohsu/eth/debug/single\_case/p20230726\_extract\_exp\_map\_for\_fasta.ipynb](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/debug/single_case/p20230726_extract_exp_map_for_fasta.ipynb))
 
-## EXPERIMENT MAPS *experiment\_map*
+## EXPERIMENT MAPS 
+Files containing the pattern *experiment\_map* <br />
 
 [projects2020\_ohsu/eth/peptide\_search\_format/notebooks/p20230726\_parse\_experiment\_map.ipynb](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptide_search_format/notebooks/p20230726_parse_experiment_map.ipynb)
 
-## COUNT FILES #*\_samp\_chrt\_norm\_mot\_unip.tsv*
+## COUNT FILES 
+Files containing the pattern *\_samp\_chrt\_norm\_mot\_unip.tsv* <br />
 
 Generated along the
 [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline)<br />
