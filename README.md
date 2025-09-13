@@ -1,8 +1,8 @@
 This is the analysis code of the preprint from Prelot and David et. al.
-The main analysis scripts are detailed, and key ressource files regarding samples and environements are provided
+The main analysis scripts are detailed, and key ressource files regarding samples and environments are provided
 
 ## PEPTIDE GENERATION STEPS
-
+Random selection of 5 BRCA and 5 OV samples script is [here](https://github.com/ratschlab/projects2020_ohsu/blob/master/ohsu/data_preparation/TCGA_sample_random_selection.py).<br />
 Generation of foreground peptides:
 [projects2020\_ohsu/eth/peptides\_generation/foreground](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_generation/foreground)<br />
 Generation of GTEX peptides
@@ -10,10 +10,15 @@ Generation of GTEX peptides
 
 ## FILTERING STEPS
 
-Codes in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline)<br />
-Steps explained in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline/README.txt](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline/README.txt)<br />
+### GP:
+- Codes in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline)<br />
+- Steps explained in [projects2020\_ohsu/eth/peptides\_filtering/python\_pipeline/README.txt](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/python_pipeline/README.txt)<br />
 Note: This is heavily inspired from [projects2020\_ohsu/eth/peptides\_filtering/spark\_pipeline](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/peptides_filtering/spark_pipeline), but this pipeline has not been used to generate the final results
 
+### JP:
+- Junction discovery and filtering methods are given in [projects2020\_ohsu/ohsu/data_preparation](https://github.com/ratschlab/projects2020_ohsu/tree/master/ohsu/data_preparation). (Sample runs are provided in step 1 and 2 scripts' docstrings. Please reach out for further details if needed.)<br />
+- Peptide translation and preparation for proteomics work is given [here](https://github.com/ratschlab/projects2020_ohsu/blob/master/ohsu/data_preparation/prep_proteomics_data.py).<br />
+  
 ## FASTA GENERATION 
 Files containing the pattern *pool*.fa <br />
 
