@@ -77,5 +77,5 @@ Steps explained in [projects2020\_ohsu/pnnl/README\_proteomics.txt](https://gith
 [projects2020\_ohsu/eth/MY\_Master\_thesis\_rerun\_LP](https://github.com/ratschlab/projects2020_ohsu/tree/master/eth/MY_Master_thesis_rerun_LP)
 
 
-## RESSOURCES
+## RESOURCES
 The samples ID used from the GTEx cohort can be found in [projects2020\_ohsu/ressources/GTEx\_sample\_IDs\_10\-2021.tsv.txt](https://github.com/ratschlab/projects2020_ohsu/tree/master/ressources/GTEx_sample_IDs_10-2021.tsv.txt)
